@@ -13,6 +13,12 @@
 ;; Generic Package to Process zakaz.ua specific items ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(defn- price-from-element [e]
+  (Double/parseDouble 
+   (str (c/text (u/find e "grivna price"))
+        "."
+        (c/text (u/find e "kopeiki")))))
+
 (defn- process-page [url]
   (web/to url)
   (try
@@ -35,17 +41,25 @@
                     image (web/attribute (web/find-element-under product-image-e {:tag "img"}) "src")
                     product-button-e (u/find item "one-product-button")
                     one-product-price-e (u/find product-button-e "one-product-price")
-                    price-grn (c/text (u/find one-product-price-e "grivna price"))
-                    price-cop (c/text (u/find one-product-price-e "kopeiki"))]
-                (recur items (conj returned {:name name
-                                             :image image
-                                             :source original-link
-                                             :price (Double/parseDouble (str price-grn "." price-cop))}))))))
+                    price (price-from-element one-product-price-e)
+                    sale-e (u/find item "badge right-up-sale-bage")
+                    _ (println sale-e)
+                    old-price (if sale-e (do (price-from-element sale-e)))
+                    ]
+                (recur items (conj returned
+                                   (cond-> {:name name
+                                            :image image
+                                            :source original-link
+                                            :price price}
+                                     old-price ((fn [m]
+                                                  (-> m
+                                                      (assoc :old-price old-price)
+                                                      (assoc :sale true))))
+                                     )))))))
 
         ))
     (catch Exception e
-      (println (format "Error processing items [%s]" (.getMessage e))))))
-
+      (println (format "Error processing items [%s]" e)))))
 
 (defn process [base-url]
   (let [base-url base-url]
