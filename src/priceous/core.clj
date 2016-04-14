@@ -4,41 +4,58 @@
             [priceous.fozzy :as fozzy]
             [priceous.stolichnyi :as stolichnyi]
             [priceous.solr :as solr]
-            [clj-webdriver.taxi :as web]))
+            [taoensso.timbre :as log]
+            [clj-webdriver.taxi :as web])
 
-(defn monitor-flow [state name f]
-  (let [items (f)]
-    (println (format "Found %s items on %s" (count items) name))
+  (:gen-class))
 
-    (swap! state + (count items))
+(defn monitor-provider [state name f]
+  (let [items (f)] ;; process items
+    (log/info (format "[%s] Found %s items" name (count items)))
 
-    (println "Pushing data to SOLR...")
-    (solr/write items)
-    (println "Pushing data to SOLR Done.")
-    
-    state
+    (solr/write
+     {:timestamp (System/currentTimeMillis)
+      :provider name}
+     items)
+
+    ;; return state as it will be caried to the 
+    (update-in state [:total] + (count items))
     ))
 
-(defn monitor-all []
-  (let [start (System/currentTimeMillis)
-        state (atom 0)]
-    (println "Init Selenium Driver...")
-    (web/set-driver! {:browser :firefox})
+(defn monitor-all [providers]
+  (try
+    (let [start (System/currentTimeMillis)]
+      (log/info "Init Selenium Driver")
+      (web/set-driver! {:browser :firefox})
 
-    (println "Start monitoring prices...")
-    (-> state ;; inititial counter
-        (monitor-flow "Novus" novus/whiskey-prices)
-        (monitor-flow "Metro" metro/whiskey-prices)
-        (monitor-flow "Fozzy" fozzy/whiskey-prices)
-        (monitor-flow "Stolichnyi" stolichnyi/whiskey-prices)
-        ;; TODO rozetka
-        ;; TODO goodwine
+      (log/info "Start monitoring prices")
 
-        )
-    (web/close)
+      ;; process each provider
+      (let [final-state
+            (reduce
+             ;; sequentially monitor each provider
+             (fn [acc {:keys [name fun]}]
+               (monitor-provider acc name fun))
+             ;; initial state
+             {:total 0}
+             providers)]
 
+        (log/info (format "Succecfully processed %s items in %s seconds"
+                          (or (:total final-state) 0)
+                          (/ (- (System/currentTimeMillis) start) 1000.0)))))
+
+    (catch Exception e
+      (log/error "Processing failed " e))
     
-    (println (format "Processed %s items" @state))
-    (println (format "Processing done in %s seconds"
-                     (/ (- (System/currentTimeMillis) start) 1000.0)))
+    (finally
+      (web/close))
+
     ))
+
+
+(defn -main [& args]
+  ;; process args
+  (monitor-all [{:name "Novus"      :fun novus/whiskey-prices}
+                {:name "Metro"      :fun metro/whiskey-prices}
+                {:name "Fozzy"      :fun fozzy/whiskey-prices}
+                {:name "Stolychnyi" :fun stolichnyi/whiskey-prices}]))
