@@ -11,16 +11,19 @@
 
 (defn monitor-provider [state name f]
   (let [items (f)] ;; process items
-    (log/info (format "[%s] Found %s items" name (count items)))
+    (cond
+      ;; nothing found
+      (empty? items)
+      (log/warn (format "[%s] No items found" name)) 
 
-    (solr/write
-     {:timestamp (System/currentTimeMillis)
-      :provider name}
-     items)
-
-    ;; return state as it will be caried to the 
-    (update-in state [:total] + (count items))
-    ))
+      :else
+      (do
+        (log/info (format "[%s] Found %s items" name (count items)))
+        (solr/write
+         {:timestamp (System/currentTimeMillis) :provider name}
+         items)
+        ;; return state as it will be caried to the 
+        (update-in state [:total] + (count items))))))
 
 (defn monitor-all [providers]
   (try
@@ -55,7 +58,7 @@
 
 (defn -main [& args]
   ;; process args
-  (monitor-all [{:name "Novus"      :fun novus/whiskey-prices}
-                {:name "Metro"      :fun metro/whiskey-prices}
-                {:name "Fozzy"      :fun fozzy/whiskey-prices}
-                {:name "Stolychnyi" :fun stolichnyi/whiskey-prices}]))
+  (monitor-all [{:name "Novus"      :fun novus/process}
+                {:name "Metro"      :fun metro/process}
+                {:name "Fozzy"      :fun fozzy/process}
+                {:name "Stolychnyi" :fun stolichnyi/process}]))

@@ -15,6 +15,9 @@
                  ;; solr clienr
                  [com.codesignals/flux "0.6.0"]
 
+                 ;; good times
+                 [clj-time "0.11.0"]
+
                  ]
   :aot  [priceous.core]
   :main priceous.core
