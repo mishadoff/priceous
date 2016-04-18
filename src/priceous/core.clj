@@ -4,13 +4,15 @@
             [priceous.fozzy :as fozzy]
             [priceous.stolichnyi :as stolichnyi]
             [priceous.solr :as solr]
+            [priceous.config :as config]
+            [priceous.flow :as flow]
             [taoensso.timbre :as log]
             [clj-webdriver.taxi :as web])
 
   (:gen-class))
 
-(defn monitor-provider [state name f]
-  (let [items (f)] ;; process items
+(defn monitor-provider [state name flow]
+  (let [items (flow/process flow)] ;; process items
     (cond
       ;; nothing found
       (empty? items)
@@ -37,8 +39,8 @@
       (let [final-state
             (reduce
              ;; sequentially monitor each provider
-             (fn [acc {:keys [name fun]}]
-               (monitor-provider acc name fun))
+             (fn [acc {:keys [name flow]}]
+               (monitor-provider acc name flow))
              ;; initial state
              {:total 0}
              providers)]
@@ -48,7 +50,8 @@
                           (/ (- (System/currentTimeMillis) start) 1000.0)))))
 
     (catch Exception e
-      (log/error "Processing failed " e))
+      (log/error "Processing failed")
+      (log/error e))
     
     (finally
       (web/close))
@@ -57,8 +60,9 @@
 
 
 (defn -main [& args]
+  (config/config-timbre!)
   ;; process args
-  (monitor-all [{:name "Novus"      :fun novus/process}
-                {:name "Metro"      :fun metro/process}
-                {:name "Fozzy"      :fun fozzy/process}
-                {:name "Stolychnyi" :fun stolichnyi/process}]))
+  (monitor-all [{:name "Novus"      :flow   novus/flow}
+                {:name "Metro"      :flow   metro/flow}
+                {:name "Fozzy"      :flow   fozzy/flow}
+                {:name "Stolychnyi" :flow   stolichnyi/flow}]))
