@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<schema name="example" version="1.5">
+  <fields>
+    <field name="id" type="string" indexed="true" stored="true" required="false"/> 
+    <field name="_version_" type="long" indexed="true" stored="true"/>
+
+    <!-- Whisky related fields -->
+    <field name="name" type="text_general" indexed="true" stored="true" required="true"/>
+    <field name="image_url" type="string" indexed="false" stored="true" required="false"/>
+    <field name="source_url" type="string" indexed="false" stored="true" required="false"/>
+    <field name="price" type="float" indexed="true" stored="true" required="true"/>
+    <field name="sale" type="boolean" indexed="true" stored="true" required="false"/>
+    <field name="old_price" type="float" indexed="true" stored="true" required="false"/>
+    <field name="provider" type="string" indexed="true" stored="true" required="true"/>
+    <field name="timestamp" type="date" indexed="true" stored="true" required="true"/>
+
+    <!-- All in one field -->
+    <field name="text" type="text_general" indexed="true" stored="false" required="false" multiValued="true"/>
+    <copyField source="*" dest="text"/>
+    
+    <uniqueKey>id</uniqueKey>
+  </fields>
+
+  <types>
+    <fieldType name="string" class="solr.StrField" sortMissingLast="true" />
+    <fieldType name="boolean" class="solr.BoolField" sortMissingLast="true"/>
+
+    <fieldType name="int" class="solr.TrieIntField" precisionStep="0" positionIncrementGap="0"/>
+    <fieldType name="float" class="solr.TrieFloatField" precisionStep="0" positionIncrementGap="0"/>
+    <fieldType name="long" class="solr.TrieLongField" precisionStep="0" positionIncrementGap="0"/>
+    <fieldType name="double" class="solr.TrieDoubleField" precisionStep="0" positionIncrementGap="0"/>
+    <fieldType name="date" class="solr.TrieDateField" precisionStep="0" positionIncrementGap="0"/>
+    <fieldtype name="binary" class="solr.BinaryField"/>
+    
+    <fieldType name="text_general" class="solr.TextField" positionIncrementGap="100">
+
+      <analyzer type="index">
+        <tokenizer class="solr.StandardTokenizerFactory"/>
+        <filter class="solr.LowerCaseFilterFactory"/>
+	<filter class="solr.WordDelimiterFilterFactory"
+		splitOnNumerics="1"
+		generateWordParts="1"
+		generateNumberParts="1"
+		catenateWords="0"
+		catenateNumbers="0"
+		catenateAll="0"
+		splitOnCaseChange="1"
+		preserveOriginal="1" />
+      </analyzer>
+      
+      <analyzer type="query">
+        <tokenizer class="solr.StandardTokenizerFactory"/>
+        <filter class="solr.LowerCaseFilterFactory"/>
+        <filter class="solr.SynonymFilterFactory" synonyms="synonyms.txt" ignoreCase="true" expand="true"/>
+      </analyzer>
+
+    </fieldType>
+  </types>
+
+  <defaultSearchField>text</defaultSearchField>
+  
+</schema>
+

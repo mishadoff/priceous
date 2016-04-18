@@ -1,0 +1,198 @@
+## A
+auchentoshan,ахентошен,ахентошн,охентошн,охентошен,ошнтошн
+ardbeg,ардбег
+american,американ
+ale,ель,эль,але
+
+## B
+balvenie,balveni,балвени,балвение
+bushmills,bushmill's,bushmils,башмиллз,башмиллс,башмилс,башмилз,бушмиллз,бушмиллс,бушмилс,бушмилз
+ballantine's,ballantines,balantines,ballantine,balantine,балантайн,баллантайн,балантайнз,баллантайнз
+bowmore,боумор,бовмор,бовморе,боуморе
+bell's,bell,bells,белз,белс,беллс,беллз,бэлс,белз,бэллс,бэллз
+bannister,banister,баннистер,банистер
+batch,бетч,батч,бач
+black,блек,блэк
+blend,бленд,блэнд
+bird,берд,бёрд,бьорд
+bush,баш,буш
+barrel,barel,баррель,баррел,барел
+buffalo,буфало,буффало,бафало,баффало
+bourbon,borbon,burbon,бурбон
+beam,бим
+benchmark,бенчмарк
+bridge,бридж
+
+## C
+chivas,чивас,шивас
+cask,каск
+carribean,caribean,каррибиан,каррибиен,каррибеан,карибеан,карибиен,карибиан
+craft,крафт
+canadian,канадиан
+club,клаб,клуб
+clan,клан,клэн
+claymore,клеймор,клэймор,клэймоур,клеймоур
+cherry,черри,чери,чэри,чэрри
+cutty,кати,катти,кути,кутти
+collie,колли,коли,коллие
+
+## D
+deward's,deward,dewards,дюарс,дюварс,дювардс,дюарз,дювард,дюварз,дювардз
+doublewood,даблвуд
+dew,дю,дью
+daniels,daniel's,денилз,дениел,дениелс,дэнилз,дэниел,дэниелс,дэниэлз,дэниэлс
+dufftown,дафтавн,даффтавн,даффтаун,дафтаун
+
+## E
+extra,екстра,экстра
+ellis,елис,элис,эллис
+
+## F
+fine,файн,фине
+finest,файнест,финест
+family,фемили,фамили,фемли
+founder's,founder,founders,фаундер,фаундерз,фаундерс
+famous,феймос,феймоус
+fraser,фрезер,фрейзер,фрэйзер,фрэзер,фрэзэр,фрэйзэр
+
+## G
+glen,глен,глэн
+glenfiddich,glenfidich,гленфидич,гленфиддич,гленфидих,гленфиддих
+glenmorangie,glenmorangi,гленморанжи
+glenlivet,гленливет
+grant's,grants,грант,грантс
+garioch,гариоч,гариош,гариох
+gold,голд
+gentleman,джентльмен,джентлмен
+grouse,grous,граус,грауз,груз,грус
+
+## H
+hankey,hanky,ханки,ханке,ханкей
+highland,хайленд,хайлэнд
+horse,хорс,хорз,хорсе
+honey,хани,хоней,хони
+
+## I
+isle,исле,айла
+irishman,айришмен
+
+## J
+jameson,джеймисон,джемисон,джеймсон
+johnny,jonnie,johnie,johnnie,джони,джонни
+jura,джура,юра
+jack,джек,джэк
+jock,джок
+jim,джим
+
+## K
+kilbeggan,килбеган,килбегган
+kakubin,какубин
+kentucky,kentuki,kentucki,кентукки,кентуки,кентаки,кентакки
+kelvin,келвин,кэлвин
+king,кинг
+
+## L
+label,лейбел,лейбл,лабел
+laphroaig,лафройг,лафроайг
+lasanta,лазанта,ласанта
+lauders,лодерс,лоудерс,лодэрс,лоудэрс
+longmorn,лонгморн
+lowland,ловленд,лоуленд,лавленд,лауленд
+lowson's,lowson,lowsons,ловсон,лоусон,ловсонз,лоусонз,лоусонс,ловсонс
+lion,лайон,лион
+leader,лидер,леадер
+
+## M
+macallan,mac allan,macalan,макаллан,макалан
+macgregor,mac gregor,макгрегор,макгрэгор
+macarthur,macartur,macarturs,mac arturs,макартур,макартурз,макартурс
+malt,молт,малт
+maker's,makers,maker,мейкерз,мейкер,мейкерс
+mark,марк
+most,мост
+mackay,mackey,маки,макки,макай,маккай,макей,маккей
+major,межор,мажор,мейжор,мэйжор,мейдже,мэйдже
+match,мач,матч
+
+## N
+nectar,нектар
+
+## O
+oak,оак,ок
+own,оун,овн
+old,олд
+origin,ориджин,орижин
+original,оригинал,орижинал,ориджинал
+
+## P
+portwood,портвуд
+platinum,платинум
+peel,пил
+pipe,пайп
+passport,pasport,пасспорт,паспорт
+pitterson,piterson,питерсон,питэрсон,питтерсон,питтэрсон
+
+## Q
+quarter,квартер,куартер,кварте
+quinta,квинта
+
+## R
+regal,ригал,регал
+reserve,ресерве,резерв
+ruban,рубан
+rich,рич
+rings,рингз,рингс
+red,ред,рэд
+road,род,роад
+roger's,rogers,roger,роджерс,роджер,роджерз
+royal,ройал,ройял,роял
+rocks,rock,рокс,рокз
+robert,роберт,робэрт
+
+## S
+signature,сигначе,сигначер,сигнатуре,сигначур
+sir,сир,сер,сэр
+skye,скай
+single,singl,сингле,сингл
+small,смол,смолл
+smuggler,смаглер,смагглер,смоглер,смогглер
+special,специал,спешиал,спешил,спешал,спэшил,спэшал,спэшиал
+singleton,синглетон,синглтон
+silver,сильвер,силвер
+select,селект
+sherry,шерри,шери,шэри,шэрри
+suntory,сантори
+stag,стаг,стег,стэг
+sark,сарк
+scottish,scotish,scotty,скотиш,скоттиш,скотти
+scotland,скотланд,скотленд,скотлэнд
+scots,скот,скотс,скотз
+straight,стрейт,стрэйт
+strathglen,srtathglen,стратглен
+
+## T
+the,зе
+tree,три
+talisker,талискер
+tullamore,туламор,тулламор,тюламор,тюлламор
+trace,трейс
+teacher's,teacher,teachers,тичер,тичерз,тичерс
+
+## U
+
+## V
+vat,ват,вот
+
+## W
+walker,вокер,волкер
+wanted,wonted,вонтед,вонтэд,вантед,вантэд
+woodford,вудфорд
+white,уайт,вайт
+whyte,whate,уайт,вайт
+william,уильям,вильям
+
+## X
+
+## Y
+
+## Z
