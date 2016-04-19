@@ -34,6 +34,9 @@
 
 (defn- process-page [flow url]
   (web/to url)
+  ;; thread waits three seconds to load the page
+  ;; (Thread/sleep 3000)
+  ;; wait three seconds before every page to load
   (try
     (loop [[item & items] (select-all-items-from-page flow) returned []]
       (cond
@@ -59,7 +62,7 @@
                       :sale sale
                       :old-price old-price}]
             ;; logging only name do not pollute namespace
-            (log/info (:name item))
+            (log/info (select-keys item [:name :price]))
             (recur items (conj returned item))))))
     (catch Exception e
       (log/error (format "Error processing items [%s]" e)))))
@@ -67,12 +70,28 @@
 (defn process
   "Process iteratively all pages by provided page-template starting from 1"
   [flow]
-  (loop [page 1 items []]
-    (log/info (format "Crawling page %s" page))
-    (let [url (format (page-template flow) page)
-          page-items (process-page flow url)]
-      (if (empty? page-items)
+  (let [{:keys [pagination-init
+                pagination-advance-fn
+                pagination-limit]
+         :or {pagination-init 1
+              pagination-advance-fn inc
+              pagination-limit Integer/MAX_VALUE}} (context flow)]
+    (loop [page pagination-init
+           processed 0
+           items []]
+      (cond
+        (<= pagination-limit processed)
         items
+
+        :else
         (do
-          (log/info (format "Crawled %s items" (count page-items)))
-          (recur (inc page) (into items page-items)))))))
+          (log/info (format "Crawling page %s" page))
+          (let [url (format (page-template flow) page)
+                page-items (process-page flow url)]
+            (if (empty? page-items)
+              items
+              (do
+                (log/info (format "Crawled %s items" (count page-items)))
+                (recur (pagination-advance-fn page)
+                       (inc processed)
+                       (into items page-items))))))))))

@@ -12,11 +12,14 @@
                  ;; logger
                  [com.taoensso/timbre "4.3.1"]
                  
-                 ;; solr clienr
+                 ;; solr client
                  [com.codesignals/flux "0.6.0"]
 
                  ;; good times
                  [clj-time "0.11.0"]
+
+                 ;; we write to csv
+                 [org.clojure/data.csv "0.1.3"]
 
                  ]
   :aot  [priceous.core]

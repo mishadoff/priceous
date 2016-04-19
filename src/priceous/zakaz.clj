@@ -27,12 +27,14 @@
   (select-all-items-from-page [_]
     (u/selenium-failsafe-apply
      context
+     true
      #(web/find-elements {:class "one-product"})
      "class: one-product"))
 
   (select-name-from-item [_ item]
     (u/selenium-failsafe-apply
      context
+     true
      #(->> (web/find-element-under item {:class "one-product-name"})
            (web/text)
            (clojure.string/trim))
@@ -41,6 +43,7 @@
   (select-link-from-item [_ item]
     (u/selenium-failsafe-apply
      context
+     true
      #(-> (web/find-element-under item {:class "one-product-link"})
           (c/attribute "href"))
      "class: one-product-link > attr: href"))
@@ -48,6 +51,7 @@
   (select-image-from-item [_ item]
     (u/selenium-failsafe-apply
      context
+     true
      #(-> item
           (web/find-element-under {:class "one-product-link"})
           (web/find-element-under {:class "one-product-image"})
@@ -58,6 +62,7 @@
   (select-price-from-item [_ item]
     (u/selenium-failsafe-apply
      context
+     true
      #(-> item
           (web/find-element-under {:class "one-product-button"})
           (web/find-element-under {:class "one-product-price"})
@@ -67,6 +72,7 @@
   (select-old-price-from-item [_ item]
     (u/selenium-failsafe-apply
      context
+     false
      #(-> item
           (web/find-element-under {:class "badge right-up-sale-bage"})
           (price-from-element))
@@ -75,6 +81,7 @@
   (select-sale-from-item [_ item]
     (u/selenium-failsafe-apply
      context
+     false
      #(-> item
           (web/find-element-under {:class "badge right-up-sale-bage"})
           (boolean))

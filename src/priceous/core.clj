@@ -3,13 +3,23 @@
             [priceous.metro :as metro]
             [priceous.fozzy :as fozzy]
             [priceous.stolichnyi :as stolichnyi]
+            [priceous.rozetka :as rozetka]
+
             [priceous.solr :as solr]
+
+            [clojure.data.csv :as csv]
+            [clojure.java.io :as io]
+            
             [priceous.config :as config]
             [priceous.flow :as flow]
             [taoensso.timbre :as log]
             [clj-webdriver.taxi :as web])
 
   (:gen-class))
+
+;; EXTERNALIZE 
+(def appenders #{:csv :solr})
+(def ^:dynamic *csv-file* "/Users/mkoz/temp/alcohol.csv")
 
 (defn monitor-provider [state name flow]
   (let [items (flow/process flow)] ;; process items
@@ -21,9 +31,33 @@
       :else
       (do
         (log/info (format "[%s] Found %s items" name (count items)))
-        (solr/write
-         {:timestamp (System/currentTimeMillis) :provider name}
-         items)
+
+        (when (:csv appenders)
+          ;; write header
+          (log/info (str "Writing to file " *csv-file*))
+          (with-open [out-file (io/writer *csv-file* :append false)]
+            (csv/write-csv
+             out-file
+             [["Name" "Price" "Image" "Source" "Sale" "Old Price"]]))
+          
+          (with-open [out-file (io/writer *csv-file* :append true)]
+            ;; write data
+            (csv/write-csv
+             out-file
+             (->> items
+                  (mapv ;; transform document map into vector
+                   (fn [{:keys [name price image source sale old-price]}]
+                     [name price image source sale old-price])))))
+          )
+          
+          
+
+        (when (:solr appenders) 
+          ;; writing to solr
+          (solr/write
+           {:timestamp (System/currentTimeMillis) :provider name}
+           items))
+        
         ;; return state as it will be caried to the 
         (update-in state [:total] + (count items))))))
 
@@ -62,7 +96,10 @@
 (defn -main [& args]
   (config/config-timbre!)
   ;; process args
-  (monitor-all [{:name "Novus"      :flow   novus/flow}
-                {:name "Metro"      :flow   metro/flow}
-                {:name "Fozzy"      :flow   fozzy/flow}
-                {:name "Stolychnyi" :flow   stolichnyi/flow}]))
+  (monitor-all [#_{:name "Novus"      :flow   novus/flow}
+                #_{:name "Metro"      :flow   metro/flow}
+                #_{:name "Fozzy"      :flow   fozzy/flow}
+                #_{:name "Stolychnyi" :flow   stolichnyi/flow}
+                {:name "Rozetka"      :flow   rozetka/flow}
+
+                ]))
