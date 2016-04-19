@@ -6,13 +6,16 @@ ale,ель,эль,але
 
 ## B
 balvenie,balveni,балвени,балвение
-bushmills,bushmill's,bushmils,башмиллз,башмиллс,башмилс,башмилз,бушмиллз,бушмиллс,бушмилс,бушмилз
-ballantine's,ballantines,balantines,ballantine,balantine,балантайн,баллантайн,балантайнз,баллантайнз
+bushmills,bushmill's,bushmils,башмиллз,башмиллс,башмилс,башмилз,бушмиллз,бушмиллс,бушмилс,бушмилз,бушмiллс
+ballantine's,ballantines,balantines,ballantine,balantine,балантайн,баллантайн,балантайнз,баллантайнз,балантайнс,баллантайнз
+ballantruan,balantruan,балантруан,баллантруан
 bowmore,боумор,бовмор,бовморе,боуморе
 bell's,bell,bells,белз,белс,беллс,беллз,бэлс,белз,бэллс,бэллз
-bannister,banister,баннистер,банистер
+benriach,ben riach,бенриах,бенриач,бен рич
+bannister,banister,bannis,bannist,баннистер,банистер
 batch,бетч,батч,бач
 black,блек,блэк
+blue,блу,блуе
 blend,бленд,блэнд
 bird,берд,бёрд,бьорд
 bush,баш,буш
@@ -27,25 +30,31 @@ bridge,бридж
 chivas,чивас,шивас
 cask,каск
 carribean,caribean,каррибиан,каррибиен,каррибеан,карибеан,карибиен,карибиан
+cavanagh,каванах,кавана
 craft,крафт
 canadian,канадиан
+cardhu,карду,кардю,кардху
 club,клаб,клуб
 clan,клан,клэн
+clynelish,клайнелиш
 claymore,клеймор,клэймор,клэймоур,клеймоур
 cherry,черри,чери,чэри,чэрри
 cutty,кати,катти,кути,кутти
 collie,колли,коли,коллие
 
 ## D
-deward's,deward,dewards,дюарс,дюварс,дювардс,дюарз,дювард,дюварз,дювардз
+dewar's,dewar,dewars,deward's,deward,dewards,дюарс,дюварс,дювардс,дюарз,дювард,дюварз,дювардз
 doublewood,даблвуд
+double,дабл
 dew,дю,дью
 daniels,daniel's,денилз,дениел,дениелс,дэнилз,дэниел,дэниелс,дэниэлз,дэниэлс
 dufftown,дафтавн,даффтавн,даффтаун,дафтаун
+distillery,distilery,distileri,дистилери,дистиллери
 
 ## E
 extra,екстра,экстра
 ellis,елис,элис,эллис
+elgin,элгин,елгин,элжин,елжин
 
 ## F
 fine,файн,фине
@@ -54,12 +63,14 @@ family,фемили,фамили,фемли
 founder's,founder,founders,фаундер,фаундерз,фаундерс
 famous,феймос,феймоус
 fraser,фрезер,фрейзер,фрэйзер,фрэзер,фрэзэр,фрэйзэр
+flannigans,flanigan,flanigans,фланиганс,фланиганз,фланниганз,фланниганс
 
 ## G
 glen,глен,глэн
-glenfiddich,glenfidich,гленфидич,гленфиддич,гленфидих,гленфиддих
+glenfiddich,glenfidich,гленфидич,гленфиддич,гленфидих,гленфиддих,гленфидик,гленфиддик
 glenmorangie,glenmorangi,гленморанжи
 glenlivet,гленливет
+glenkinchie,glenkinchi,glenkinchy,гленкинчи,гленкичи
 grant's,grants,грант,грантс
 garioch,гариоч,гариош,гариох
 gold,голд
@@ -70,10 +81,14 @@ grouse,grous,граус,грауз,груз,грус
 hankey,hanky,ханки,ханке,ханкей
 highland,хайленд,хайлэнд
 horse,хорс,хорз,хорсе
-honey,хани,хоней,хони
+honey,хани,хоней,хони,хані
+hibiki,хибики
+hakushu,хакушу,хакусю
+hamiltons,hamilton,hamilton's,гамилтон,хамилтон,гамильтон,хамильтон,гамилтонс,гамилтонз,гамильтонс,гамильтонз,хамилтонс,хамилтонз,хамильтонс,хамильтонз
 
 ## I
 isle,исле,айла
+islay,айла
 irishman,айришмен
 
 ## J
@@ -90,22 +105,28 @@ kakubin,какубин
 kentucky,kentuki,kentucki,кентукки,кентуки,кентаки,кентакки
 kelvin,келвин,кэлвин
 king,кинг
+kindilan,киндилан	
 
 ## L
 label,лейбел,лейбл,лабел
 laphroaig,лафройг,лафроайг
+lagavulin,лагавулин
 lasanta,лазанта,ласанта
 lauders,лодерс,лоудерс,лодэрс,лоудэрс
 longmorn,лонгморн
+lochnagar,локнагар,лохнагар,лочнагар
 lowland,ловленд,лоуленд,лавленд,лауленд
 lowson's,lowson,lowsons,ловсон,лоусон,ловсонз,лоусонз,лоусонс,ловсонс
 lion,лайон,лион
+limited,лимитед,лимитэд
 leader,лидер,леадер
+legend,легенд,ледженд
 
 ## M
 macallan,mac allan,macalan,макаллан,макалан
 macgregor,mac gregor,макгрегор,макгрэгор
 macarthur,macartur,macarturs,mac arturs,макартур,макартурз,макартурс
+mcclellands,macclellands,маклеланд,макклеланд,маклелланд,макклелланд,маклеландс,макклеландс,маклелландс,макклелландс,маклеландз,макклеландз,маклелландз,макклелландз
 malt,молт,малт
 maker's,makers,maker,мейкерз,мейкер,мейкерс
 mark,марк
@@ -118,23 +139,27 @@ match,мач,матч
 nectar,нектар
 
 ## O
-oak,оак,ок
+oak,оак,оук,ок
 own,оун,овн
 old,олд
 origin,ориджин,орижин
 original,оригинал,орижинал,ориджинал
+oban,обан
 
 ## P
 portwood,портвуд
-platinum,платинум
+platinum,платинум,платінум
 peel,пил
 pipe,пайп
+park,парк
 passport,pasport,пасспорт,паспорт
 pitterson,piterson,питерсон,питэрсон,питтерсон,питтэрсон
 
 ## Q
-quarter,квартер,куартер,кварте
+quarter,квартер,куартер,кварте,квоте
 quinta,квинта
+quanta,кванта,куанта
+queen,квин,куин
 
 ## R
 regal,ригал,регал
@@ -148,6 +173,7 @@ roger's,rogers,roger,роджерс,роджер,роджерз
 royal,ройал,ройял,роял
 rocks,rock,рокс,рокз
 robert,роберт,робэрт
+ridgemont,риджмонт
 
 ## S
 signature,сигначе,сигначер,сигнатуре,сигначур
@@ -161,12 +187,13 @@ singleton,синглетон,синглтон
 silver,сильвер,силвер
 select,селект
 sherry,шерри,шери,шэри,шэрри
-suntory,сантори
+suntory,suntori,сантори
 stag,стаг,стег,стэг
 sark,сарк
 scottish,scotish,scotty,скотиш,скоттиш,скотти
 scotland,скотланд,скотленд,скотлэнд
 scots,скот,скотс,скотз
+storm,сторм,шторм
 straight,стрейт,стрэйт
 strathglen,srtathglen,стратглен
 
@@ -177,6 +204,10 @@ talisker,талискер
 tullamore,туламор,тулламор,тюламор,тюлламор
 trace,трейс
 teacher's,teacher,teachers,тичер,тичерз,тичерс
+tomintoul,томинтул
+tomatin,томатин
+turkey,турки,терки,тёрки,тёки,туркей
+tavern,таверн
 
 ## U
 
@@ -184,15 +215,17 @@ teacher's,teacher,teachers,тичер,тичерз,тичерс
 vat,ват,вот
 
 ## W
-walker,вокер,волкер
+walker,вокер,волкер,уокер,уолкер
 wanted,wonted,вонтед,вонтэд,вантед,вантэд
 woodford,вудфорд
 white,уайт,вайт
 whyte,whate,уайт,вайт
 william,уильям,вильям
+wild,валд,вайлд,уайлд,вилд,уилд
 
 ## X
 
 ## Y
+yamazaki,ямазаки,йямазаки
 
 ## Z
