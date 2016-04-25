@@ -1,0 +1,5 @@
+- Java
+- Firefox
+- xvfb
+- Solr
+

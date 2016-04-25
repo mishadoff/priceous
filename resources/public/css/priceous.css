@@ -1,0 +1,31 @@
+.query-text-area {
+    font-family: 'Alegreya', serif;
+    font-size: 28px;
+    line-height: 1;
+    background-color: #f2f2f2;
+    width: 60%;
+}
+
+.item-image {
+    display: inline-block;
+    padding: 5px;
+    width: 20%;
+}
+
+.item-name {
+    display: inline-block;
+    padding: 5px;
+    width: 30%;
+}
+
+.item-provider {
+    display: inline-block;
+    padding: 5px;
+    width: 20%;
+}
+
+.item-price {
+    display: inline-block;
+    padding: 5px;
+    width: 20%;
+}
