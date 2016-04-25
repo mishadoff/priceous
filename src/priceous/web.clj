@@ -29,10 +29,8 @@
                       :query query
                       :items (solr/query query)}))))
 
-  (GET "/admin" [] "TBD")
-  (POST "/admin/gather" []
-        (future (core/gather))
-        :ok)
+  (GET "/admin" [] (t/admin))
+
   
   (route/resources "/")
 

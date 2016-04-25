@@ -1,7 +1,13 @@
 (ns priceous.metro
-  (:require [priceous.zakaz :as zakaz]))
+  (:require [net.cgrand.enlive-html :as html]
+            [priceous.flow :as flow]
+            [priceous.zakaz :as zakaz]
+            [priceous.utils :as u]))
 
-(def flow
-  (zakaz/->ZakazFlow
-   {:provider "Metro"
-    :base "https://metro.zakaz.ua/ru/whiskey"}))
+(def provider
+  (merge zakaz/provider
+         {
+
+          })
+
+  )

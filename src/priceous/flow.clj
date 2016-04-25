@@ -1,97 +1,90 @@
 (ns priceous.flow
-  (:require [clj-webdriver.taxi :as web]
-            [clj-webdriver.core :as c]
-            [taoensso.timbre :as log]
+  (:require [taoensso.timbre :as log]
             [priceous.utils :as u]
-            [priceous.api :as api]
-            )
-  (:import [org.openqa.selenium NoSuchElementException]))
+            [net.cgrand.enlive-html :as html]))
 
-;;;;;;;;;;;;; API
+(defn get-urls-for-provider
+  "Retrieve urls from the current state of provider
 
+  Return modified provider (with state) and list of urls
 
-(defprotocol IFlow
-  "Defines a flow for scrapping"
+  - pass returned provider to the next call to get correct state
+  - if list is empty, stop processing
+
+  {:provider provider
+   :urls      [url url url]}
+
+  "
+  [{:keys [page->urls last-page] :as provider}]
+  ;; TODO preconditions
   
-  (select-all-items-from-page [this])
-  (select-name-from-item [this item])
-  (select-link-from-item [this item])
-  (select-image-from-item [this item])
-  (select-price-from-item [this item])
-  (select-old-price-from-item [this item])
-  (select-sale-from-item [this item])
-  (valid-element? [this item])
+  (let [empty-and-done      (-> {:provider provider :urls []}
+                                (assoc-in [:provider :state :done] true))
+        template            (get-in provider [:state :page-template])
+        page-number         (get-in provider [:state :page-current])
+        page-processed      (get-in provider [:state :page-processed])
+        page-limit          (get-in provider [:state :page-limit])
+        done                (get-in provider [:state :done])]
 
-  (page-template [this])
-  (context [this])
-  
-  )
+    (cond
 
+      ;; indicated as done, stop processing
+      (true? done) empty-and-done
 
-;;;;;;;;;;;;;
+      ;; we encountered a limit for processed pages
+      (>= page-processed page-limit) empty-and-done
 
-
-
-(defn- process-page [flow url]
-  (web/to url)
-  ;; thread waits three seconds to load the page
-  ;; (Thread/sleep 3000)
-  ;; wait three seconds before every page to load
-  (try
-    (loop [[item & items] (select-all-items-from-page flow) returned []]
-      (cond
-        ;; all items are processed or nothing found
-        (nil? item) returned
-
-        :else 
+      ;; not enough information to decide stop or procees
+      :else
+      (let [url         (format template page-number)        
+            page        (u/fetch url)
+            ;; if last page function is defined use it
+            last-page?  (if last-page
+                          (= (last-page provider page) page-number) false)]
         (cond
-          ;; name not found means no more products
-          (not (valid-element? flow item)) returned
 
-          :else 
-          (let [name (select-name-from-item flow item)
-                original-link (select-link-from-item flow item)
-                product-image (select-image-from-item flow item)
-                price (select-price-from-item flow item)
-                sale (select-sale-from-item flow item)
-                old-price (select-old-price-from-item flow item)
-                item {:name name
-                      :image product-image
-                      :source original-link
-                      :price price
-                      :sale sale
-                      :old-price old-price}]
-            ;; logging only name do not pollute namespace
-            (log/info (select-keys item [:name :price]))
-            (recur items (conj returned item))))))
-    (catch Exception e
-      (log/error (format "Error processing items [%s]" e)))))
+          ;; page not found
+          (nil? page) empty-and-done
 
-(defn process
-  "Process iteratively all pages by provided page-template starting from 1"
-  [flow]
-  (let [{:keys [pagination-init
-                pagination-advance-fn
-                pagination-limit]
-         :or {pagination-init 1
-              pagination-advance-fn inc
-              pagination-limit Integer/MAX_VALUE}} (context flow)]
-    (loop [page pagination-init
-           processed 0
-           items []]
-      (cond
-        (<= pagination-limit processed)
-        items
+          ;; page exists, proceed
+          :else
+          ;; TODO possibly to externalize that
+          (let [urls (page->urls provider page)]
+            {:provider
+             (-> provider
+                 (update-in  [:state :page-current] inc)
+                 (update-in  [:state :page-processed] inc)
+                 (assoc-in   [:state :done] last-page?)
+                 ((fn [p]
+                    (let [page-processed (get-in p [:state :page-processed])
+                          page-limit     (get-in p [:state :page-limit])]
+                      (cond
+                        (>= page-processed page-limit) 
+                        (assoc-in p [:state :done] true)
+                        :else p))))
+                 )
+             :urls urls}))))))
 
-        :else
-        (do
-          (log/info (format "Crawling page %s" page))
-          (let [url (format (page-template flow) page)
-                page-items (process-page flow url)]
-            (if (empty? page-items)
-              items
-              (do
-                (log/info (format "Crawled %s items" (count page-items)))
-                (recur (pagination-advance-fn page)
-                       (inc processed)
-                       (into items page-items))))))))))
+
+(defn process [{:keys [url->document] :as provider}]
+  (loop [p provider total-urls [] docs []]
+    (cond
+      ;; provider processed
+      (true? (get-in p [:state :done]))
+      (do
+        (log/info (format "[%s] Processing finished. Found %s items"
+                      (get-in p [:provider-name])
+                      (count total-urls)))
+        (map deref docs))
+      
+
+      :else
+      (do
+        (log/info (format "[%s] Processing page %s"
+                      (get-in p [:provider-name])
+                      (get-in p [:state :page-current])))
+        (let [result (get-urls-for-provider p)
+              new-provider (:provider result) new-urls (:urls result)]
+          (recur new-provider (into total-urls new-urls)
+                 (into docs (map #(future (url->document p %)) new-urls))
+                 ))))))

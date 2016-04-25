@@ -1,98 +1,98 @@
 (ns priceous.zakaz
-  (:require [clj-webdriver.taxi :as web]
-            [clj-webdriver.core :as c]
-            [taoensso.timbre :as log]
+  (:require [net.cgrand.enlive-html :as html]
             [priceous.flow :as flow]
-            [priceous.utils :as u]
-            ))
+            [priceous.utils :as u]))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Generic Package to Process zakaz.ua specific items ;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defn- text-from-selector [provider node selector]
+  (html/text (u/ensure-one (html/select node selector)
+                           :selector selector
+                           :required false
+                           :provider (:name provider))))
 
-(defn- price-from-element [e]
-  (Double/parseDouble
-   (str (c/text (web/find-element-under e {:class "grivna price"}))
-        "."
-        (c/text (web/find-element-under e {:class "kopeiki"})))))
+(defn- zakaz-price [price-node provider]
+  (let [text (str (text-from-selector provider price-node [:.grivna.price])
+                  (text-from-selector provider price-node [:.kopeiki]))
+        value (u/safe-parse-double text)]
+    (if value (/ value 100.0) nil)))
 
+(defn node->price [provider node]
+  (-> node
+      (html/select [:.one-product-price])
+      (u/ensure-one
+       :required false
+       :selector [:.one-product-price]
+       :provider (:name provider))
+      (zakaz-price provider)))
 
+(defn node->old-price [provider node]
+  (-> node
+      (html/select [:.badge.right-up-sale-bage])
+      (u/ensure-one
+       :required false
+       :selector [:.badge.right-up-sale-bage]
+       :provider (:name provider))
+      (zakaz-price provider)))
 
-;;; Worker Object
-;;; All zakaz-based providers can extend it
- 
-(defrecord ZakazFlow [context]
-  flow/IFlow
+(defn node->link [provider node]
+  (-> node
+      (html/select (:selector-link provider))
+      (u/ensure-one
+       :required true
+       :selector (:selector-link provider)
+       :provider (:name provider))
+      (get-in [:attrs :href])
+      ((fn [part-link] (str (:base-url provider) part-link)))))
 
-  (select-all-items-from-page [_]
-    (u/selenium-failsafe-apply
-     context
-     true
-     #(web/find-elements {:class "one-product"})
-     "class: one-product"))
+(defn page->nodes [provider page]
+  (-> page
+      (html/select (:selector-pages provider))
+      ((fn [items]
+         (remove (fn [i]
+                   (-> (html/select i [:.one-product-name])
+                       (u/ensure-one
+                        :required false
+                        :selector [:.one-product-name]
+                        :provider (:name provider))
+                       (html/text)
+                       (clojure.string/trim)
+                       (empty?))) items)))))
 
-  (select-name-from-item [_ item]
-    (u/selenium-failsafe-apply
-     context
-     true
-     #(->> (web/find-element-under item {:class "one-product-name"})
-           (web/text)
-           (clojure.string/trim))
-     "class: one-product-name > text"))
+(def provider
+  {
+   :page-start 1
+   ;;   :log-item? true
+   
+   :selector-pages      [:.one-product]
+   :selector-name       [:.one-product-name]   
+   :selector-link       [:.one-product-link]
+   :selector-image      [:.one-product-image :img]
+   :selector-available? [:.one-product-name]
+   :selector-sale?      [:.badge.right-up-sale-bage]
 
-  (select-link-from-item [_ item]
-    (u/selenium-failsafe-apply
-     context
-     true
-     #(-> (web/find-element-under item {:class "one-product-link"})
-          (c/attribute "href"))
-     "class: one-product-link > attr: href"))
+   :node->price node->price
+   :node->old-price node->old-price
+   :node->link node->link
+   :page->nodes page->nodes
+   
+   })
 
-  (select-image-from-item [_ item]
-    (u/selenium-failsafe-apply
-     context
-     true
-     #(-> item
-          (web/find-element-under {:class "one-product-link"})
-          (web/find-element-under {:class "one-product-image"})
-          (web/find-element-under {:tag "img"})
-          (web/attribute "src"))
-     "class: one-product-link > class: one-product-image > tag: img > attr: src"))
+(defn- extend-provider [parent child]
+  (-> (merge provider child)
+      (assoc :page-template (str (:base-url child) "?&page=%s"))))
 
-  (select-price-from-item [_ item]
-    (u/selenium-failsafe-apply
-     context
-     true
-     #(-> item
-          (web/find-element-under {:class "one-product-button"})
-          (web/find-element-under {:class "one-product-price"})
-          (price-from-element))
-     "class: one-product-button > class: one-product-price > class: grivna price & kopeiki"))
-
-  (select-old-price-from-item [_ item]
-    (u/selenium-failsafe-apply
-     context
-     false
-     #(-> item
-          (web/find-element-under {:class "badge right-up-sale-bage"})
-          (price-from-element))
-     "class: badge right-up-sale-bage > class: grivna price & kopeiki"))
-
-  (select-sale-from-item [_ item]
-    (u/selenium-failsafe-apply
-     context
-     false
-     #(-> item
-          (web/find-element-under {:class "badge right-up-sale-bage"})
-          (boolean))
-     "class: badge right-up-sale-bage"))
-
-  (valid-element? [this item]
-    (not (empty? (flow/select-name-from-item this item))))
-
-  (page-template [this]
-    (str (:base context) "/?&page=%s"))
-
-  (context [this] context)
-  
-  )
+(def provider-metro
+  (extend-provider provider
+                   {:name "Metro"
+                    :base-url "https://metro.zakaz.ua/ru/whiskey/"}))
+(def provider-novus
+  (extend-provider provider
+                   {:name "Novus"
+                    :base-url "https://novus.zakaz.ua/ru/whiskey/"}))
+(def provider-fozzy
+  (extend-provider provider
+                   {:name "Fozzy"
+                    :base-url "https://fozzy.zakaz.ua/ru/whiskey/"}))
+(def provider-stolichnyi
+  (extend-provider provider
+                   {:name "Stolichnyi"
+                    :base-url "https://stolichnyi.zakaz.ua/ru/whiskey/"}))
