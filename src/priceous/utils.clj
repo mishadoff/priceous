@@ -44,7 +44,7 @@
     ;; No nodes found
     (empty? nodes)
     {:result nil
-     :status (if required :error :success) ;; FIX we do not want to pollute namespace
+     :status (if required :error :success)
      :message "[%s] No elements found using selector [%s]"}
     
     ;; Exactly one node found

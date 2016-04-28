@@ -1,6 +1,10 @@
 (ns priceous.core
   (:require [priceous.goodwine :as gw]
             [priceous.rozetka :as rozetka]
+            [priceous.metro :as metro]
+            [priceous.fozzy :as fozzy]
+            [priceous.novus :as novus]
+            [priceous.stolichnyi :as stolichnyi]
             
             [priceous.solr :as solr]
             [priceous.utils :as u]
@@ -68,7 +72,11 @@
 (defn -main [provider & args]
   (config/config-timbre!)
   (cond
-    (= provider "goodwine") (monitor-all [gw/provider])
-    (= provider "rozetka")  (monitor-all [rozetka/provider])
+    (= provider "goodwine")  (monitor-all [gw/provider])
+    (= provider "rozetka")   (monitor-all [rozetka/provider])
+    (= provider "metro")     (monitor-all [metro/provider])
+    (= provider "novus")     (monitor-all [novus/provider])
+    (= provider "fozzy")     (monitor-all [fozzy/provider])
+    (= provider "stolichnyi")(monitor-all [stolichnyi/provider])
 
     :else (u/die "Invalid provider")))

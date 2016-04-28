@@ -70,8 +70,11 @@
            :done           false
            }
 
-   :url->document url->document
+   :strategy :heavy
+   
    :page->urls page->urls
+   :url->document url->document
+
    :last-page  last-page
    
    })

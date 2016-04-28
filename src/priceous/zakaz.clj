@@ -3,96 +3,75 @@
             [priceous.flow :as flow]
             [priceous.utils :as u]))
 
-(defn- text-from-selector [provider node selector]
-  (html/text (u/ensure-one (html/select node selector)
-                           :selector selector
-                           :required false
-                           :provider (:name provider))))
+;; Zakaz.ua specific items
 
-(defn- zakaz-price [price-node provider]
-  (let [text (str (text-from-selector provider price-node [:.grivna.price])
-                  (text-from-selector provider price-node [:.kopeiki]))
-        value (u/safe-parse-double text)]
-    (if value (/ value 100.0) nil)))
-
-(defn node->price [provider node]
-  (-> node
-      (html/select [:.one-product-price])
-      (u/ensure-one
-       :required false
-       :selector [:.one-product-price]
-       :provider (:name provider))
-      (zakaz-price provider)))
-
-(defn node->old-price [provider node]
-  (-> node
-      (html/select [:.badge.right-up-sale-bage])
-      (u/ensure-one
-       :required false
-       :selector [:.badge.right-up-sale-bage]
-       :provider (:name provider))
-      (zakaz-price provider)))
-
-(defn node->link [provider node]
-  (-> node
-      (html/select (:selector-link provider))
-      (u/ensure-one
-       :required true
-       :selector (:selector-link provider)
-       :provider (:name provider))
-      (get-in [:attrs :href])
-      ((fn [part-link] (str (:base-url provider) part-link)))))
+(defn last-page [provider page]
+  (let [value 
+        (some->> (u/select-mul-required page provider
+                                        [:.catalog-pagination :li :a])
+                 (map html/text)
+                 (map u/smart-parse-double)
+                 (sort)
+                 (reverse)
+                 (first)
+                 (int))]
+    ;; default page is 1
+    (or value 1)))
 
 (defn page->nodes [provider page]
-  (-> page
-      (html/select (:selector-pages provider))
-      ((fn [items]
-         (remove (fn [i]
-                   (-> (html/select i [:.one-product-name])
-                       (u/ensure-one
-                        :required false
-                        :selector [:.one-product-name]
-                        :provider (:name provider))
-                       (html/text)
-                       (clojure.string/trim)
-                       (empty?))) items)))))
+  (u/select-mul-required
+   page provider
+   [:.one-product]))
 
-(def provider
-  {
-   :page-start 1
-   ;;   :log-item? true
-   
-   :selector-pages      [:.one-product]
-   :selector-name       [:.one-product-name]   
-   :selector-link       [:.one-product-link]
-   :selector-image      [:.one-product-image :img]
-   :selector-available? [:.one-product-name]
-   :selector-sale?      [:.badge.right-up-sale-bage]
+(defn node->document
+  "Transform item html snippet (node) into document"  
+  [{:keys [provider-name provider-base-url provider-icon] :as provider} node]
+  (let [page node
+        ;; some handy local aliases
+        prop (u/property-fn provider page)
+        text (u/text-fn prop)
 
-   :node->price node->price
-   :node->old-price node->old-price
-   :node->link node->link
-   :page->nodes page->nodes
-   
-   })
+        ;; dependent items
+        price-fn (fn [selector]
+                   (some-> (prop selector)
+                           (html/text)
+                           (u/smart-parse-double)
+                           (/ 100))) 
+        price (price-fn [:.one-product-price])
+        old-price (price-fn [:.badge.right-up-sale-bage])]
+    {
+     ;; provider specific options
+     :provider-name           provider-name
+     :provider-base-url       provider-base-url
+     :provider-icon           provider-icon
+     
+     ;; document
+     :name                    (text [:.one-product-name])     
+     :link                    (-> (prop [:.one-product-link])
+                                  (get-in [:attrs :href])
+                                  ((fn [part-href]
+                                     (str (:provider-base-url provider) "/" part-href))))
+     :image                   (-> (prop [:.one-product-image :img])
+                                  (get-in [:attrs :src]))
 
-(defn- extend-provider [parent child]
-  (-> (merge provider child)
-      (assoc :page-template (str (:base-url child) "?&page=%s"))))
+     ;; NOT DECIDED TO GATHER YET
+     ;;
+     ;;     :country                 
+     ;; 
+     ;;     :producer
+     :type                    "Whisky" ;; TODO redecide
+     ;; :product-code            nil
+     ;; :alcohol                 need to be parsed
+     ;; :description             not much description
+     :timestamp               (u/now)
+     :available               true ;; zakaz everything shows as available
+     ;;     :volume              need to be parsed
 
-(def provider-metro
-  (extend-provider provider
-                   {:name "Metro"
-                    :base-url "https://metro.zakaz.ua/ru/whiskey/"}))
-(def provider-novus
-  (extend-provider provider
-                   {:name "Novus"
-                    :base-url "https://novus.zakaz.ua/ru/whiskey/"}))
-(def provider-fozzy
-  (extend-provider provider
-                   {:name "Fozzy"
-                    :base-url "https://fozzy.zakaz.ua/ru/whiskey/"}))
-(def provider-stolichnyi
-  (extend-provider provider
-                   {:name "Stolichnyi"
-                    :base-url "https://stolichnyi.zakaz.ua/ru/whiskey/"}))
+     :sale                    (and price
+                                   old-price
+                                   (> old-price price))
+     
+     :price                   price
+
+     :sale-description        (if old-price (format "старая цена %s" old-price) nil)
+     }))
