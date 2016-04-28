@@ -35,6 +35,6 @@
   :plugins [[lein-ring "0.9.7"]]
   :ring {:handler priceous.web/app}
   
-  ;;:aot  [priceous.core]
+  :aot  [priceous.core]
   ;;:main priceous.core
   )

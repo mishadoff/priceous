@@ -1,45 +1,27 @@
 (ns priceous.goodwine
   (:require [net.cgrand.enlive-html :as html]
             [taoensso.timbre :as log]
-            [priceous.config :as config]
             [priceous.flow :as flow]
             [priceous.utils :as u]))
 
-;; SPECIFIC
-(defn- last-page
-  "Detects what is the last page for pagination"
-  [provider page]
-  (-> page 
-      (u/select [:.paginator-list [:li html/last-child]] provider)
-      (html/text)
-      (u/safe-parse-double)
-      (int)))
+(def last-page (u/generic-last-page
+                [:.paginator-list [:li html/last-child]]))
 
-;; SPECIFIC
-(defn- page->urls
-  ;; TODO use logged select
-  [provider page]
-  (map #(get-in % [:attrs :href]) (html/select page [:.g-title-bold :a])))
 
-;; UTILS
-(defn- text-contains [s sub-selector]
-  (html/pred #(.contains (html/text (first (html/select % sub-selector))) s)))
+(def page->urls (u/generic-page-urls [:.g-title-bold :a]))
 
-;; TODO replace all html select first to utils selector
-;; MOVE all helpers to utils
-;; SPECIFIC
+
 (defn- url->document
   "Read html resource from URL and transforms it to the document"  
   [{:keys [provider-name provider-base-url provider-icon] :as provider} url]
-  (let [page (u/fetch url)
-        prop (fn [selector postfn] (postfn (u/select page selector provider-name)))
-        text (fn [selector] (prop selector html/text))
-        spec (fn [field]
-               (prop [[:.specifications-list-item (text-contains field [:.specifications-list-title])]]
-                     #(-> (html/select % [:.specifications-list-field])
-                          (first)
-                          (html/text)
-                          (clojure.string/trim))))]
+
+  (let [page (u/fetch url) ;; retrieve the page
+        ;; some handy local aliases
+        prop (u/property-fn provider page)
+        text (u/text-fn prop)
+        spec (u/build-spec-map provider page
+                               [:.specifications-list-title]
+                               [:.specifications-list-field])]
     {
      ;; provider specific options
      :provider-name           provider-name
@@ -49,28 +31,32 @@
      ;; document
      :name                    (text [:.pp-title])
      :link                    url
-     :image                   (prop [:.b-product-img-link :img] #(get-in % [:attrs :src]))
+     :image                   (-> (prop [:.b-product-img-link :img]) (get-in [:attrs :src]))
      :country                 (spec "Страна регион:")
      :producer                (spec "Производитель:")
      :type                    (spec "Тип:")
      :product-code            (spec "Артикул:")
-     :alcohol                 (-> (spec "Крепость:") (u/safe-parse-double-with-intruders))
+     :alcohol                 (-> (spec "Крепость:") (u/smart-parse-double))
      :description             (text [:.product-description])
      :timestamp               (u/now)
-     :available               (prop [:.g-status-available] boolean)
-     :volume                  (prop [:.product-status-volume]
-                                    #(-> (html/text %) (u/safe-parse-double-with-intruders)))
-     :sale                    (prop [:.g-tag.g-tag-big.g-tag-promotion]
-                                    #(-> (html/text %)
-                                         (.contains "Акция")))
-     :price                   (prop [:.price.price-big.price-retail]
-                                    #(-> (html/text %) (u/safe-parse-double-with-intruders)))
-     :sale-description        (let [sale-price 
-                                    (prop [:.price.price-big.price-wholesale]
-                                          #(-> (html/text %) (u/safe-parse-double-with-intruders)))]
+     :available               (-> (prop [:.g-status-available]) boolean)
+     :volume                  (-> (prop [:.product-status-volume])
+                                  (html/text)
+                                  (u/smart-parse-double))
+     :sale                    (-> (prop [:.g-tag.g-tag-big.g-tag-promotion])
+                                  (html/text)
+                                  (.contains "Акция"))
+     :price                   (-> (prop [:.price.price-big.price-retail])
+                                  (html/text)
+                                  (u/smart-parse-double))
+     :sale-description        (let [sale-price (-> (prop [:.price.price-big.price-wholesale])
+                                                   (html/text)
+                                                   (u/smart-parse-double))]
                                 (if sale-price (format "от 6 бутылок %s" sale-price) nil))
      }))
 
+
+;;;;;;; Provider description
 
 (def provider
   {:provider-name "Goodwine"

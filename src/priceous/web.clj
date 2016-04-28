@@ -29,7 +29,7 @@
                       :query query
                       :items (solr/query query)}))))
 
-  (GET "/admin" [] (t/admin))
+  (GET "/admin" [] #_(t/admin))
 
   
   (route/resources "/")

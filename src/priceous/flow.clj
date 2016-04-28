@@ -77,7 +77,7 @@
                       (count total-urls)))
         (map deref docs))
       
-
+      
       :else
       (do
         (log/info (format "[%s] Processing page %s"

@@ -1,6 +1,10 @@
 (ns priceous.core
   (:require [priceous.goodwine :as gw]
+            [priceous.rozetka :as rozetka]
+            
             [priceous.solr :as solr]
+            [priceous.utils :as u]
+            [priceous.config :as config]
             [clojure.data.csv :as csv]
             [clojure.java.io :as io]            
             [priceous.flow :as flow]
@@ -12,16 +16,16 @@
 (def ^:dynamic *csv-file* "/Users/mkoz/temp/alcohol.csv")
 
 (defn monitor-provider
-  [state {:keys [name] :as provider}]
+  [state {:keys [provider-name] :as provider}]
   (let [items (flow/process provider)] ;; process items
     (cond
       ;; nothing found
       (empty? items)
-      (log/warn (format "[%s] No items found" name)) 
+      (log/warn (format "[%s] No items found" provider-name)) 
 
       :else
       (do
-        (log/info (format "[%s] Found %s items" name (count items)))
+        (log/info (format "[%s] Found %s items" provider-name (count items)))
 
         ;; sample
         ;; solr
@@ -59,3 +63,12 @@
 
 (defn gather []
   (monitor-all [gw/provider]))
+
+
+(defn -main [provider & args]
+  (config/config-timbre!)
+  (cond
+    (= provider "goodwine") (monitor-all [gw/provider])
+    (= provider "rozetka")  (monitor-all [rozetka/provider])
+
+    :else (u/die "Invalid provider")))
