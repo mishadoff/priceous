@@ -4,7 +4,6 @@
             [priceous.utils :as u]))
 
 ;; Zakaz.ua specific items
-
 (defn last-page [provider page]
   (let [value 
         (some->> (u/select-mul-required page provider
@@ -25,7 +24,8 @@
 
 (defn node->document
   "Transform item html snippet (node) into document"  
-  [{:keys [provider-name provider-base-url provider-icon] :as provider} node]
+  [{:keys [provider-name provider-base-url provider-icon
+           provider-icon-w provider-icon-h] :as provider} node]
   (let [page node
         ;; some handy local aliases
         prop (u/property-fn provider page)
@@ -44,6 +44,8 @@
      :provider-name           provider-name
      :provider-base-url       provider-base-url
      :provider-icon           provider-icon
+     :provider-icon-w         provider-icon-w
+     :provider-icon-h         provider-icon-h
      
      ;; document
      :name                    (text [:.one-product-name])     

@@ -13,7 +13,8 @@
 
 (defn- url->document
   "Read html resource from URL and transforms it to the document"  
-  [{:keys [provider-name provider-base-url provider-icon] :as provider} url]
+  [{:keys [provider-name provider-base-url provider-icon
+           provider-icon-w provider-icon-h] :as provider} url]
 
   (let [page (u/fetch url) ;; retrieve the page
         ;; some handy local aliases
@@ -27,6 +28,8 @@
      :provider-name           provider-name
      :provider-base-url       provider-base-url
      :provider-icon           provider-icon
+     :provider_icon_w         provider-icon-w
+     :provider_icon_h         provider-icon-h
      
      ;; document
      :name                    (text [:.pp-title])
@@ -62,7 +65,9 @@
   {:provider-name "Goodwine"
    :provider-base-url "http://goodwine.com.ua/"
    :provider-icon "http://i.goodwine.com.ua/design/goodwine-logo.png"
-
+   :provider-icon-w "70"
+   :provider-icon-h "34"
+   
    :state {:page-current   1
            :page-processed 0
            :page-template "http://goodwine.com.ua/whisky/c4502/page=%s/"

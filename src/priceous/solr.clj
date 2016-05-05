@@ -20,17 +20,16 @@
       (let [response
             (flux/request
              (query/create-query-request
-              {:q q
+              {:q (str "{!q.op=AND} " q) ;; change default operator to be AND
                :fq "available:true"
                :start 0 ;; TODO paging later
-               :rows Integer/MAX_VALUE
-               :sort "price asc"}))
-            items (get-in response [:response :docs])]
-        (log/debug (format "Found %s items" (count items)))
-        {:status :success :items items}))
+               :rows 50 ;; ONLY 50 RESULTS RTURNED
+               :sort "price asc"}))]
+        #_(log/debug (format "Found %s items" (count (:docs response))))
+        {:status :success :data response}))
     (catch Exception e
       (log/error e)
-      {:status :error :items []})))
+      {:status :error :response {}})))
 
 
 ;; TODO can be avoided later

@@ -29,7 +29,8 @@
 
 (defn- url->document
   "Read html resource from URL and transforms it to the document"  
-  [{:keys [provider-name provider-base-url provider-icon] :as provider} url]
+  [{:keys [provider-name provider-base-url provider-icon
+           provider-icon-w provider-icon-h] :as provider} url]
   (let [page (u/fetch url)
         ;; some handy local aliases
         prop (u/property-fn provider page)
@@ -54,6 +55,8 @@
      :provider-name           provider-name
      :provider-base-url       provider-base-url
      :provider-icon           provider-icon
+     :provider-icon-w         provider-icon-w
+     :provider-icon-h         provider-icon-h
      
      ;; document
      :name                    name
@@ -109,6 +112,8 @@
   {:provider-name "Rozetka"
    :provider-base-url "http://rozetka.com.ua/"
    :provider-icon "http://i1.rozetka.ua/logos/0/99.png"
+   :provider-icon-w "134"
+   :provider-icon-h "34"
 
    :state {:page-current   1
            :page-processed 0

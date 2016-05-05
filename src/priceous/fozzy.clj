@@ -10,9 +10,9 @@
 (def provider
   {:provider-name "Fozzy"
    :provider-base-url "https://fozzy.zakaz.ua"
-   :provider-icon "" ;; TODO
-   :provider-icon-width 88
-   :provider-icon-height 24
+   :provider-icon "http://www.fozzy.ua/include/img/fozzy_logo.png"
+   :provider-icon-width "70"
+   :provider-icon-height "34"
    
 
    :state {:page-current   1

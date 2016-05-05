@@ -14,9 +14,9 @@
 (def provider
   {:provider-name "Metro"
    :provider-base-url "https://metro.zakaz.ua"
-   :provider-icon "http//i.zakaz.ua/Metro/metro_logo.png"
-   :provider-icon-width 88
-   :provider-icon-height 24
+   :provider-icon "/images/metro.png"
+   :provider-icon-width "96"
+   :provider-icon-height "27"
    
 
    :state {:page-current   1

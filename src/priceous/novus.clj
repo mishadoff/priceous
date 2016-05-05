@@ -10,9 +10,9 @@
 (def provider
   {:provider-name "Novus"
    :provider-base-url "https://novus.zakaz.ua"
-   :provider-icon "http://i.zakaz.ua/Novus/logo.png"
-   :provider-icon-width 88
-   :provider-icon-height 24
+   :provider-icon "http://novus.com.ua/sites/all/themes/novus/images/logo.png"
+   :provider-icon-w "112"
+   :provider-icon-h "26"
    
 
    :state {:page-current   1

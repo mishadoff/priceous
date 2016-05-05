@@ -10,9 +10,9 @@
 (def provider
   {:provider-name "Stolichnyi"
    :provider-base-url "https://stolichnyi.zakaz.ua"
-   :provider-icon "" ;; TODO
-   :provider-icon-width 88
-   :provider-icon-height 24
+   :provider-icon "http://kyivopt.com/images/logo.png"
+   :provider-icon-width "34"
+   :provider-icon-height "34"
    
 
    :state {:page-current   1

@@ -68,15 +68,23 @@
 (defn gather []
   (monitor-all [gw/provider]))
 
+(def provider-map
+  {
+   "goodwine"       gw/provider  
+   "rozetka"        rozetka/provider
+   "metro"          metro/provider
+   "novus"          novus/provider
+   "fozzy"          fozzy/provider
+   "stolichnyi"     stolichnyi/provider
+   })
 
 (defn -main [provider & args]
   (config/config-timbre!)
   (cond
-    (= provider "goodwine")  (monitor-all [gw/provider])
-    (= provider "rozetka")   (monitor-all [rozetka/provider])
-    (= provider "metro")     (monitor-all [metro/provider])
-    (= provider "novus")     (monitor-all [novus/provider])
-    (= provider "fozzy")     (monitor-all [fozzy/provider])
-    (= provider "stolichnyi")(monitor-all [stolichnyi/provider])
-
+    (= provider "all")
+    (monitor-all (vals provider-map))
+    
+    (get provider-map provider)
+    (monitor-all [(get provider-map provider)])
+    
     :else (u/die "Invalid provider")))

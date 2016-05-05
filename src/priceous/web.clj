@@ -24,10 +24,10 @@
   (GET "/search" {params :params}
        (let [query (:query params)]
          (if (empty? query)
-           (t/search {:title "Whisky Search"})
-           (t/search {:title "Whisky Search"
-                      :query query
-                      :items (solr/query query)}))))
+           (t/search-new {:title "Whisky Search"})
+           (t/search-new {:title "Whisky Search"
+                          :query query
+                          :response (solr/query query)}))))
 
   (GET "/admin" [] #_(t/admin))
 
