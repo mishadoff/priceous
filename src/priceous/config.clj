@@ -1,7 +1,6 @@
 (ns priceous.config
   (:require [taoensso.timbre :as timbre]))
 
-
 (defn config-timbre! []
   (let [colors {:info :green :warn :yellow :error :red :fatal :purple :report :blue}]
     (timbre/set-config!

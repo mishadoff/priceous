@@ -6,4 +6,5 @@ Web-aggregator for whisky prices in ukrainian whisky shops
 ## License
 
 Copyright © 2016 mishadoff
+
 Distributed under the Eclipse Public License either version 1.0
