@@ -5,12 +5,12 @@
             [net.cgrand.enlive-html :as html]))
 
 (declare
- die                    ;; TODO: test -> TODO: move to ex ns
- debug                  ;; TODO: test -> TODO: move to debug ns
- to-date                ;; TODO: test -> TODO: move to date ns
- now                    ;; TODO: test -> TODO: move to date ns
+ die                    ;; TESTED, TODO: move to ex ns
+ debug                  ;; TESTED, TODO: move to debug ns
+ to-date                ;; TESTED, TODO: move to date ns
+ now                    ;; TESTED, TODO: move to date ns
  smart-parse-double     ;; TESTED, TODO: move to number ns
- fetch                  ;; TODO: test -> TODO: move to http utils
+ fetch                  ;; TESTED, TODO: move to http utils
  cleanup                ;; TODO: test -> TODO: move to str utils
  falsy                  ;; TODO: test
  )
@@ -53,11 +53,15 @@
     (html/html-resource (java.net.URL. url))
 
     (catch java.io.FileNotFoundException e
-      (log/error "Can't access url " url)
+      (log/error "File not found: " url)
+      nil)
+
+    (catch java.net.UnknownHostException e
+      (log/error "Unknow host: " url)
       nil)
 
     (catch java.net.MalformedURLException e
-      (log/error "Malformed URL" url)
+      (log/error "Malformed URL: " url)
       nil)))
 
 

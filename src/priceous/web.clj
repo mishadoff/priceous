@@ -44,6 +44,7 @@
       wrap-session))
 
 (defn -main []
+  ;; TODO: scheduler
   (let [scheduler (java.util.concurrent.Executors/newSingleThreadScheduledExecutor)]
     (.scheduleAtFixedRate
      scheduler
