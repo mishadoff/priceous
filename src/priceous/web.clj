@@ -16,7 +16,8 @@
             [priceous.config :as config]
             [priceous.template :as t]
             [priceous.solr :as solr]
-            [priceous.core :as core]))
+            [priceous.core :as core])
+  (:gen-class))
 
 (defroutes app-routes
   (GET "/" [] (redirect "/search"))
@@ -30,7 +31,6 @@
                           :response (solr/query query)}))))
 
   (GET "/admin" [] #_(t/admin))
-
   
   (route/resources "/")
 
@@ -44,6 +44,11 @@
       wrap-session))
 
 (defn -main []
-  ;; TODO port from property
-  (config/config-timbre!)
-  (ring/run-jetty #'app {:port 3000 :join? false}))
+  (let [scheduler (java.util.concurrent.Executors/newSingleThreadScheduledExecutor)]
+    (.scheduleAtFixedRate
+     scheduler
+     (fn [] (core/gather))
+     0
+     4 java.util.concurrent.TimeUnit/HOURS)
+    (config/config-timbre!)
+    (ring/run-jetty #'app {:port 3000 :join? false})))

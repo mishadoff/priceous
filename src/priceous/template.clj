@@ -50,13 +50,19 @@
      ]))
 
 (defn price-element [price]
-  (let [grn (bigint (Math/floor price))
-        kop (->> (int (* 100 (- price grn)))
-                 (format "%2d")
-                 ((fn [s] (clojure.string/replace s " " "0"))))]
-    [:div
-     [:span {:class "grn"} grn]
-     [:span {:class "kop"} kop]]))
+  (cond
+    price
+    (let [grn (bigint (Math/floor price))
+          kop (->> (int (* 100 (- price grn)))
+                   (format "%2d")
+                   ((fn [s] (clojure.string/replace s " " "0"))))]
+      [:div
+       [:span {:class "grn"} grn]
+       [:span {:class "kop"} kop]])
+
+    :esle
+    [:div {:class "price-na"} "-"]
+    ))
 
 (defn render-item
   "Renders one block of item"
@@ -127,7 +133,7 @@
    [:div {:class "search-left-panel"}
     [:p {:class "query-examples-title"} "Примеры запросов:"]
     [:ul {:class "query-examples"}
-     (query-example "Миниатюры (0.05)" "/search?query=0.05")
+     (query-example "Миниатюры (0.05)" "/search?query=0.05+OR+volume%3A%5B*+TO+0.05%5D")
      (query-example "Glenfiddich 12yo 0.7" "/search?query=glenfiddich+12+0.7")
      (query-example "Односолодовый виски" "/search?query=name%3A+\"single+malt\"+OR+type%3Aодносолодовый")
      (query-example "Бленды" "/search?query=name%3Ablend+OR+type%3Aбленд")
@@ -135,11 +141,13 @@
      (query-example "Акции" "/search?query=sale%3Atrue")
      (query-example "Во вкусе есть ваниль" "/search?query=description%3Aваниль")
      (query-example "Банан и торф" "/search?query=description%3Aбанан+AND+description%3Aторф")
+     (query-example "Морская соль" "/search?query=description%3A\"морская+соль\"")
      (query-example "Страна: Шотландия" "/search?query=country%3Aшотландия")
      (query-example "Страна: США" "/search?query=country%3Aсша")
      (query-example "Цена: до 1000 грн" "/search?query=price%3A%5B*+TO+1000%5D")
      (query-example "Бочковая крепость" "/search?query=name%3A\"cask+strength\"+OR+alcohol%3A%5B55+TO+*%5D")
      (query-example "Только Goodwine" "/search?query=provider_name%3AGoodwine")
+     (query-example "Бюджетные молты" "/search?query=%28name%3A+\"single+malt\"+OR+type%3Aодносолодовый%29+AND+%28price%3A%5B*+TO+1500%5D%29+AND+0.7")
      ]
     ]
    [:div {:class "search-right-panel"}
@@ -156,14 +164,17 @@
 
    ;; header icon
    [:div {:class "header_icon"}
-    [:a {:href "/search" :class "amber"}
-     "Whisky Search"]] ;; TODO: Icon an reference to the /search
+    [:a {:href "/search" :class "amber h100"}
+     [:div 
+      [:img {:src "/images/glencairn.png" :width "30" :height "46"}]
+      ]
+     ]] ;; TODO: Icon an reference to the /search
 
+   
    ;; link to help page
-   [:div {:class "header_link"}
-    [:a {:href "/help" :class "amber"} "Help"]]
-
-   #_(search-input content)
+   #_[:div {:class "header_link"}
+    [:a {:href "/help" :class "amber h100"} "Помощь"]
+    [:a {:href "/stats" :class "amber h100"} "Статистика"]]
 
    ])
 

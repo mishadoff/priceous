@@ -113,12 +113,14 @@ html, body {
 /* OLD STYLES */ 
 
 
+.header > div {
+    float: left;
+    height: 100%;
+}
 
-
-
-.header > div, .header > form {
-    display: inline-block;
-    padding: 5px;
+.h100 {
+    border-right: 1px solid;
+    height: 100%;
 }
 
 /* Ugly hack to hide submit button */

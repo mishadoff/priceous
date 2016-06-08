@@ -4,68 +4,75 @@
             [priceous.utils :as u]
             ))
 
-(defn node->link [provider node]
-  (-> node
-      (html/select (:selector-link provider))
-      (u/ensure-one
-       :required true
-       :selector (:selector-link provider)
-       :provider (:name provider))
-      (get-in [:attrs :href])
-      ((fn [part-link] (str (:base-url provider) part-link)))))
+(defn page->urls [provider page]
+  ((u/generic-page-urls-with-prefix
+    [:.item-block-head_main :a]
+    (:provider-base-url provider)) provider page))
 
-(defn node->price [provider node]
-  (-> node
-      (html/select (:selector-price provider))
-      (u/ensure-one
-       :required false
-       :selector (:selector-price provider)
-       :provider (:name provider))
-      (get-in [:attrs :price])
-      (u/safe-parse-double)
-      ))
+(defn url->document
+  "Transform item html snippet (node) into document"  
+  [{:keys [provider-name provider-base-url provider-icon
+           provider-icon-w provider-icon-h] :as provider} url]
+  (let [page (u/fetch url)
+        ;; some handy local aliases
+        prop (u/property-fn provider page)
+        text (u/text-fn prop)]
+    {
+     ;; provider specific options
+     ;; TODO: this often repeats, fix
+     :provider-name           provider-name
+     :provider-base-url       provider-base-url
+     :provider-icon           provider-icon
+     :provider-icon-w         provider-icon-w
+     :provider-icon-h         provider-icon-h
+     
+     ;; document
+     :name                    (text [:.product-details-wrapper :h1])
+     :link                    url
+     :image                   (-> (prop [:.product-details-wrapper :.foto_main :img])
+                                  (get-in [:attrs :src])
+                                  ((fn [part-href]
+                                     (str (:provider-base-url provider) part-href))))
 
-(defn node->old-price [provider node]
-  (-> node
-      (html/select (:selector-old-price provider))
-      (u/ensure-one
-       :required false
-       :selector (:selector-old-price provider)
-       :provider (:name provider))
-      (html/text)
-      (u/safe-parse-double)
-      ((fn [value] (if value (/ value 100.0) nil)))
-      ))
+     ;; NOT DECIDED TO GATHER YET
+     ;;
+     ;;     :country                 
+     ;; 
+     ;;     :producer
+     :type                    "Whisky" ;; TODO redecide
+     ;; :product-code            nil
+     ;; :alcohol                 need to be parsed
+     ;; :description             not much description
+     :timestamp               (u/now)
+     :available               true ;; zakaz everything shows as available
+     ;;     :volume              need to be parsed
 
-(defn node->available? [provider node]
-  (-> (node->price provider node)
-      (boolean)))
+     :sale                    nil
+     
+     :price                   (-> (text [:.show_all_sum])
+                                  (u/smart-parse-double))
 
-(defn node->sale? [provider node]
-  (-> (node->old-price provider node)
-      (boolean)))
-
+     :sale-description        nil
+     }))
 
 (def provider
-  {:name "Winetime"
+  {:provider-name "Winetime"
+   :provider-base-url "http://winetime.com.ua"
+   :provider-icon "http://winetime.com.ua/shared/site/images/logo_03.jpg"
+   :provider-icon-w "119"
+   :provider-icon-h "34"
 
-   :base-url "http://winetime.com.ua/"
-   :page-template "http://winetime.com.ua/ua/whiskey.htm?type_tovar=view_all_tovar&size=10000"
-   :page-start 1
-   :page-limit 1 ;; we process only one page with all items
-   
-   :selector-pages      [:.item-block_main]
-   :selector-name       [:.item-block-content_main :h3 :a]
-   :selector-link       [:.item-block-content_main :h3 :a]
-   :selector-image      [:.item-block-head_main :a :img]
-   :selector-price      [:.main_price]
-   :selector-old-price  [:.old_price]
+   :state {:page-current   1
+           :page-processed 0
+           :page-template "http://winetime.com.ua/ua/whiskey.htm?type_tovar=view_all_tovar&size=10000"
+           :page-limit     1 ;Integer/MAX_VALUE
+           :done           false
+           }
 
-   ;; overriden methods
-   :node->link node->link
-   :node->price node->price
-   :node->old-price node->old-price
-   :node->available? node->available?
-   :node->sale? node->sale?
+   :strategy :heavy
    
+   :page->urls page->urls
+   :url->document url->document
+   :last-page  (fn [_ _] true) ;; only one page processing for now, since we use hack
+
    })

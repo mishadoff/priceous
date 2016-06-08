@@ -4,18 +4,15 @@
             [priceous.flow :as flow]
             [priceous.utils :as u]))
 
-(def last-page (u/generic-last-page
-                [:.paginator-list [:li html/last-child]]))
+(def ^{:private true} next-page?
+  (u/generic-last-page? [:.paginator-list [:li html/last-child]]))
 
-
-(def page->urls (u/generic-page-urls [:.g-title-bold :a]))
-
+(def ^{:private true} page->urls
+  (u/generic-page-urls [:.g-title-bold :a]))
 
 (defn- url->document
   "Read html resource from URL and transforms it to the document"  
-  [{:keys [provider-name provider-base-url provider-icon
-           provider-icon-w provider-icon-h] :as provider} url]
-
+  [provider url]
   (let [page (u/fetch url) ;; retrieve the page
         ;; some handy local aliases
         prop (u/property-fn provider page)
@@ -25,16 +22,13 @@
                                [:.specifications-list-field])]
     {
      ;; provider specific options
-     :provider-name           provider-name
-     :provider-base-url       provider-base-url
-     :provider-icon           provider-icon
-     :provider_icon_w         provider-icon-w
-     :provider_icon_h         provider-icon-h
+     :provider                (get-in provider [:info :name])
      
      ;; document
      :name                    (text [:.pp-title])
      :link                    url
-     :image                   (-> (prop [:.b-product-img-link :img]) (get-in [:attrs :src]))
+     :image                   (-> (prop [:.b-product-img-link :img])
+                                  (get-in [:attrs :src]))
      :country                 (spec "Страна регион:")
      :producer                (spec "Производитель:")
      :type                    (spec "Тип:")
@@ -59,27 +53,36 @@
      }))
 
 
-;;;;;;; Provider description
+;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;  PROVIDER  ;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 
 (def provider
-  {:provider-name "Goodwine"
-   :provider-base-url "http://goodwine.com.ua/"
-   :provider-icon "http://i.goodwine.com.ua/design/goodwine-logo.png"
-   :provider-icon-w "70"
-   :provider-icon-h "34"
+  {
+   ;; provider specific information
+   :info {
+          :name          "Goodwine"
+          :base-url      "http://goodwine.com.ua/"
+          :icon          "http://i.goodwine.com.ua/design/goodwine-logo.png"
+          :icon-width    "70"
+          :icon-height   "34"
+          }
    
-   :state {:page-current   1
+   ;; provider state, will be changed by flow processor
+   :state {
+           :page-current   1
            :page-processed 0
            :page-template "http://goodwine.com.ua/whisky/c4502/page=%s/"
            :page-limit     Integer/MAX_VALUE
            :done           false
            }
-
-   :strategy :heavy
+   ;; fetch strategy defines how we will fetch results
+   :fetch-strategy :heavy
    
-   :page->urls page->urls
-   :url->document url->document
-
-   :last-page  last-page
-   
+   :functions {
+               :url->document url->document
+               :page->urls    page->urls
+               :last-page?    last-page?
+               }
    })
