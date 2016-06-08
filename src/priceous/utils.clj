@@ -18,7 +18,9 @@
 ;; Common Utilities ;;
 ;;;;;;;;;;;;;;;;;;;;;;
 
-(defn die [message] (throw (IllegalArgumentException. message)))
+(defn die [message]
+  {:pre [message]}
+  (throw (IllegalArgumentException. message)))
 
 (defn debug [e] (log/debug e) e)
 

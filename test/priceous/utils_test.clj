@@ -2,6 +2,19 @@
   (:require [priceous.utils :refer :all]
             [clojure.test :refer :all]))
 
+(deftest die-test
+  (testing "Errors thrown" 
+    (is (thrown? IllegalArgumentException (die "Clojure Error")))
+    (is (thrown? AssertionError (die nil))))
+
+  (testing "Messages are avvailable in exception"
+    (let [message "Error message which should be available in ex"]
+      (try
+        (die message)
+        (is false) ;; should not enter to this
+        (catch IllegalArgumentException e
+          (is (= message (.getMessage e))))))))
+
 (deftest smart-parse-double-test
   ;; happy cases
   (is (= 1.0 (smart-parse-double "1")))
