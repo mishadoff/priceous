@@ -3,7 +3,6 @@
             [priceous.utils :as u]
             [priceous.provider :as p]
             [clojure.spec :as s]
-            [priceous.spec :as spec]
             [net.cgrand.enlive-html :as html]))
 
 (defn- empty-and-done

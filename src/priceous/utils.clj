@@ -1,7 +1,8 @@
 (ns priceous.utils
   (:require [clj-time.coerce :as tc]
             [clj-time.format :as tf]
-            [taoensso.timbre :as log]))
+            [taoensso.timbre :as log]
+            [net.cgrand.enlive-html :as html]))
 
 (declare
  die                    ;; TODO: test -> TODO: move to ex ns
@@ -49,7 +50,7 @@
   ;; TODO: fetch with retries
   ;; TODO: timeouts
   (try 
-    (e/html-resource (java.net.URL. url))
+    (html/html-resource (java.net.URL. url))
 
     (catch java.io.FileNotFoundException e
       (log/error "Can't access url " url)

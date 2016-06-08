@@ -2,22 +2,23 @@
   (:require [net.cgrand.enlive-html :as html]
             [taoensso.timbre :as log]
             [priceous.flow :as flow]
-            [priceous.utils :as u]))
+            [priceous.utils :as u]
+            [priceous.selector-utils :as su]))
 
 (def ^{:private true} next-page?
-  (u/generic-last-page? [:.paginator-list [:li html/last-child]]))
+  (su/generic-next-page? [:.paginator-list [:li html/last-child]]))
 
 (def ^{:private true} page->urls
-  (u/generic-page-urls [:.g-title-bold :a]))
+  (su/generic-page-urls [:.g-title-bold :a]))
 
 (defn- url->document
   "Read html resource from URL and transforms it to the document"  
   [provider url]
   (let [page (u/fetch url) ;; retrieve the page
         ;; some handy local aliases
-        prop (u/property-fn provider page)
-        text (u/text-fn prop)
-        spec (u/build-spec-map provider page
+        prop (su/property-fn provider page)
+        text (su/text-fn prop)
+        spec (su/build-spec-map provider page
                                [:.specifications-list-title]
                                [:.specifications-list-field])]
     {
@@ -83,6 +84,6 @@
    :functions {
                :url->document url->document
                :page->urls    page->urls
-               :last-page?    last-page?
+               :last-page?    next-page?
                }
    })

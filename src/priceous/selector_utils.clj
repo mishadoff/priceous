@@ -13,7 +13,7 @@
  select-mul-req                 ;; TODO: TEST
  select-one-opt                 ;; TODO: TEST
  select-mul-opt                 ;; TODO: TEST
- generic-has-next?              ;; TODO: TEST
+ generic-next-page?             ;; TODO: TEST
  generic-page-urls              ;; TODO: TEST
  generic-page-urls-with-prefix  ;; TODO: TEST
  property-fn                    ;; TODO: TEST
@@ -108,7 +108,7 @@
   ((select-common :required false :count-strategy :multiple)
    node selector provider))
 
-(defn generic-has-next? [selector]
+(defn generic-next-page? [selector]
   (fn [provider page]
     (some-> (select-one-req page provider selector)
             (html/text)
@@ -119,27 +119,27 @@
 
 (defn generic-page-urls [selector]
   (fn [provider page]
-    (->> (select-mul-required page provider selector)
+    (->> (select-mul-req page provider selector)
          (map #(get-in % [:attrs :href])))))
 
 (defn generic-page-urls-with-prefix [selector prefix]
   (fn [provider page]
-    (->> (select-mul-required page provider selector)
+    (->> (select-mul-req page provider selector)
          (map #(get-in % [:attrs :href]))
          (map #(str prefix %)))))
 
 (defn property-fn [provider page]
-  (fn [selector] (select-one-optional page provider selector)))
+  (fn [selector] (select-one-opt page provider selector)))
 
 (defn text-fn [property-fn]
   (fn [selector]
     (-> (property-fn selector)
-        (e/text)
-        (cleanup))))
+        (html/text)
+        (u/cleanup))))
 
 (defn build-spec-map [provider page selector-key selector-value]
   (let [select-cells-fn (fn [selector]
-                          (->> (select-mul-optional page provider selector)
+                          (->> (select-mul-opt page provider selector)
                                (map html/text)
                                (map u/cleanup)))
         ekeys   (select-cells-fn selector-key) 
