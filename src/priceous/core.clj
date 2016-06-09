@@ -10,11 +10,6 @@
             
             ;; providers
             [priceous.goodwine :as gw]
-            ;;[priceous.rozetka :as rozetka]
-            ;;[priceous.metro :as metro]
-            ;;[priceous.fozzy :as fozzy]
-            ;;[priceous.novus :as novus]
-            ;;[priceous.stolichnyi :as stolichnyi]
             )
   (:gen-class))
 

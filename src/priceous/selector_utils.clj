@@ -6,19 +6,19 @@
 
 
 (declare
- select-common                  ;; TODO: TEST
  retrieve                       ;; TESTED
  retrieve+log                   ;; TODO: TEST
- select-one-req                 ;; TODO: TEST
- select-mul-req                 ;; TODO: TEST
- select-one-opt                 ;; TODO: TEST
- select-mul-opt                 ;; TODO: TEST
- generic-next-page?             ;; TODO: TEST
- generic-page-urls              ;; TODO: TEST
- generic-page-urls-with-prefix  ;; TODO: TEST
+ generic-next-page?             ;; TESTED
+ generic-page-urls              ;; TESTED
+ generic-page-urls-with-prefix  ;; TESTED
  property-fn                    ;; TODO: TEST
  text-fn                        ;; TODO: TEST
- build-spec-map                 ;; TODO: TEST
+ build-spec-map                 ;; TESTED
+ select-common                  ;; PRIVATE
+ select-one-req                 ;; PRIVATE
+ select-mul-req                 ;; PRIVATE
+ select-one-opt                 ;; PRIVATE
+ select-mul-opt                 ;; PRIVATE
  )
 
 
@@ -81,6 +81,8 @@
     :else (u/die "Should not happen")))
 
 (defn retrieve+log
+  "Side-effect retrieve companion. It unwraps the real value
+  from retrieve result and log any errors and warnings"
   [nodes & kseq]
   (let [{:keys [provider selector] :as ks-map} (apply hash-map kseq)
         {:keys [result status message]} (apply retrieve nodes kseq)]
@@ -90,25 +92,12 @@
       (= :error status)   (do (log/error (format message (p/get-provider-name provider) selector))  result)
       :else               (u/die "Invalid status"))))
 
-
-;; TODO candidate for multimethods
-(defn select-one-req [node provider selector]
-  ((select-common :required true :count-strategy :single)
-   node selector provider))
-
-(defn select-one-opt [node provider selector]
-  ((select-common :required false :count-strategy :single)
-   node selector provider))
-
-(defn select-mul-req [node provider selector]
-  ((select-common :required true :count-strategy :multiple)
-   node selector provider))
-
-(defn select-mul-opt [node provider selector]
-  ((select-common :required false :count-strategy :multiple)
-   node selector provider))
-
-(defn generic-next-page? [selector]
+(defn generic-next-page?
+  "Return a predicate function (fn [provider page])
+   which yield
+    - true, if there are more pages for current state for provider
+    - false, otherwise"
+  [selector]
   (fn [provider page]
     (some-> (select-one-req page provider selector)
             (html/text)
@@ -117,12 +106,23 @@
             ((fn [p]
                (< (get-in provider [:state :page-current]) p))))))
 
-(defn generic-page-urls [selector]
+(defn generic-page-urls
+  "Return a function (fn [provider page])
+  which return all links from the page.
+  Selector should return path to <a> tag"
+  [selector]
   (fn [provider page]
     (->> (select-mul-req page provider selector)
          (map #(get-in % [:attrs :href])))))
 
-(defn generic-page-urls-with-prefix [selector prefix]
+(defn generic-page-urls-with-prefix
+  "Return a function (fn [provider page])
+  which return all links from the page prefixed with [prefix] arg.
+  Selector should return path to <a> tag.
+  
+  This function mostly needed if page contains relative links
+  so we need to pass base path as a prefix to get absolute url"
+  [selector prefix]
   (fn [provider page]
     (->> (select-mul-req page provider selector)
          (map #(get-in % [:attrs :href]))
@@ -137,17 +137,37 @@
         (html/text)
         (u/cleanup))))
 
-(defn build-spec-map [provider page selector-key selector-value]
+(defn build-spec-map
+  "Accepts selector for keys and selector for values
+  and build a map from page representation
+
+  If key-selector and value-selector return different amount
+  of items, min-match map is build
+  "
+  [provider page selector-key selector-value]
   (let [select-cells-fn (fn [selector]
                           (->> (select-mul-opt page provider selector)
                                (map html/text)
                                (map u/cleanup)))
         ekeys   (select-cells-fn selector-key) 
         evalues (select-cells-fn selector-value)]
-    
-    ;; print warn message
     (when (not= (count ekeys) (count evalues))
-      (log/warn (format "[%s] Number of keys don't match with number of values"
-                        (get-in provider [:info :name]))))
-    
+      (log/warn (format "[%s] Number of keys don't match with number of values" (get-in provider [:info :name]))))
     (zipmap ekeys evalues)))
+
+
+(defn- select-one-req [node provider selector]
+  ((select-common :required true :count-strategy :single)
+   node selector provider))
+
+(defn- select-one-opt [node provider selector]
+  ((select-common :required false :count-strategy :single)
+   node selector provider))
+
+(defn- select-mul-req [node provider selector]
+  ((select-common :required true :count-strategy :multiple)
+   node selector provider))
+
+(defn- select-mul-opt [node provider selector]
+  ((select-common :required false :count-strategy :multiple)
+   node selector provider))
