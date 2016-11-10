@@ -48,17 +48,23 @@
       wrap-session))
 
 ;; TODO introduce properties
-(defn -main []
-  ;; configure logger
+(defn -main [& args]
+  ;; init
   (config/config-timbre!)
-
+  (config/read-properties! (first args))
   (log/info "Starting server...")
   
   ;; schedule data gathering every 2 hours
   (scheduler/schedule-submit-function
    (fn []
      (log/info "Start scrapping..")
-     (core/gather)) :delay 0 :value 2 :time-unit TimeUnit/HOURS)
+     (core/gather))
+   :delay (get-in @config/properties [:scheduler :delay])
+   :value (get-in @config/properties [:scheduler :value])
+   :time-unit (java.util.concurrent.TimeUnit/valueOf
+               (get-in @config/properties [:scheduler :time-unit])))
   
   ;; start server
-  (ring/run-jetty #'app {:port 3000 :join? false}))
+  (ring/run-jetty #'app
+                  {:port (get-in @config/properties [:server :port])
+                   :join? false}))

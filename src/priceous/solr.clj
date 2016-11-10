@@ -2,7 +2,8 @@
   (:require [flux.http :as http]
             [flux.core :as flux]
             [flux.query :as query]
-            [taoensso.timbre :as log]))
+            [taoensso.timbre :as log]
+            [priceous.config :as config]))
 
 (defn transform-to-solr-document [doc]
   (clojure.set/rename-keys
@@ -15,7 +16,9 @@
   (try 
     (flux/with-connection
       ;; TODO externalize host and collection
-      (http/create "http://localhost:8983/solr" :whisky)
+      (http/create
+       (get-in @config/properties [:solr :host])
+       (keyword (get-in @config/properties [:solr :collection])))
       (log/debug (format "SolrQuery: [%s]" q))
       (let [response
             (flux/request
@@ -23,7 +26,7 @@
               {:q (str "{!q.op=AND} " q) ;; change default operator to be AND
                :fq "available:true"
                :start 0 ;; TODO paging later
-               :rows 50 ;; ONLY 50 RESULTS RTURNED
+               :rows 50 ;; TODO ONLY 50 RESULTS RTURNED
                :sort "price asc"}))]
         #_(log/debug (format "Found %s items" (count (:docs response))))
         {:status :success :data response}))
@@ -51,8 +54,6 @@
       ;; in recent items
       (log/info provider)
       (flux/delete-by-query (str "provider:" (get-in provider [:info :name])))
-
-      (log/info (first items))
       
       ;; transform and add to solr
       (->> items

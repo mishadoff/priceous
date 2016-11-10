@@ -1,0 +1,14 @@
+;; Properties for Priceous
+{
+ :app {:name "Whisky Search"
+       :version "0.0.1"}
+
+ :server {:port 3000 }
+
+ :solr {:host "http://localhost:8983/solr"
+        :collection "whisky"}
+ 
+ :scheduler {:delay 1
+             :value 2
+             :time-unit "HOURS"}
+ }
