@@ -61,11 +61,11 @@
 (defn set-done 
   "Set provider state to done"
   [provider]
-  (assoc-in provider [:provider :state :done] true))
+  (assoc-in provider [:state :done] true))
 
 
 (defn set-done-if-limit-reached
   [provider]
-  (cond-> provider
-    (limit-reached? provider) set-done
+  (cond 
+    (limit-reached? provider) (set-done provider) 
     :else                     provider))

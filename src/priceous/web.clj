@@ -12,11 +12,15 @@
              :refer [wrap-keyword-params]]
             
             [ring.middleware.session :refer [wrap-session]]
-            
+
+            [taoensso.timbre :as log]
+
             [priceous.config :as config]
             [priceous.template :as t]
+            [priceous.scheduler :as scheduler]
             [priceous.solr :as solr]
             [priceous.core :as core])
+  (:import [java.util.concurrent TimeUnit])
   (:gen-class))
 
 (defroutes app-routes
@@ -26,9 +30,9 @@
        (let [query (:query params)]
          (if (empty? query)
            (t/search-new {:title "Whisky Search"})
-           (t/search-new {:title "Whisky Search"
-                          :query query
-                          :response (solr/query query)}))))
+           (t/search-new (merge {:title "Whisky Search"
+                                 :response (solr/query query)}
+                                params)))))
 
   (GET "/admin" [] #_(t/admin))
   
@@ -43,13 +47,18 @@
       wrap-params
       wrap-session))
 
+;; TODO introduce properties
 (defn -main []
-  ;; TODO: scheduler
-  (let [scheduler (java.util.concurrent.Executors/newSingleThreadScheduledExecutor)]
-    (.scheduleAtFixedRate
-     scheduler
-     (fn [] (core/gather))
-     0
-     4 java.util.concurrent.TimeUnit/HOURS)
-    (config/config-timbre!)
-    (ring/run-jetty #'app {:port 3000 :join? false})))
+  ;; configure logger
+  (config/config-timbre!)
+
+  (log/info "Starting server...")
+  
+  ;; schedule data gathering every 2 hours
+  (scheduler/schedule-submit-function
+   (fn []
+     (log/info "Start scrapping..")
+     (core/gather)) :delay 0 :value 2 :time-unit TimeUnit/HOURS)
+  
+  ;; start server
+  (ring/run-jetty #'app {:port 3000 :join? false}))

@@ -2,7 +2,6 @@
   (:require [taoensso.timbre :as log]
             [priceous.utils :as u]
             [priceous.provider :as p]
-            [clojure.spec :as s]
             [net.cgrand.enlive-html :as html]))
 
 (defn- empty-and-done
@@ -24,7 +23,6 @@
 
   "
   [provider]  
-  {:pre [(s/valid? :priceous.spec/provider provider)]}
   (cond
     ;; indicated as done, stop processing
     (p/done? provider) (empty-and-done provider)
@@ -49,15 +47,18 @@
            (-> provider
                (update-in [:state :page-current] inc)
                (update-in [:state :page-processed] inc)
-               (assoc-in  [:state :done] ((p/get-last-page? provider) provider page))
+               ((fn [provider]
+                  (assoc-in provider
+                            [:state :done]
+                            (not ((p/get-last-page? provider) provider page)))))
                (p/set-done-if-limit-reached))
            :urls urls})))))
 
 (defn- process-heavy [provider]
-  {:pre [(s/valid? :priceous.spec/provider provider)]}  
   (loop [p provider total-urls [] docs []]
+    (log/trace p)
     (cond
-      (p/done? provider)
+      (p/done? p)
       (do
         (log/info (format "[%s] Processing finished. Found %s items"
                           (get-in p [:info :name])

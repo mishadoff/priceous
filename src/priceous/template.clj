@@ -2,6 +2,7 @@
   (:require [hiccup.core :refer :all]
             [hiccup.form :refer :all]
             [priceous.utils :as u]
+            [taoensso.timbre :as log]
             [hiccup.page :as page]))
 
 (declare
@@ -66,7 +67,7 @@
 
 (defn render-item
   "Renders one block of item"
-  [{:keys [price name provider_name link image] :as provider}]
+  [{:keys [price name link image] :as provider}]
   [:div {:class "item"}
 
    [:div {:class "item-images-container"}
@@ -101,17 +102,14 @@
         [:div (for [i (get-in data [:response :docs])] (render-item i))]]))])
 
 (defn- provider-element [content]
+  ()
   [:div {:class "provider-element"}
-   [:a {:href (:provider_base_url content)}
-    [:img {:src (:provider_icon content)
-           :title (:provider_name content)
-           :alt (:provider_name content)
-           :width (get content :provider_icon_w "70")
-           :height (get content :provider_icon_h "34")}]]])
-
-
-
-
+   [:a {:href (:base_url content)}
+    [:img {:src (:icon_url content)
+           :title (:provider content)
+           :alt (:proivder content)
+           :width (get content :icon_url_width "70")
+           :height (get content :icon_url_height "34")}]]])
 
 (defn search-input [content]
   (form-to
@@ -146,7 +144,7 @@
      (query-example "Страна: США" "/search?query=country%3Aсша")
      (query-example "Цена: до 1000 грн" "/search?query=price%3A%5B*+TO+1000%5D")
      (query-example "Бочковая крепость" "/search?query=name%3A\"cask+strength\"+OR+alcohol%3A%5B55+TO+*%5D")
-     (query-example "Только Goodwine" "/search?query=provider_name%3AGoodwine")
+     (query-example "Только Goodwine" "/search?query=provider%3AGoodwine")
      (query-example "Бюджетные молты" "/search?query=%28name%3A+\"single+malt\"+OR+type%3Aодносолодовый%29+AND+%28price%3A%5B*+TO+1500%5D%29+AND+0.7")
      ]
     ]
@@ -179,7 +177,7 @@
    ])
 
 (defn- footer [content]
-  (let [version     (get-in content [:meta :version]    "0.0.1")
+  (let [version     (get-in content [:meta :version]    "0.0.2")
         build-date  (get-in content [:meta :build-date] (u/now))
         site-name   (get-in content [:meta :name]       "Whisky Search")]
     [:div {:class "footer"}

@@ -24,6 +24,10 @@
     {
      ;; provider specific options
      :provider                (get-in provider [:info :name])
+     :base-url                (get-in provider [:info :base-url])
+     :icon-url                (get-in provider [:info :icon])
+     :icon-url-width          (get-in provider [:info :icon-width])
+     :icon-url-height         (get-in provider [:info :icon-height])
      
      ;; document
      :name                    (text [:.pp-title])

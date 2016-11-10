@@ -13,9 +13,9 @@
             )
   (:gen-class))
 
-(defn- monitor-provider
-  [state {:keys [provider-name] :as provider}]
-  (let [items (flow/process provider)] ;; process items
+(defn- monitor-provider [state provider]
+  (let [items (flow/process provider)
+        provider-name (get-in provider [:info :name])]
     (cond
       ;; nothing found
       (empty? items)
@@ -28,7 +28,7 @@
         ;; solr appender
         (solr/write provider items)        
 
-        ;; return state as it will be caried to the 
+        ;; return state as it will be caried to the next
         (update-in state [:total] + (count items))))))
 
 (defn- monitor-all [providers]
@@ -53,7 +53,7 @@
     (catch Exception e
       (log/error "Processing failed")
       (log/error e))
-
+    
     ))
 
 (def provider-map
@@ -70,14 +70,3 @@
 
 (defn gather []
   (monitor-all (vals provider-map)))
-
-(defn -main [provider & args]
-  (config/config-timbre!)
-  (cond
-    (= provider "all")
-    (monitor-all (vals provider-map))
-
-    (get provider-map provider)
-    (monitor-all [(get provider-map provider)])
-    
-    :else (u/die "Invalid provider")))

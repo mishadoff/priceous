@@ -1,9 +1,8 @@
-(defproject priceous "0.0.1-SNAPSHOT"
+(defproject priceous "0.1.0"
   :description "Process to monitor prices for precious items"
-  :url "http://mishadoff.com"
-  :license {:name "Eclipse Public License"
-            :url "http://www.eclipse.org/legal/epl-v10.html"
-            }
+  :url "http://mishadoff.com" ;; TODO Domain?
+  :license {:name "Eclipse Public License" ;; TODO License definition
+            :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [[org.clojure/clojure "1.9.0-alpha3"]
 
                  ;; server and middleware

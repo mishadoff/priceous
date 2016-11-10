@@ -4,15 +4,29 @@
     <field name="id" type="string" indexed="true" stored="true" required="false"/> 
     <field name="_version_" type="long" indexed="true" stored="true"/>
 
+    <!-- Provider related fields -->
+    <field name="provider" type="string" indexed="true" stored="true" required="true"/>
+    <field name="base_url" type="string" indexed="false" stored="true" required="false"/>
+    <field name="icon_url" type="string" indexed="false" stored="true" required="false"/>
+    <field name="icon_url_width" type="string" indexed="false" stored="true" required="false"/>
+    <field name="icon_url_height" type="string" indexed="false" stored="true" required="false"/>    
     <!-- Whisky related fields -->
     <field name="name" type="text_general" indexed="true" stored="true" required="true"/>
-    <field name="image_url" type="string" indexed="false" stored="true" required="false"/>
-    <field name="source_url" type="string" indexed="false" stored="true" required="false"/>
-    <field name="price" type="float" indexed="true" stored="true" required="true"/>
-    <field name="sale" type="boolean" indexed="true" stored="true" required="false"/>
-    <field name="old_price" type="float" indexed="true" stored="true" required="false"/>
-    <field name="provider" type="string" indexed="true" stored="true" required="true"/>
+    <field name="link" type="string" indexed="false" stored="true" required="false"/>
+    <field name="image" type="string" indexed="false" stored="true" required="false"/>
+    <field name="country" type="text_general" indexed="true" stored="true" required="false"/>
+    <field name="producer" type="text_general" indexed="true" stored="true" required="false"/>
+    <field name="type" type="text_general" indexed="true" stored="true" required="false"/>
+    <field name="product_code" type="string" indexed="true" stored="true" required="false"/>
+    <field name="alcohol" type="float" indexed="true" stored="true" required="false"/>
+    <field name="description" type="text_general" indexed="true" stored="true" required="false"/>
     <field name="timestamp" type="date" indexed="true" stored="true" required="true"/>
+    <field name="available" type="boolean" indexed="true" stored="true" required="false"/>
+    <field name="volume" type="float" indexed="true" stored="true" required="false"/>
+    <field name="sale" type="boolean" indexed="true" stored="true" required="false"/>
+    <field name="price" type="float" indexed="true" stored="true" required="false"/>
+    <field name="sale_description" type="text_general" indexed="true" stored="true" required="false"/>
+    <field name="old_price" type="float" indexed="true" stored="true" required="false"/>
 
     <!-- All in one field -->
     <field name="text" type="text_general" indexed="true" stored="false" required="false" multiValued="true"/>

@@ -11,8 +11,8 @@
  now                    ;; TESTED, TODO: move to date ns
  smart-parse-double     ;; TESTED, TODO: move to number ns
  fetch                  ;; TESTED, TODO: move to http utils
- cleanup                ;; TODO: test -> TODO: move to str utils
- falsy                  ;; TODO: test
+ cleanup                ;; TESTED, TODO: move to str utils
+ falsy                  ;; TESTED, TODO: test
  )
 
 ;;;;;;;;;;;;;;;;;;;;;;
@@ -65,10 +65,12 @@
       nil)))
 
 
-(defn cleanup [s]
+(defn cleanup
+  "Remove whitespace charaters from string"
+  [s]
   (clojure.string/trim s))
 
 (defn falsy []
-  "Returns function which accepts any numner of arguments
+  "Returns function which accepts any number of arguments
    and always return false"
   (fn [& _] false))

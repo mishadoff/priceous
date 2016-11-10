@@ -50,8 +50,10 @@
       ;; delete all documents for this provider because currently we interested
       ;; in recent items
       (log/info provider)
-      (flux/delete-by-query (str "provider_name:" (:provider-name provider)))
+      (flux/delete-by-query (str "provider:" (get-in provider [:info :name])))
 
+      (log/info (first items))
+      
       ;; transform and add to solr
       (->> items
            (map transform-dashes-to-underscores)
