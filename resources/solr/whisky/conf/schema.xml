@@ -28,10 +28,24 @@
     <field name="sale_description" type="text_general" indexed="true" stored="true" required="false"/>
     <field name="old_price" type="float" indexed="true" stored="true" required="false"/>
 
-    <!-- All in one field -->
-    <field name="text" type="text_general" indexed="true" stored="false" required="false" multiValued="true"/>
-    <copyField source="*" dest="text"/>
+
+    <!-- Duplicated fields -->
     
+    <!-- All in one field -->
+    <field name="text_all" type="text_general" indexed="true" stored="false" required="false" multiValued="true"/>
+    <copyField source="*" dest="text_all"/>
+
+    <!-- all user searchable fields -->
+    <field name="text" type="text_general" indexed="true" stored="false" required="false" multiValued="true"/>
+    <copyField source="provider" dest="text"/>
+    <copyField source="name" dest="text"/>
+    <copyField source="country" dest="text"/>
+    <copyField source="producer" dest="text"/>
+    <copyField source="type" dest="text"/>
+    <copyField source="alcohol" dest="text"/>
+    <copyField source="volume" dest="text"/>
+    <copyField source="sale_description" dest="text"/>
+
     <uniqueKey>id</uniqueKey>
   </fields>
 
@@ -72,6 +86,7 @@
   </types>
 
   <defaultSearchField>text</defaultSearchField>
+  <solrQueryParser defaultOperator="AND"/>
   
 </schema>
 

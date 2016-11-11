@@ -8,7 +8,7 @@
  :solr {:host "http://localhost:8983/solr"
         :collection "whisky"}
  
- :scheduler {:delay 1
+ :scheduler {:delay 0
              :value 2
              :time-unit "HOURS"}
  }

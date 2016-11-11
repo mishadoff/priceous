@@ -79,7 +79,7 @@ html, body {
 /*     top: 50px; */
 /* } */
 
-.search-container {
+.full-container {
     float: left;
     flex: 1;
     position: relative;
@@ -106,8 +106,6 @@ html, body {
     background-color: #f2f2f2;
     overflow: auto;
 }
-
-
 
 
 /* OLD STYLES */ 
@@ -287,4 +285,8 @@ div {
     margin-right: 10px;
     position: relative;
     float: right;
+}
+
+.help-list > li {
+    margin-bottom: 5px;
 }

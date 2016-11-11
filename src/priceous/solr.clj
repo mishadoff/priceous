@@ -3,51 +3,48 @@
             [flux.core :as flux]
             [flux.query :as query]
             [taoensso.timbre :as log]
-            [priceous.config :as config]))
+            [priceous.config :as config])
+  (:import [org.apache.solr.client.solrj.util ClientUtils]))
 
-(defn transform-to-solr-document [doc]
-  (clojure.set/rename-keys
-   doc
-   {:image            :image_url
-    :old-price        :old_price
-    :link             :source_url}))
-
+;; TODO test
 (defn query [q]
   (try 
     (flux/with-connection
-      ;; TODO externalize host and collection
       (http/create
        (get-in @config/properties [:solr :host])
        (keyword (get-in @config/properties [:solr :collection])))
-      (log/debug (format "SolrQuery: [%s]" q))
-      (let [response
+      (log/debug (format "-> SolrQuery: [%s]" q))
+      (let [processed-query (if (clojure.string/starts-with? q "!")
+                              (subs q 1)
+                              (ClientUtils/escapeQueryChars q))
+            response
             (flux/request
              (query/create-query-request
-              {:q (str "{!q.op=AND} " q) ;; change default operator to be AND
+              {:q processed-query
                :fq "available:true"
                :start 0 ;; TODO paging later
                :rows 50 ;; TODO ONLY 50 RESULTS RTURNED
                :sort "price asc"}))]
-        #_(log/debug (format "Found %s items" (count (:docs response))))
+        (log/debug (format "Completed SolrQuery [%s] found %s items" q
+                           (get-in response [:response :numFound])))
         {:status :success :data response}))
     (catch Exception e
       (log/error e)
       {:status :error :response {}})))
 
-
-;; TODO can be avoided later
 (defn transform-dashes-to-underscores [m]
   (into {} (map (fn [[k v]]
-                  [(keyword (subs (clojure.string/replace (str k) "-" "_") 1)) v]
-                  ) m)))
+                  [(keyword (subs (clojure.string/replace (str k) "-" "_") 1))
+                   v]) m)))
 
 (defn write [provider items]
   (log/info "Write data to solr")
   (try
     (flux/with-connection
-      ;; TODO externalize host and collection
-      (http/create "http://localhost:8983/solr" :whisky)
-
+      (http/create
+       (get-in @config/properties [:solr :host])
+       (keyword (get-in @config/properties [:solr :collection])))
+      
       (log/debug "Connections to SOLR established")
       
       ;; delete all documents for this provider because currently we interested

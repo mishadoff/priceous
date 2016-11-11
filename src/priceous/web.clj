@@ -27,14 +27,15 @@
   (GET "/" [] (redirect "/search"))
   
   (GET "/search" {params :params}
-       (let [query (:query params)]
+       (let [query (:query params) advanced (:advanced params)]
          (if (empty? query)
            (t/search-new {:title "Whisky Search"})
            (t/search-new (merge {:title "Whisky Search"
                                  :response (solr/query query)}
                                 params)))))
 
-  (GET "/admin" [] #_(t/admin))
+  (GET "/stats" [] (t/admin {:title "Whisky Search :: admin"}))
+  (GET "/help" []  (t/help {:title "Whisky Search :: Help"}))
   
   (route/resources "/")
 
@@ -47,11 +48,15 @@
       wrap-params
       wrap-session))
 
-;; TODO introduce properties
-(defn -main [& args]
-  ;; init
+(defn init [& args]
   (config/config-timbre!)
   (config/read-properties! (first args))
+  )
+
+;; TODO introduce properties
+(defn -main [& args]
+  (init args)
+
   (log/info "Starting server...")
   
   ;; schedule data gathering every 2 hours
