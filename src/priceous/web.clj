@@ -34,7 +34,8 @@
                                  :response (solr/query query)}
                                 params)))))
 
-  (GET "/stats" [] (t/admin {:title "Whisky Search :: admin"}))
+  (GET "/stats" [] (t/stats {:title "Whisky Search :: Stats"
+                             :response (solr/stats)}))
   (GET "/help" []  (t/help {:title "Whisky Search :: Help"}))
   
   (route/resources "/")

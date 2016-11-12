@@ -3,6 +3,7 @@
             [hiccup.form :refer :all]
             [priceous.utils :as u]
             [taoensso.timbre :as log]
+            [clj-time.format :as tf]
             [hiccup.page :as page]))
 
 (declare
@@ -154,18 +155,21 @@
    ;; header icon
    [:div {:class "header_icon"}
     [:a {:href "/search" :class "amber h100"}
-     [:div 
-      [:img {:src "/images/glencairn.png" :width "30" :height "46"}]
+     [:div {:class "header_whisky_block"}
+      [:div {:class "header_whisky_block_text"} [:div "Whisky"] [:div "Search"]]
+      [:div {:class "header_whisky_block_image"}
+       [:img {:src "/images/glencairn.png" :width "30" :height "46"}]]
       ]
-     ]] ;; TODO: Icon an reference to the /search
+     ]]
 
    
    ;; link to help page
-   #_[:div {:class "header_link"}
-    [:a {:href "/help" :class "amber h100"} "Помощь"]
-    [:a {:href "/stats" :class "amber h100"} "Статистика"]]
+   [:div {:class "header_link"}
+    [:a {:href "/help" :class "amber h100"} "Помощь"]]
+   [:div {:class "header_link"}
+    [:a {:href "/stats" :class "amber h100"} "Статистика"]]]
 
-   ])
+   )
 
 (defn- footer [content]
   (let [version     (get-in content [:meta :version]    "0.0.2")
@@ -209,9 +213,39 @@
      ]
     ]))
 
-(defn admin-container [content]
+(defn stats-container [content]
   [:div {:class "full-container"}
-   "Тут пока пусто."])
+   (let [{:keys [status response]} (:response content)]
+     (cond
+       (not= :success status) [:div "Статистика недоступна."]
+       :else
+       [:div
+        [:ul {:class "help-list"}
+
+         ;; Gather time
+         [:li
+          [:div (format "Последняя сборка данных была в %s"
+                        (tf/unparse (tf/formatters :date-time-no-ms)
+                                    (get-in response [:last-gather-ts])))]]
+         
+         ;; Totals
+         [:li 
+          [:div (format "В базе всего %s элементов" (get-in response [:total]))]]
+         
+         ;; Providers
+         [:li
+          [:div (format "Доступна информация по %s магазинам"
+                        (count (get-in response [:providers])))]
+          [:ul
+           (for [p (get-in response [:providers])]
+             [:li (format "%s: всего %s, в наличии есть %s"
+                          (:name p) (:total p) (:available p))])]
+          ]
+
+
+         ]]
+       
+       ))])
 
 (defn help-container [content]
   [:div {:class "full-container"}
@@ -310,7 +344,7 @@
      (footer content)]]))
 
 
-(defn admin [content]
+(defn stats [content]
   (page/html5
    [:head
     ;; TODO: images
@@ -320,5 +354,5 @@
    [:body
     [:div {:id "main"} 
      (header content) 
-     (admin-container content)
+     (stats-container content)
      (footer content)]]))

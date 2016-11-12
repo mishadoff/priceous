@@ -3,6 +3,7 @@
             [flux.core :as flux]
             [flux.query :as query]
             [taoensso.timbre :as log]
+            [clj-time.coerce :as tc]
             [priceous.config :as config])
   (:import [org.apache.solr.client.solrj.util ClientUtils]))
 
@@ -21,7 +22,7 @@
             (flux/request
              (query/create-query-request
               {:q processed-query
-               :fq "available:true"
+               :fq "available:true" ;; TODO remove if available true
                :start 0 ;; TODO paging later
                :rows 50 ;; TODO ONLY 50 RESULTS RTURNED
                :sort "price asc"}))]
@@ -31,6 +32,54 @@
     (catch Exception e
       (log/error e)
       {:status :error :response {}})))
+
+(defn- process-provider-pivots [response]
+  (let [pivot (first (vals (get-in response [:facet_counts :facet_pivot])))]
+    (mapv (fn [pp] {:name (:value pp)
+                    :total (:count pp)
+                    :available (->> (:pivot pp)
+                                    (filter #(= (:value %) true))
+                                    (first)
+                                    (:count))}) pivot)))
+
+(defn stats []
+  (try 
+    (flux/with-connection
+      (http/create
+       (get-in @config/properties [:solr :host])
+       (keyword (get-in @config/properties [:solr :collection])))
+      (log/debug (format "-> StatsRequest"))
+
+      (let [response1
+            (flux/request
+             (query/create-query-request
+              {:q "*"
+               :start 0 
+               :rows 0
+               :facet true
+               :facet.pivot "provider,available"
+               }))
+            
+            
+            response2
+            (flux/request
+             (query/create-query-request
+              {:q "*"
+               :start 0 
+               :rows 1
+               :sort "timestamp desc"
+               }))
+            doc (first (get-in response2 [:response :docs]))
+            ]
+        {:status :success :response
+         {:total (get-in response1 [:response :numFound])
+          :last-gather-ts (tc/from-date (:timestamp doc))
+          :providers (process-provider-pivots response1)
+          }}))
+    (catch Exception e
+      (log/error e)
+      {:status :error :response {}}))
+  )
 
 (defn transform-dashes-to-underscores [m]
   (into {} (map (fn [[k v]]

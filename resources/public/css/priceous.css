@@ -31,6 +31,24 @@ html, body {
     height: 100%;
 }
 
+.header_whisky_block {
+    width: 100%;
+}
+
+.header_whisky_block > div {
+    display: inline-block;
+    height: 100%;
+}
+
+.header_whisky_block_text {
+    padding-right: 5px;
+    vertical-align: top;
+}
+
+.header_whisky_block_image {
+    padding-top: 3px;
+}
+
 .footer {
     border-top: 1px solid;
     height: 50px;
