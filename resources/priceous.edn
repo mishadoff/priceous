@@ -11,4 +11,7 @@
  :scheduler {:delay 0
              :value 2
              :time-unit "HOURS"}
+
+ :scrapping {:providers ["rozetka" "goodwine"] }
+ 
  }

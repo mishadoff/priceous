@@ -16,7 +16,8 @@
 (defn- sale-element [provider]
   (let [{:keys [sale sale_description]} provider]
     (if sale
-      [:div {:class "sale-description"} "Акция"])))
+      [:div {:class "sale-description"}
+       (format "Акция: %s" sale_description)])))
 
 (defn- status-bar [content]
   (cond
@@ -224,9 +225,12 @@
 
          ;; Gather time
          [:li
-          [:div (format "Последняя сборка данных была в %s"
-                        (tf/unparse (tf/formatters :date-time-no-ms)
-                                    (get-in response [:last-gather-ts])))]]
+          [:div (format "Последняя сборка данных была %s UTC"
+                        (-> (tf/unparse
+                             (tf/formatters :date-time-no-ms)
+                             (get-in response [:last-gather-ts]))
+                            (.replace "T" " ")
+                            (.replace "Z" " ")))]]
          
          ;; Totals
          [:li 
@@ -261,7 +265,7 @@
       [:div
        "Не нужно никаких кавычек, если это два и больше слов, например: "
        [:a {:href "/search?query=tullamore+dew" :class "amber"} "tullamore dew"] ","
-       [:a {:href "/search?query=springbank" :class "amber"} "balvenie sherry"] ","
+       [:a {:href "/search?query=balvenie+sherry" :class "amber"} "balvenie sherry"] ","
        [:a {:href "/search?query=clynelish+marsala+finish" :class "amber"} "clynelish marsala finish"]
        ]]
      [:li

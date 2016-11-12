@@ -59,8 +59,6 @@
                :facet true
                :facet.pivot "provider,available"
                }))
-            
-            
             response2
             (flux/request
              (query/create-query-request

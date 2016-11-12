@@ -30,6 +30,7 @@
        (tf/unparse (tf/formatters :date-time-no-ms))))
 
 (defn now [] (to-date (System/currentTimeMillis)))
+(defn now-dt [] (tc/from-long (System/currentTimeMillis)))
 
 (defn smart-parse-double [s]
   (some-> s

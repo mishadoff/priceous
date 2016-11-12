@@ -10,6 +10,7 @@
             
             ;; providers
             [priceous.goodwine :as gw]
+            [priceous.rozetka :as rozetka]
             )
   (:gen-class))
 
@@ -31,7 +32,7 @@
         ;; return state as it will be caried to the next
         (update-in state [:total] + (count items))))))
 
-(defn- monitor-all [providers]
+(defn monitor-all [providers]
   (try
     (let [start (System/currentTimeMillis)]
       (log/info "Start monitoring prices")
@@ -59,7 +60,7 @@
 (def provider-map
   {
    "goodwine"       gw/provider  
-   ;; "rozetka"        rozetka/provider
+   "rozetka"        rozetka/provider
    ;; "metro"          metro/provider
    ;; "novus"          novus/provider
    ;; "fozzy"          fozzy/provider
@@ -68,5 +69,6 @@
    
    })
 
-(defn gather []
-  (monitor-all (vals provider-map)))
+(defn gather [provider-names]
+  (log/debug provider-names)
+  (monitor-all (map #(get provider-map %) provider-names)))

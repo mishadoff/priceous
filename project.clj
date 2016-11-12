@@ -33,6 +33,9 @@
 
                  ;; we also can write to csv
                  [org.clojure/data.csv "0.1.3"]
+
+                 ;; json is a must
+                 [cheshire "5.6.3"]
                  
                  ]
   :plugins [[lein-ring "0.9.7"]]

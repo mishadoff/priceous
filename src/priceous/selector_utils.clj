@@ -168,6 +168,6 @@
   ((select-common :required true :count-strategy :multiple)
    node selector provider))
 
-(defn- select-mul-opt [node provider selector]
+(defn select-mul-opt [node provider selector]
   ((select-common :required false :count-strategy :multiple)
    node selector provider))

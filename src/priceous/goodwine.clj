@@ -20,7 +20,10 @@
         text (su/text-fn prop)
         spec (su/build-spec-map provider page
                                [:.specifications-list-title]
-                               [:.specifications-list-field])]
+                               [:.specifications-list-field])
+        sale-price (-> (prop [:.price.price-big.price-wholesale])
+                       (html/text)
+                       (u/smart-parse-double))]
     {
      ;; provider specific options
      :provider                (get-in provider [:info :name])
@@ -45,16 +48,11 @@
      :volume                  (-> (prop [:.product-status-volume])
                                   (html/text)
                                   (u/smart-parse-double))
-     :sale                    (-> (prop [:.g-tag.g-tag-big.g-tag-promotion])
-                                  (html/text)
-                                  (.contains "Акция"))
      :price                   (-> (prop [:.price.price-big.price-retail])
                                   (html/text)
                                   (u/smart-parse-double))
-     :sale-description        (let [sale-price (-> (prop [:.price.price-big.price-wholesale])
-                                                   (html/text)
-                                                   (u/smart-parse-double))]
-                                (if sale-price (format "от 6 бутылок %s" sale-price) nil))
+     :sale-description        (if sale-price (format "от 6 бутылок %s" sale-price) nil)
+     :sale                    (boolean sale-price)
      }))
 
 
