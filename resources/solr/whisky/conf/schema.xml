@@ -66,19 +66,26 @@
         <tokenizer class="solr.StandardTokenizerFactory"/>
         <filter class="solr.LowerCaseFilterFactory"/>
 	<filter class="solr.WordDelimiterFilterFactory"
-		splitOnNumerics="1"
 		generateWordParts="1"
-		generateNumberParts="1"
-		catenateWords="0"
-		catenateNumbers="0"
-		catenateAll="0"
-		splitOnCaseChange="1"
-		preserveOriginal="1" />
+                generateNumberParts="0"
+                catenateWords="1"
+                catenateNumbers="1"
+                catenateAll="0"
+                preserveOriginal="1"
+		splitOnNumerics="1"
+		splitOnCaseChange="1"/>
       </analyzer>
       
       <analyzer type="query">
         <tokenizer class="solr.StandardTokenizerFactory"/>
         <filter class="solr.LowerCaseFilterFactory"/>
+	<filter class="solr.WordDelimiterFilterFactory"
+		generateWordParts="1"
+                generateNumberParts="0"
+                catenateWords="0"
+                catenateNumbers="1"
+                catenateAll="0"
+                preserveOriginal="1"/>
         <filter class="solr.SynonymFilterFactory" synonyms="synonyms.txt" ignoreCase="true" expand="true"/>
       </analyzer>
 
