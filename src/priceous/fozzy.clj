@@ -8,12 +8,13 @@
 ;;;;;;; Provider description
 
 (def provider
-  {:provider-name "Fozzy"
-   :provider-base-url "https://fozzy.zakaz.ua"
-   :provider-icon "http://www.fozzy.ua/include/img/fozzy_logo.png"
-   :provider-icon-width "70"
-   :provider-icon-height "34"
-   
+  {:info {
+          :name "Fozzy"
+          :base-url "https://fozzy.zakaz.ua"
+          :icon "http://www.fozzy.ua/include/img/fozzy_logo.png"
+          :icon-width "70"
+          :icon-height "34"
+          }
 
    :state {:page-current   1
            :page-processed 0
@@ -22,10 +23,12 @@
            :done           false
            }
 
-   :strategy :light
+   :fetch-strategy :light
 
-   :page->nodes page->nodes
-   :node->document node->document
-   :last-page  last-page
+   :functions {
+               :node->document node->document
+               :page->nodes page->nodes
+               :last-page last-page
+               }
    
    })

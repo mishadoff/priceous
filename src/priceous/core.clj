@@ -11,6 +11,7 @@
             ;; providers
             [priceous.goodwine :as gw]
             [priceous.rozetka :as rozetka]
+            [priceous.fozzy :as fozzy]
             )
   (:gen-class))
 
@@ -61,9 +62,9 @@
   {
    "goodwine"       gw/provider  
    "rozetka"        rozetka/provider
+   "fozzy"          fozzy/provider
    ;; "metro"          metro/provider
    ;; "novus"          novus/provider
-   ;; "fozzy"          fozzy/provider
    ;; "stolichnyi"     stolichnyi/provider
    ;; "winetime"       winetime/provider
    

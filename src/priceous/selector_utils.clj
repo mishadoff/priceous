@@ -156,15 +156,15 @@
     (zipmap ekeys evalues)))
 
 
-(defn- select-one-req [node provider selector]
+(defn select-one-req [node provider selector]
   ((select-common :required true :count-strategy :single)
    node selector provider))
 
-(defn- select-one-opt [node provider selector]
+(defn select-one-opt [node provider selector]
   ((select-common :required false :count-strategy :single)
    node selector provider))
 
-(defn- select-mul-req [node provider selector]
+(defn select-mul-req [node provider selector]
   ((select-common :required true :count-strategy :multiple)
    node selector provider))
 

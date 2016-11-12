@@ -80,95 +80,91 @@
 
 
 
-;; (defn get-documents-for-provider
-;;   "Retrieve documents from the current state of provider
+(defn get-documents-for-provider
+  "Retrieve documents from the current state of provider
 
-;;   STRATEGY: LIGHT
+  STRATEGY: LIGHT
   
-;;   Return modified provider (with state) and list of documents
+  Return modified provider (with state) and list of documents
 
-;;   - pass returned provider to the next call to get correct state
-;;   - if list is empty, stop processing
+  - pass returned provider to the next call to get correct state
+  - if list is empty, stop processing
 
-;;   {:provider provider
-;;    :docs      [doc doc doc]}
+  {:provider provider
+   :docs      [doc doc doc]}
 
-;;   "
-;;   [provider]
-;;   {:pre [(s/valid? :priceous.spec/provider provider)]}
-;;   (let [template            (get-in provider [:state :page-template])
-;;         page-number         (get-in provider [:state :page-current])
-;;         page-processed      (get-in provider [:state :page-processed])
-;;         page-limit          (get-in provider [:state :page-limit])
-;;         done                (get-in provider [:state :done])
+  "
+  [provider]
+  (let [template            (get-in provider [:state :page-template])
+        page-number         (get-in provider [:state :page-current])
+        page-processed      (get-in provider [:state :page-processed])
+        page-limit          (get-in provider [:state :page-limit])
+        done                (get-in provider [:state :done])
+        last-page           (get-in provider [:functions :last-page])
+        page->nodes         (get-in provider [:functions :page->nodes])
+        node->document      (get-in provider [:functions :node->document])]
+    (cond
 
-;;         ;; functions
-;;         last-page?          (or (get-in provider [:functions :last-page])
-;;                                 (u/falsy))
-;;         page-t
-;;         ]
-;;     (cond
+      ;; indicated as done, stop processing
+      (true? done) (empty-and-done provider)
 
-;;       ;; indicated as done, stop processing
-;;       (true? done) (empty-and-done provider)
+      ;; we encountered a limit for processed pages
+      (>= page-processed page-limit) (empty-and-done provider)
 
-;;       ;; we encountered a limit for processed pages
-;;       (>= page-processed page-limit) (empty-and-done provider)
+      ;; not enough information to decide stop or procees
+      :else
+      (let [url         (format template page-number)        
+            page        (u/fetch url)]
+        (cond
+          ;; page not found
+          (nil? page) empty-and-done
 
-;;       ;; not enough information to decide stop or procees
-;;       :else
-;;       (let [url         (format template page-number)        
-;;             page        (u/fetch url)]
-;;         (cond
-;;           ;; page not found
-;;           (nil? page) empty-and-done
-
-;;           ;; page exists, proceed
-;;           :else
-;;           ;; TODO possibly to externalize that
-;;           (let [nodes (page->nodes provider page)]
-;;             {:provider
-;;              (-> provider
-;;                  (update-in  [:state :page-current] inc)
-;;                  (update-in  [:state :page-processed] inc)
-;;                  (assoc-in   [:state :done] last-page?)
-;;                  ((fn [p]
-;;                     (let [page-processed (get-in p [:state :page-processed])
-;;                           page-limit     (get-in p [:state :page-limit])]
-;;                       (cond
-;;                         (>= page-processed page-limit) 
-;;                         (assoc-in p [:state :done] true)
-;;                         :else p))))
-;;                  )
-;;              :docs (map #(node->document provider %) nodes)}))))))
+          ;; page exists, proceed
+          :else
+          ;; TODO possibly to externalize that
+          (let [nodes (page->nodes provider page)]
+            {:provider
+             (-> provider
+                 (update-in  [:state :page-current] inc)
+                 (update-in  [:state :page-processed] inc)
+                 ((fn [p]
+                    (let [page-processed (get-in p [:state :page-processed])
+                          page-current   (get-in p [:state :page-current])
+                          page-limit     (get-in p [:state :page-limit])]
+                      (cond
+                        (or (>= page-processed page-limit)
+                            (> page-current (last-page provider page))) 
+                        (assoc-in p [:state :done] true)
+                        :else p))))
+                 )
+             :docs (map #(node->document provider %) nodes)}))))))
 
 
-;; (defn process-light [{:keys [page->nodes node->document] :as provider}]
-;;   ;; TODO: valid light provider
-  
-;;   (loop [p provider docs []]
-;;     (cond
-;;       ;; provider processed
-;;       (true? (get-in p [:state :done]))
-;;       (do
-;;         (log/info (format "[%s] Processing finished. Found %s items"
-;;                           (get-in p [:provider-name])
-;;                           (count docs)))
-;;         docs)
+(defn process-light [provider]
+  ;; TODO: valid light provider
+  (loop [p provider docs []]
+    (cond
+      ;; provider processed
+      (true? (get-in p [:state :done]))
+      (do
+        (log/info (format "[%s] Processing finished. Found %s items"
+                          (get-in p [:info :name])
+                          (count docs)))
+        docs)
       
-;;       :else
-;;       (do
-;;         (log/info (format "[%s] Processing page %s"
-;;                           (get-in p [:provider-name])
-;;                           (get-in p [:state :page-current])))
-;;         (let [result (get-documents-for-provider p)
-;;               new-provider (:provider result)
-;;               documents (:docs result)]
-;;           (recur new-provider (into docs documents)))))))
+      :else
+      (do
+        (log/info (format "[%s] Processing page %s"
+                          (get-in p [:info :name])
+                          (get-in p [:state :page-current])))
+        (let [result (get-documents-for-provider p)
+              new-provider (:provider result)
+              documents (:docs result)]
+          (recur new-provider (into docs documents)))))))
 
 
 ;; register processors (ns: processor)
 (defmulti process (fn [provider] (:fetch-strategy provider)))
 (defmethod process :heavy [provider] (process-heavy provider))
-;;(defmethod process :light [provider] (process-light provider))
+(defmethod process :light [provider] (process-light provider))
 (defmethod process :default [_] (u/die "Unknown :fetch-strategy"))
