@@ -1,5 +1,5 @@
-(ns priceous.fozzy
-  (:require [priceous.zakaz :as zakaz]))
+(ns priceous.provider.metro
+  (:require [priceous.provider.zakaz :as zakaz]))
 
 (def last-page zakaz/last-page)
 (def page->nodes zakaz/page->nodes)
@@ -9,16 +9,16 @@
 
 (def provider
   {:info {
-          :name "Fozzy"
-          :base-url "https://fozzy.zakaz.ua"
-          :icon "http://www.fozzy.ua/include/img/fozzy_logo.png"
-          :icon-width "70"
-          :icon-height "34"
+          :name "Metro"
+          :base-url "https://metro.zakaz.ua"
+          :icon "/images/metro.png"
+          :icon-width "96"
+          :icon-height "27"
           }
 
    :state {:page-current   1
            :page-processed 0
-           :page-template "https://fozzy.zakaz.ua/ru/whiskey/?&page=%s"
+           :page-template "https://metro.zakaz.ua/ru/whiskey/?&page=%s"
            :page-limit     Integer/MAX_VALUE
            :done           false
            }

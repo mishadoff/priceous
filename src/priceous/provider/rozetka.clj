@@ -1,4 +1,4 @@
-(ns priceous.rozetka
+(ns priceous.provider.rozetka
   (:require [net.cgrand.enlive-html :as html]
             [taoensso.timbre :as log]
             [priceous.flow :as flow]

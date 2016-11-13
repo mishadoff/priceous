@@ -1,4 +1,4 @@
-(ns priceous.goodwine
+(ns priceous.provider.goodwine
   (:require [net.cgrand.enlive-html :as html]
             [taoensso.timbre :as log]
             [priceous.flow :as flow]

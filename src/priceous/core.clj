@@ -9,9 +9,11 @@
             [taoensso.timbre :as log]
             
             ;; providers
-            [priceous.goodwine :as gw]
-            [priceous.rozetka :as rozetka]
-            [priceous.fozzy :as fozzy]
+            [priceous.provider.goodwine :as gw]
+            [priceous.provider.rozetka :as rozetka]
+            [priceous.provider.fozzy :as fozzy]
+            [priceous.provider.metro :as metro]
+            [priceous.provider.novus :as novus]
             )
   (:gen-class))
 
@@ -63,9 +65,8 @@
    "goodwine"       gw/provider  
    "rozetka"        rozetka/provider
    "fozzy"          fozzy/provider
-   ;; "metro"          metro/provider
-   ;; "novus"          novus/provider
-   ;; "stolichnyi"     stolichnyi/provider
+   "metro"          metro/provider
+   "novus"          novus/provider
    ;; "winetime"       winetime/provider
    
    })

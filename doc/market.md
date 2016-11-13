@@ -2,10 +2,11 @@
 
 - **DONE** [GoodWine](http://goodwine.com.ua/)
 - **DONE** [Rozetka](http://rozetka.com)
+- **DONE** [Fozzy](http://fozzy.zakaz.ua)
 
 - **TODO** [Novus](http://novus.zakaz.ua) 
 - **TODO** [Metro](http://metro.zakaz.ua)
-- **TODO** [Fozzy](http://fozzy.zakaz.ua)
+
 - **TODO** [Auchan](http://auchan.zakaz.ua)
 - **TODO** [Winetime](http://winetime.com.ua/)
 - **TODO** [Winestyle](http://winestyle.com.ua/)

@@ -1,4 +1,4 @@
-(ns priceous.zakaz
+(ns priceous.provider.zakaz
   (:require [net.cgrand.enlive-html :as html]
             [priceous.flow :as flow]
             [priceous.utils :as u]
@@ -50,7 +50,7 @@
      :link                    (-> (prop [:.one-product-link])
                                   (get-in [:attrs :href])
                                   ((fn [part-href]
-                                     (str (:provider-base-url provider) "/" part-href))))
+                                     (str (get-in provider [:info :base-url]) "/" part-href))))
      :image                   (-> (prop [:.one-product-image :img])
                                   (get-in [:attrs :src]))
      :type                    "whisky"
