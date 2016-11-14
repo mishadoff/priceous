@@ -65,7 +65,7 @@
         [:.catalog-menu-table :li :a])
        (map #(vec [(html/text %)
                    (str (get-in % [:attrs :href]) "page=%s/")]))
-       (seq) (u/debug)
+       (cons ["Ликеры" "http://goodwine.com.ua/liqueurs/c4509/" ])
        ))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -92,6 +92,7 @@
            :page-limit     Integer/MAX_VALUE
            :done           false
            }
+
    ;; fetch strategy defines how we will fetch results
    :fetch-strategy :heavy
    :category true
