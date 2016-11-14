@@ -4,11 +4,11 @@ Link: [http://goodwine.com.ua/](http://goodwine.com.ua/)
 
 ## Document Structure
 
-- `provider_name : string` Goodwine
-- `provider_base_url : string` "http://goodwine.com.ua/"
-- `provider_icon : string` "http://i.goodwine.com.ua/design/goodwine-logo.png"
+- `name : string` Goodwine
+- `base_url : string` "http://goodwine.com.ua/"
+- `icon : string` "http://i.goodwine.com.ua/design/goodwine-logo.png"
 - `name : text` BenRiach, tube (0,7 л)
-- `price : float` 977,17
+- `price : float` 977.17
 - `link : string` "http://goodwine.com.ua/benriach-non-age-07-tube/p5289/"
 - `country : text` Шотландия
 - `producer : text` BenRiach
@@ -21,6 +21,6 @@ Link: [http://goodwine.com.ua/](http://goodwine.com.ua/)
 - `sale : boolean` true
 - `sale_description : boolean` от 6 бутылок 899.00
 - `image : string` 
-- `timestamp : date` "2016-01-01 23:34:00" 
+- `timestamp : date` "2016-01-01T23:34:00Z" 
 
 

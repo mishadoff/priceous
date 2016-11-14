@@ -1,21 +1,20 @@
 (ns priceous.provider.metro
-  (:require [priceous.provider.zakaz :as zakaz]))
-
-(def last-page zakaz/last-page)
-(def page->nodes zakaz/page->nodes)
-(def node->document zakaz/node->document)
-
-;;;;;;; Provider description
+  (:require [priceous.provider.zakaz-react :as zr]))
 
 (def provider
   {:info {
           :name "Metro"
-          :base-url "https://metro.zakaz.ua"
+          :base-url "https://metro.zakaz.ua/"
           :icon "/images/metro.png"
           :icon-width "96"
           :icon-height "27"
           }
 
+   :custom {
+            :store_num "48215611"
+            }
+   
+   
    :state {:page-current   1
            :page-processed 0
            :page-template "https://metro.zakaz.ua/ru/whiskey/?&page=%s"
@@ -23,12 +22,8 @@
            :done           false
            }
 
-   :fetch-strategy :light
-
-   :functions {
-               :node->document node->document
-               :page->nodes page->nodes
-               :last-page last-page
-               }
+   :fetch-strategy :api
    
+   :functions { :docs zr/query }
+
    })

@@ -119,13 +119,13 @@
           :base-url "http://rozetka.com.ua/"
           :icon "http://i1.rozetka.ua/logos/0/99.png"
           :icon-width "134"
-          :icon-heught "34"
+          :icon-height "34"
           }
    
    :state {
            :page-current   1
            :page-processed 0
-           :page-template  "http://rozetka.com.ua/krepkie-napitki/c4594292/filter/page=%s;vid-napitka-69821=whiskey-blend,whiskey-bourbon,whiskey-single-malt/"
+           :page-template  "http://rozetka.com.ua/krepkie-napitki/c4594292/filter/page=%s"
            :page-limit     Integer/MAX_VALUE
            :done           false
            }

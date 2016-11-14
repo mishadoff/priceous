@@ -18,7 +18,7 @@
 
    :state {:page-current   1
            :page-processed 0
-           :page-template "https://fozzy.zakaz.ua/ru/whiskey/?&page=%s"
+           :page-template "https://fozzy.zakaz.ua/ru/hard-drinks/?&page=%s"
            :page-limit     Integer/MAX_VALUE
            :done           false
            }

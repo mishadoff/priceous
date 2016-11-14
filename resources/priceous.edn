@@ -12,6 +12,11 @@
              :value 2
              :time-unit "HOURS"}
 
- :scrapping {:providers ["fozzy" #_"rozetka" #_"goodwine"] }
- 
+ :scrapping {:providers ["goodwine"
+                         "rozetka"
+                         "fozzy"
+                         "metro"
+                         "auchan"
+                         "novus"]}
+
  }

@@ -15,10 +15,10 @@
  text-fn                        ;; TODO: TEST
  build-spec-map                 ;; TESTED
  select-common                  ;; PRIVATE
- select-one-req                 ;; PRIVATE
- select-mul-req                 ;; PRIVATE
- select-one-opt                 ;; PRIVATE
- select-mul-opt                 ;; PRIVATE
+ select-one-req                 ;; TODO: TEST
+ select-mul-req                 ;; TODO: TEST
+ select-one-opt                 ;; TODO: TEST
+ select-mul-opt                 ;; TODO: TEST
  )
 
 
@@ -99,12 +99,14 @@
     - false, otherwise"
   [selector]
   (fn [provider page]
-    (some-> (select-one-req page provider selector)
-            (html/text)
-            (u/smart-parse-double)
-            (int)
-            ((fn [p]
-               (< (get-in provider [:state :page-current]) p))))))
+    (boolean
+     (some-> (select-one-opt page provider selector)
+             (html/text)
+             (u/smart-parse-double)
+             (int)
+             ((fn [p]
+                (< (get-in provider [:state :page-current]) p)))
+             ))))
 
 (defn generic-page-urls
   "Return a function (fn [provider page])

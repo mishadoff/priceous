@@ -40,7 +40,7 @@
           (clojure.string/replace #"[^0-9\\.]+" "")
           ;; swap empty string with nils to be handled by some->
           ((fn [s] (if (empty? s) nil s))) 
-          ;; if it is still not vali string
+          ;; if it is still not valid string
           ((fn [s]
              (try (Double/parseDouble s)
                   (catch NumberFormatException e
@@ -55,6 +55,7 @@
 
     (catch java.io.FileNotFoundException e
       (log/error "File not found: " url)
+      (log/error e)
       nil)
 
     (catch java.net.UnknownHostException e

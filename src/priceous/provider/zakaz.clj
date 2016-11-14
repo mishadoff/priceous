@@ -9,12 +9,12 @@
 (defn last-page [provider page]
   (let [value 
         (some->> (su/select-mul-req page provider
-                                    [:.catalog-pagination :li :a])
+                                    [:.catalog-pagination [:a (html/attr-has :href)]])
                  (map html/text)
+                 (remove #{"»"})
                  (map u/smart-parse-double)
                  (sort)
-                 (reverse)
-                 (first)
+                 (last)
                  (int))]
     ;; default page is 1
     (or value 1)))

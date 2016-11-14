@@ -14,26 +14,46 @@
             [priceous.provider.fozzy :as fozzy]
             [priceous.provider.metro :as metro]
             [priceous.provider.novus :as novus]
+            [priceous.provider.auchan :as auchan]
             )
   (:gen-class))
 
 (defn- monitor-provider [state provider]
-  (let [items (flow/process provider)
-        provider-name (get-in provider [:info :name])]
-    (cond
-      ;; nothing found
-      (empty? items)
-      (log/warn (format "[%s] No items found" provider-name)) 
+  ;; TODO fix npe
+  (try
+    (let [items
+          (cond
+            (:category provider)
+            (let [cat-fn (get-in provider [:functions :categories])
+                  cats (cat-fn provider)]
+              (->> (map (fn [[cat-name cat-url]]
+                          (-> provider
+                              (assoc-in [:state :page-template] cat-url)
+                              (assoc-in [:state :category] cat-name))) cats)
+                   (map flow/process)
+                   (apply concat)))
+            
+            :else (flow/process provider))
 
-      :else
-      (do
-        (log/info (format "[%s] Found %s items" provider-name (count items)))
+          provider-name (get-in provider [:info :name])]
+      (cond
+        ;; nothing found
+        (empty? items)
+        (log/warn (format "[%s] No items found" provider-name)) 
 
-        ;; solr appender
-        (solr/write provider items)        
+        :else
+        (do
+          (log/info (format "[%s] Found %s items" provider-name (count items)))
 
-        ;; return state as it will be caried to the next
-        (update-in state [:total] + (count items))))))
+          ;; solr appender
+          (solr/write provider items)        
+
+          ;; return state as it will be caried to the next
+          (update-in state [:total] + (count items)))))
+    (catch Exception e
+      (log/error e)
+      ;; something bad happened do not update state atom
+      state)))
 
 (defn monitor-all [providers]
   (try
@@ -62,12 +82,20 @@
 
 (def provider-map
   {
+   "metro"          metro/provider
+   "auchan"         auchan/provider
+   "novus"          novus/provider
+   "fozzy"          fozzy/provider
    "goodwine"       gw/provider  
    "rozetka"        rozetka/provider
-   "fozzy"          fozzy/provider
-   "metro"          metro/provider
-   "novus"          novus/provider
-   ;; "winetime"       winetime/provider
+   ;;"winetime"       winetime/provider
+   ;; "megamarket"
+   ;; "polyana"
+   ;; "vintagemarket"
+   ;; "silpo?"
+   ;; "elit-alco"
+   ;; "elitochka"
+   ;; "alcovegas"
    
    })
 

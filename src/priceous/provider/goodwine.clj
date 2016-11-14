@@ -14,7 +14,9 @@
 (defn- url->document
   "Read html resource from URL and transforms it to the document"  
   [provider url]
-  (let [page (u/fetch url) ;; retrieve the page
+  (if ((get-in provider [:skip :url] #{}) url)
+    (do (log/warn "Skipping URL: " url) nil)
+    (let [page (u/fetch url) ;; retrieve the page
         ;; some handy local aliases
         prop (su/property-fn provider page)
         text (su/text-fn prop)
@@ -53,8 +55,18 @@
                                   (u/smart-parse-double))
      :sale-description        (if sale-price (format "от 6 бутылок %s" sale-price) nil)
      :sale                    (boolean sale-price)
-     }))
+     })))
 
+
+(defn get-categories [provider]
+  (->> (su/select-mul-req
+        (u/fetch "http://goodwine.com.ua/spirits/c34290/")
+        provider
+        [:.catalog-menu-table :li :a])
+       (map #(vec [(html/text %)
+                   (str (get-in % [:attrs :href]) "page=%s/")]))
+       (seq) (u/debug)
+       ))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;  PROVIDER  ;;;;;;;;
@@ -82,10 +94,17 @@
            }
    ;; fetch strategy defines how we will fetch results
    :fetch-strategy :heavy
+   :category true
    
    :functions {
                :url->document url->document
                :page->urls    page->urls
                :last-page?    next-page?
+
+               :categories    get-categories ;; return name [tempalte]
                }
+
+   :skip {:url #{"http://goodwine.com.ua/armagnac/p53825/"
+                 "http://goodwine.com.ua/sambuca/p45499/"}}
+   
    })
