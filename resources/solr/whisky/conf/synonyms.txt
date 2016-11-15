@@ -17,6 +17,9 @@ auchentoshan,ахентошен,ахентошан,ахентошн,охенто
 ardbeg,ардбег
 american,американ,америкен,америкэн
 ale,ель,эль,але
+amaro,амаро
+armagnac,арманьяк
+absent,absenta,абсент
 
 ## B
 balvenie,balveni,балвени,балвение,балвені,балвеніе
@@ -26,12 +29,14 @@ ballantruan,balantruan,балантруан,баллантруан
 bowmore,боумор,бовмор,бовморе,боуморе,бомо,бомор,боумо,бовмо
 bell's,bell,bells,белз,белс,беллс,беллз,бэлс,белз,бэллс,бэллз
 benriach,ben riach,бенриах,бенриач,бен рич
+benedictine,бенедиктин,бенедіктин,бенедіктін
 bannister,banister,bannis,bannist,баннистер,банистер
 batch,бетч,батч,бач
 black,блек,блэк,блак
 blue,блу,блуе,блю
 blend,blended,бленд,блэнд,блендед
 bird,берд,бёрд,бьорд
+bitter,бітер,біттер,биттер,битер
 bush,баш,буш
 barrel,barel,баррель,баррел,барел
 buffalo,буфало,буффало,бафало,баффало
@@ -39,6 +44,7 @@ bourbon,borbon,burbon,бурбон
 beam,бим
 benchmark,бенчмарк
 bridge,бридж
+brandy,бренді,бренди,брэнди
 
 ## C
 chivas,чивас,шивас
@@ -55,6 +61,9 @@ claymore,клеймор,клэймор,клэймоур,клеймоур
 cherry,черри,чери,чэри,чэрри
 cutty,кати,катти,кути,кутти
 collie,колли,коли,коллие
+comfort,комфорт
+cognac,коньяк
+calvados,кальвадос
 
 ## D
 dewar's,dewar,dewars,deward's,deward,dewards,дюарс,дюварс,дювардс,дюарз,дювард,дюварз,дювардз
@@ -69,6 +78,7 @@ distillery,distilery,distileri,дистилери,дистиллери
 extra,екстра,экстра
 ellis,елис,элис,эллис
 elgin,элгин,елгин,элжин,елжин
+espolon,есполон,эсполон
 
 ## F
 fine,файн,фине
@@ -78,6 +88,7 @@ founder's,founder,founders,фаундер,фаундерз,фаундерс
 famous,феймос,феймоус
 fraser,фрезер,фрейзер,фрэйзер,фрэзер,фрэзэр,фрэйзэр
 flannigans,flanigan,flanigans,фланиганс,фланиганз,фланниганз,фланниганс
+fozzy,фози,фоззи,фозі,фоззі
 
 ## G
 glen,глен,глэн
@@ -86,10 +97,13 @@ glenmorangie,glenmorangi,гленморанжи
 glenlivet,гленливет
 glenkinchie,glenkinchi,glenkinchy,гленкинчи,гленкичи
 grant's,grants,грант,грантс
+grappa,grapa,граппа,грапа
 garioch,гариоч,гариош,гариох
 gold,голд
 gentleman,джентльмен,джентлмен
 grouse,grous,граус,грауз,груз,грус
+goodwine,гудвайн
+gin,джин
 
 ## H
 hankey,hanky,ханки,ханке,ханкей
@@ -104,6 +118,7 @@ hamiltons,hamilton,hamilton's,гамилтон,хамилтон,гамильто
 isle,исле,айла
 islay,айла
 irishman,айришмен
+irish,ириш,айриш,айріш
 
 ## J
 jameson,джеймисон,джемисон,джеймсон
@@ -112,6 +127,7 @@ jura,джура,юра
 jack,джек,джэк
 jock,джок
 jim,джим
+jagermeister,jaegermeister,jegermeister,jegermaister,jaegermaister,егермейстер,егер,єгер,єгєр,єгермейстер,єгермайстер,джегермейстер,джагермайстер
 
 ## K
 kilbeggan,килбеган,килбегган
@@ -135,6 +151,7 @@ lion,лайон,лион
 limited,лимитед,лимитэд
 leader,лидер,леадер
 legend,легенд,ледженд
+liquor,лікер,лікьор,ликьор,ликер,ликёр
 
 ## M
 macallan,macalan,макаллан,макалан
@@ -149,9 +166,13 @@ most,мост
 mackay,mackey,маки,макки,макай,маккай,макей,маккей
 major,межор,мажор,мейжор,мэйжор,мейдже,мэйдже
 match,мач,матч
+mist,міст,мист
+metro,метро,мєтро,мэтро
 
 ## N
 nectar,нектар
+nonino,нонино,ноніно
+novus,новус
 
 ## O
 oak,оак,оук,ок
@@ -166,6 +187,7 @@ portwood,портвуд
 platinum,платинум,платінум
 peel,пил
 pipe,пайп
+pisco,писко,піско
 park,парк
 passport,pasport,пасспорт,паспорт
 pitterson,piterson,питерсон,питэрсон,питтерсон,питтэрсон
@@ -175,6 +197,7 @@ quarter,квартер,куартер,кварте,квоте
 quinta,квинта
 quanta,кванта,куанта
 queen,квин,куин
+quintessentia,квинтессенция,квинтесенция
 
 ## R
 regal,ригал,регал
@@ -189,6 +212,7 @@ royal,ройал,ройял,роял
 rocks,rock,рокс,рокз
 robert,роберт,робэрт
 ridgemont,риджмонт
+rum,ron,ром,рон
 
 ## S
 signature,сигначе,сигначер,сигнатуре,сигначур
@@ -211,6 +235,7 @@ scots,скот,скотс,скотз
 storm,сторм,шторм
 straight,стрейт,стрэйт
 strathglen,srtathglen,стратглен
+southern,саузерн
 
 ## T
 the,зе
@@ -223,11 +248,14 @@ tomintoul,томинтул
 tomatin,томатин
 turkey,турки,терки,тёрки,тёки,туркей
 tavern,таверн
+tequila,текіла,текила
 
 ## U
 
 ## V
 vat,ват,вот
+vodka,водка,горилка,горілка
+vermouth,вермут
 
 ## W
 walker,вокер,волкер,уокер,уолкер
@@ -237,8 +265,10 @@ white,уайт,вайт
 whyte,whate,уайт,вайт
 william,уильям,вильям
 wild,валд,вайлд,уайлд,вилд,уилд
+whisky,whiskey,віскі,виски
 
 ## X
+xenta,ксента,хента
 
 ## Y
 yamazaki,ямазаки,йямазаки

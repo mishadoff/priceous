@@ -1,0 +1,22 @@
+# List of stopwords
+
+# Related to Maturation
+y
+yo
+year
+years
+г
+год
+года
+л
+лет
+рік
+років
+роки
+
+# Related to Volume
+l
+ml
+л
+литр
+мл

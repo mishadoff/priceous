@@ -102,7 +102,7 @@
      :price                   price
 
      :sale-description        (let []
-                                 (if old-price (format "старая цена %s" old-price) nil))
+                                 (if old-price (format "старая цена %.2f" old-price) nil))
      }))
 
 

@@ -53,16 +53,15 @@
      :price                   (-> (prop [:.price.price-big.price-retail])
                                   (html/text)
                                   (u/smart-parse-double))
-     :sale-description        (if sale-price (format "от 6 бутылок %s" sale-price) nil)
+     :sale-description        (if sale-price (format "от 6 бутылок %.2f" sale-price) nil)
      :sale                    (boolean sale-price)
      })))
 
 
 (defn get-categories [provider]
   (->> (su/select-mul-req
-        (u/fetch "http://goodwine.com.ua/spirits/c34290/")
-        provider
-        [:.catalog-menu-table :li :a])
+        (u/fetch "http://goodwine.com.ua/spirits/c34290/") 
+        provider [:.catalog-menu-table :li :a]) 
        (map #(vec [(html/text %)
                    (str (get-in % [:attrs :href]) "page=%s/")]))
        (cons ["Ликеры" "http://goodwine.com.ua/liqueurs/c4509/" ])

@@ -58,5 +58,5 @@
      :available               true
      :sale                    (and price old-price (> old-price price))
      :price                   price
-     :sale-description        (if old-price (format "старая цена %s" old-price) nil)
+     :sale-description        (if old-price (format "старая цена %.2f" old-price) nil)
      }))

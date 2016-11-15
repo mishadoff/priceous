@@ -56,6 +56,11 @@
    :sale             (get-in item [:sale])
    :available        (get-in item [:available])
    :price            (/ (get-in item [:price]) 100.0)
+   :old-price        (let [p (get-in item [:old_price])]
+                       (if p (/ p 100.0) p))
+   :sale-description (let [p (get-in item [:old_price])]
+                       (if p (format "старая цена %.2f" (/ p 100.0))))
+
    }
   )
 
@@ -83,7 +88,7 @@
               (map (fn [i] (transform-item provider i))))}))
     (catch Exception e
       (log/error e)
-      {:status :error :reponse {}})
+      {:status :error :response {}})
     )
   )
 
