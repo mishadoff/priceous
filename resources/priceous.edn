@@ -9,7 +9,7 @@
         :collection "whisky"}
  
  :scheduler {:delay 0
-             :value 2
+             :value 8
              :time-unit "HOURS"}
 
  :scrapping {:providers ["goodwine"

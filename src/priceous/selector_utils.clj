@@ -146,15 +146,20 @@
   If key-selector and value-selector return different amount
   of items, min-match map is build
   "
-  [provider page selector-key selector-value]
-  (let [select-cells-fn (fn [selector]
+  [provider page selector-key selector-value
+   & {:keys [keys-post-fn vals-post-fn]
+      :or {keys-post-fn identity vals-post-fn identity}}]
+  (let [select-cells-fn (fn [selector post-fn]
                           (->> (select-mul-opt page provider selector)
+                               (map post-fn)
                                (map html/text)
                                (map u/cleanup)))
-        ekeys   (select-cells-fn selector-key) 
-        evalues (select-cells-fn selector-value)]
+        ekeys   (select-cells-fn selector-key keys-post-fn) 
+        evalues (select-cells-fn selector-value vals-post-fn)]
     (when (not= (count ekeys) (count evalues))
       (log/warn (format "[%s] Number of keys don't match with number of values" (get-in provider [:info :name]))))
+    #_(log/debug (seq ekeys))
+    #_(log/debug (seq evalues))
     (zipmap ekeys evalues)))
 
 

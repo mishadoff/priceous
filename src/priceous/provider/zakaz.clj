@@ -53,7 +53,7 @@
                                      (str (get-in provider [:info :base-url]) "/" part-href))))
      :image                   (-> (prop [:.one-product-image :img])
                                   (get-in [:attrs :src]))
-     :type                    "whisky"
+     :type                    nil
      :timestamp               (u/now)
      :available               true
      :sale                    (and price old-price (> old-price price))
