@@ -76,3 +76,10 @@
   "Returns function which accepts any number of arguments
    and always return false"
   (fn [& _] false))
+
+(defn full-href [provider part-href]
+  (let [base-url (get-in provider [:info :base-url])]
+    (cond
+      (clojure.string/ends-with? base-url "/")
+      (str base-url part-href)
+      :else (str base-url "/" part-href))))

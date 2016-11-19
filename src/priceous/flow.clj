@@ -165,16 +165,26 @@
       ;; provider processed
       (true? (get-in p [:state :done]))
       (do
-        (log/info (format "[%s] Processing finished. Found %s items"
-                          (get-in p [:info :name])
-                          (count docs)))
+        (if (:category p)
+            (log/info (format "[%s | %s] Processing finished. Found %s items"
+                              (get-in p [:info :name])
+                              (get-in p [:state :category])
+                              (count docs)))
+            (log/info (format "[%s] Processing finished. Found %s items"
+                              (get-in p [:info :name])
+                              (count docs))))
         docs)
       
       :else
       (do
-        (log/info (format "[%s] Processing page %s"
-                          (get-in p [:info :name])
-                          (get-in p [:state :page-current])))
+        (if (:category p)
+            (log/info (format "[%s | %s] Processing page %s"
+                              (get-in p [:info :name])
+                              (get-in p [:state :category])
+                              (get-in p [:state :page-current])))
+            (log/info (format "[%s] Processing page %s"
+                              (get-in p [:info :name])
+                              (get-in p [:state :page-current]))))
         (let [result (get-documents-for-provider p)
               new-provider (:provider result)
               documents (:docs result)]

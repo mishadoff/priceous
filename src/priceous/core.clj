@@ -15,6 +15,7 @@
             [priceous.provider.metro :as metro]
             [priceous.provider.novus :as novus]
             [priceous.provider.auchan :as auchan]
+            [priceous.provider.megamarket :as megamarket]
             )
   (:gen-class))
 
@@ -88,8 +89,8 @@
    "fozzy"          fozzy/provider
    "goodwine"       gw/provider  
    "rozetka"        rozetka/provider
+   "megamarket"     megamarket/provider
    ;;"winetime"       winetime/provider
-   ;; "megamarket"
    ;; "polyana"
    ;; "vintagemarket"
    ;; "silpo?"
