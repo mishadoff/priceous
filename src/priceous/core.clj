@@ -10,12 +10,14 @@
             
             ;; providers
             [priceous.provider.goodwine :as gw]
+            [priceous.provider.winetime :as winetime]
             [priceous.provider.rozetka :as rozetka]
             [priceous.provider.fozzy :as fozzy]
             [priceous.provider.metro :as metro]
             [priceous.provider.novus :as novus]
             [priceous.provider.auchan :as auchan]
             [priceous.provider.megamarket :as megamarket]
+            [priceous.provider.elitochka :as elitochka]
             )
   (:gen-class))
 
@@ -90,12 +92,12 @@
    "goodwine"       gw/provider  
    "rozetka"        rozetka/provider
    "megamarket"     megamarket/provider
-   ;;"winetime"       winetime/provider
+   "elitochka"      elitochka/provider
+   "winetime"       winetime/provider
    ;; "polyana"
    ;; "vintagemarket"
    ;; "silpo?"
    ;; "elit-alco"
-   ;; "elitochka"
    ;; "alcovegas"
    
    })

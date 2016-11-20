@@ -5,7 +5,7 @@
             [net.cgrand.enlive-html :as html])
   (:import [java.util.concurrent ExecutorService Executors Callable]))
 
-(def ^ExecutorService pool (Executors/newFixedThreadPool 16))
+(def ^ExecutorService pool (Executors/newFixedThreadPool 10))
 (defn future-in-the-pool [^ExecutorService pool ^Callable fun]
   (.submit pool fun))
 

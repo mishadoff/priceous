@@ -80,6 +80,16 @@
 (defn full-href [provider part-href]
   (let [base-url (get-in provider [:info :base-url])]
     (cond
-      (clojure.string/ends-with? base-url "/")
+      ;; http://sit.com/     AND      /part/of/url.html
+      (and (clojure.string/ends-with? base-url "/")
+           (clojure.string/starts-with? part-href "/"))
+      (str base-url (subs part-href 1))
+
+      ;; either one with /
+      (or (and (clojure.string/ends-with? base-url "/")
+               (not (clojure.string/starts-with? part-href "/")))
+          (and (not (clojure.string/ends-with? base-url "/"))
+               (clojure.string/starts-with? part-href "/")))
       (str base-url part-href)
+
       :else (str base-url "/" part-href))))

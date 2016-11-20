@@ -96,7 +96,7 @@
 (defn get-categories [provider]
   [["Виски" "http://goodwine.com.ua/viski.html?dir=asc&p=%s"]
    ;; Not enabled yet
-   #_["Другие Крепкие" "http://goodwine.com.ua/drugie-krepkie.html?dir=asc&p=%s"]])
+   ["Другие Крепкие" "http://goodwine.com.ua/drugie-krepkie.html?dir=asc&p=%s"]])
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;  PROVIDER  ;;;;;;;;
