@@ -49,13 +49,14 @@
       wrap-params
       wrap-session))
 
-(defn init [& args]
+(defn init [args]
   (config/config-timbre!)
   (config/read-properties! (first args))
   )
 
 ;; TODO introduce properties
 (defn -main [& args]
+  (log/debug "Args: " args)
   (init args)
 
   (log/info "Starting server...")

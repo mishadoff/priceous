@@ -1,5 +1,6 @@
 (ns priceous.config
   (:require [taoensso.timbre :as log]
+            [taoensso.timbre.appenders.3rd-party.rotor :as rotor]
             [clojure.java.io :as io]))
 
 (def properties (atom nil))
@@ -11,16 +12,18 @@
        :output-fn log/default-output-fn
        :appenders
        {:color-appender
-         {:enabled?   true
-          :async?     false
-          :min-level  nil
-          :rate-limit nil
-          :output-fn  :inherit
-          :fn (fn [{:keys [error? level output-fn] :as data}]
-                (binding [*out* (if error? *err* *out*)]
-                  (if-let [color (colors level)]
-                    (println (log/color-str color (output-fn data)))
-                    (println (output-fn data)))))}}})))
+        {:enabled?   true
+         :async?     false
+         :min-level  nil
+         :rate-limit nil
+         :output-fn  :inherit
+         :fn (fn [{:keys [error? level output-fn] :as data}]
+               (binding [*out* (if error? *err* *out*)]
+                 (if-let [color (colors level)]
+                   (println (log/color-str color (output-fn data)))
+                   (println (output-fn data)))))}
+        :rotor-appender (rotor/rotor-appender :path "./priceous.log")  
+        }})))
 
 (defn- props-from-resource [file]
   (try (read-string (slurp (io/resource file)))
@@ -28,6 +31,7 @@
          (do (log/error e "Problem reading props from resource") {} ))))
 
 (defn- props-from-file [file]
+  (log/debug "Reading props from file" file)
   (try (read-string (slurp (io/file file)))
        (catch Exception e
          (do (log/error e "Problem reading props from file") {} ))))
