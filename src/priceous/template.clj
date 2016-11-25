@@ -222,15 +222,6 @@
        :else
        [:div
         [:ul {:class "help-list"}
-
-         ;; Gather time
-         [:li
-          [:div (format "Последняя сборка данных была %s UTC"
-                        (-> (tf/unparse
-                             (tf/formatters :date-time-no-ms)
-                             (get-in response [:last-gather-ts]))
-                            (.replace "T" " ")
-                            (.replace "Z" " ")))]]
          
          ;; Totals
          [:li 
@@ -238,12 +229,17 @@
          
          ;; Providers
          [:li
-          [:div (format "Доступна информация по %s магазинам"
+          [:div (format "Доступна информация по %s магазинам (в наличии / всего / последняя сборка)"
                         (count (get-in response [:providers])))]
           [:ul
            (for [p (get-in response [:providers])]
-             [:li (format "%s: всего %s, в наличии есть %s"
-                          (:name p) (:total p) (:available p))])]
+             [:li (format "%s: %s/%s, %s"
+                          (:name p)
+                          (:available p)
+                          (:total p)
+                          (-> (:ts p)
+                              (clojure.string/replace "T" " ")
+                              (clojure.string/replace "Z" " ")))])]
           ]
 
 

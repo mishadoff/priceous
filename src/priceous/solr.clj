@@ -4,7 +4,8 @@
             [flux.query :as query]
             [taoensso.timbre :as log]
             [clj-time.coerce :as tc]
-            [priceous.config :as config])
+            [priceous.config :as config]
+            [priceous.utils :as u])
   (:import [org.apache.solr.client.solrj.util ClientUtils]))
 
 ;; TODO test
@@ -49,31 +50,33 @@
        (get-in @config/properties [:solr :host])
        (keyword (get-in @config/properties [:solr :collection])))
       (log/debug (format "-> StatsRequest"))
-
-      (let [response1
-            (flux/request
+      (let [response
+            (flux/request 
              (query/create-query-request
               {:q "*"
                :start 0 
                :rows 0
-               :facet true
-               :facet.pivot "provider,available"
-               }))
-            response2
-            (flux/request
-             (query/create-query-request
-              {:q "*"
-               :start 0 
-               :rows 1
-               :sort "timestamp desc"
-               }))
-            doc (first (get-in response2 [:response :docs]))
-            ]
-        {:status :success :response
-         {:total (get-in response1 [:response :numFound])
-          :last-gather-ts (tc/from-date (:timestamp doc))
-          :providers (process-provider-pivots response1)
-          }}))
+               :json.facet.providers
+               "{type:terms,
+                 field:provider,
+                 facet:{
+                   ts:\"max(timestamp)\",
+                   available:{
+                     type:terms,
+                     field:available}}}"
+               }))]
+        {:status :success
+         :response {:total (get-in response [:response :numFound])
+                    :providers (->> (get-in response [:facets :providers :buckets])
+                                    (mapv (fn [bkt]
+                                            {:name (:val bkt)
+                                             :total (:count bkt)
+                                             :ts (-> (:ts bkt) long u/to-date)
+                                             :available (or (some->> (get-in bkt [:available :buckets])
+                                                                     (filter :val)
+                                                                     (first)
+                                                                     (:count))
+                                                            0)})))}}))
     (catch Exception e
       (log/error e)
       {:status :error :response {}}))

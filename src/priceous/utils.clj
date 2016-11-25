@@ -93,3 +93,8 @@
       (str base-url part-href)
 
       :else (str base-url "/" part-href))))
+
+(defn get-client-ip [req]
+  (if-let [ips (get-in req [:headers "x-forwarded-for"])]
+    (-> ips (clojure.string/split #",") first)
+    (:remote-addr req)))

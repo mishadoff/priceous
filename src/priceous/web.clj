@@ -12,7 +12,8 @@
              :refer [wrap-keyword-params]]
             
             [ring.middleware.session :refer [wrap-session]]
-
+            [ring.middleware.ratelimit :refer [wrap-ratelimit ip-limit]]
+            
             [taoensso.timbre :as log]
 
             [priceous.config :as config]
@@ -23,42 +24,45 @@
   (:import [java.util.concurrent TimeUnit])
   (:gen-class))
 
-(defroutes app-routes
-  (GET "/" [] (redirect "/search"))
-  
-  (GET "/search" {params :params}
-       (let [query (:query params) advanced (:advanced params)]
-         (if (empty? query)
-           (t/search-new {:title "Whisky Search"})
-           (t/search-new (merge {:title "Whisky Search"
-                                 :response (solr/query query)}
-                                params)))))
+(defn app-routes [state]
+  (compojure.core/routes 
 
-  (GET "/stats" [] (t/stats {:title "Whisky Search :: Stats"
-                             :response (solr/stats)}))
-  (GET "/help" []  (t/help {:title "Whisky Search :: Help"}))
-  
-  (route/resources "/")
+   (GET "/" [] (redirect "/search"))
 
-  )
+   (GET "/search" {params :params}
+        (let [query (:query params) advanced (:advanced params)]
+          (if (empty? query)
+            (t/search-new {:title "Whisky Search"})
+            (t/search-new (merge {:title "Whisky Search"
+                                  :response (solr/query query)}
+                                 params)))))
+
+   (GET "/stats" [] (t/stats {:title "Whisky Search :: Stats"
+                              :response (solr/stats)}))
+   (GET "/help" []  (t/help {:title "Whisky Search :: Help"}))
+   
+   (route/resources "/")
+   
+   ))
 
 (def app
-  (-> app-routes
+  (-> (config/read-properties! nil)
+      app-routes
       (wrap-defaults site-defaults)
+      #_(wrap-ratelimit {:limits [(ip-limit (get-in @config/properties [:ratelimit]))]})
       wrap-keyword-params
       wrap-params
       wrap-session))
 
-(defn init [args]
-  (config/config-timbre!)
-  (config/read-properties! (first args))
-  )
+(defn init
+  ([] (init nil))
+  ([args]
+   (config/config-timbre!)
+   (config/read-properties! (first args))))
 
 ;; TODO introduce properties
 (defn -main [& args]
-  (log/debug "Args: " args)
   (init args)
-
   (log/info "Starting server...")
   
   ;; schedule data gathering every 2 hours

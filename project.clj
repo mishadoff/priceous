@@ -36,11 +36,14 @@
 
                  ;; json is a must
                  [cheshire "5.6.3"]
+
+                 ;; Rate limiter
+                 [ring-ratelimit "0.2.2"]
                  
                  ]
   :plugins [[lein-ring "0.9.7"]]
   :ring {:handler priceous.web/app
-         :init priceous.web/init}
+         :init    priceous.web/init}
 
   :profiles {:dev {:plugins [[jonase/eastwood "0.2.1"]
                              [lein-kibit "0.1.2"]
