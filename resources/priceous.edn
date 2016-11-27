@@ -1,7 +1,7 @@
 ;; Properties for Priceous
 {
  :app {:name "Whisky Search"
-       :version "0.0.1"}
+       :version "0.0.3"}
 
  :server {:port 3000 }
 

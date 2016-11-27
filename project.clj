@@ -1,4 +1,4 @@
-(defproject priceous "0.1.0"
+(defproject priceous "0.0.3"
   :description "Process to monitor prices for precious items"
   :url "http://mishadoff.com" ;; TODO Domain?
   :license {:name "Eclipse Public License" ;; TODO License definition
@@ -23,6 +23,7 @@
                  
                  ;; logger
                  [com.taoensso/timbre "4.3.1"]
+                 [com.fzakaria/slf4j-timbre "0.3.2"]
                  
                  ;; solr client
                  [com.codesignals/flux "0.6.0"

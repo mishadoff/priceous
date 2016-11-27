@@ -23,6 +23,7 @@
 
 (defn- monitor-provider [state provider]
   ;; TODO fix npe
+  (log/info state)
   (try
     (let [items
           (cond
@@ -42,7 +43,9 @@
       (cond
         ;; nothing found
         (empty? items)
-        (log/warn (format "[%s] No items found" provider-name)) 
+        (do 
+          (log/warn (format "[%s] No items found" provider-name))
+          state) 
 
         :else
         (do
@@ -103,5 +106,5 @@
    })
 
 (defn gather [provider-names]
-  (log/debug provider-names)
+  (log/info provider-names)
   (monitor-all (map #(get provider-map %) provider-names)))

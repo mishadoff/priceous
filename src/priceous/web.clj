@@ -18,38 +18,37 @@
 
             [priceous.config :as config]
             [priceous.template :as t]
+            [priceous.utils :as u]
             [priceous.scheduler :as scheduler]
             [priceous.solr :as solr]
             [priceous.core :as core])
   (:import [java.util.concurrent TimeUnit])
   (:gen-class))
 
-(defn app-routes [state]
-  (compojure.core/routes 
-
+(defroutes app-routes 
+  
    (GET "/" [] (redirect "/search"))
 
-   (GET "/search" {params :params}
+   (GET "/search" {:keys [params] :as request}
         (let [query (:query params) advanced (:advanced params)]
           (if (empty? query)
             (t/search-new {:title "Whisky Search"})
             (t/search-new (merge {:title "Whisky Search"
-                                  :response (solr/query query)}
+                                  :response (solr/query query {:ip (u/get-client-ip request)})}
                                  params)))))
 
-   (GET "/stats" [] (t/stats {:title "Whisky Search :: Stats"
-                              :response (solr/stats)}))
-   (GET "/help" []  (t/help {:title "Whisky Search :: Help"}))
+   (GET "/stats" request (t/stats {:title "Whisky Search :: Stats"
+                                     :response (solr/stats {:ip (u/get-client-ip request)} )}))
+   (GET "/help" [] (t/help {:title "Whisky Search :: Help"}))
    
    (route/resources "/")
-   
-   ))
+
+   )
 
 (def app
-  (-> (config/read-properties! nil)
-      app-routes
+  (-> app-routes
       (wrap-defaults site-defaults)
-      #_(wrap-ratelimit {:limits [(ip-limit (get-in @config/properties [:ratelimit]))]})
+      (wrap-ratelimit {:limits [(ip-limit 1000)]}) ;; TODO extract
       wrap-keyword-params
       wrap-params
       wrap-session))
@@ -63,7 +62,7 @@
 ;; TODO introduce properties
 (defn -main [& args]
   (init args)
-  (log/info "Starting server...")
+  (log/info "Server started.")
   
   ;; schedule data gathering every 2 hours
   (scheduler/schedule-submit-function

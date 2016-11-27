@@ -2,6 +2,7 @@
   (:require [hiccup.core :refer :all]
             [hiccup.form :refer :all]
             [priceous.utils :as u]
+            [priceous.config :as config]
             [taoensso.timbre :as log]
             [clj-time.format :as tf]
             [hiccup.page :as page]))
@@ -173,9 +174,9 @@
    )
 
 (defn- footer [content]
-  (let [version     (get-in content [:meta :version]    "0.0.2")
+  (let [version     (get-in @config/properties [:app :version])
         build-date  (get-in content [:meta :build-date] (u/now))
-        site-name   (get-in content [:meta :name]       "Whisky Search")]
+        site-name   (get-in @config/properties [:app :name])]
     [:div {:class "footer"}
      [:div {:class "footer-left"}
       [:div {:class "footer-name"} site-name]
@@ -253,7 +254,7 @@
     [:ul {:class "help-list"}
      [:li 
       [:div
-       "Просто введите виски, который вы ищете в строку поиска, например: "
+       "Просто введите название виски, который вы ищете в строку поиска, например: "
        [:a {:href "/search?query=springbank" :class "amber"} "springbank"] ","
        [:a {:href "/search?query=glenfiddich" :class "amber"} "glenfiddich"] ","
        [:a {:href "/search?query=jameson" :class "amber"} "jameson"]]]
@@ -296,7 +297,7 @@
 
      [:li
       [:div
-       "Всегда показывается только первых 50 результатов, отсортированые от дешевых к дорогим и которые обязательно есть в наличии."]]
+       "Всегда показывается только первых 50 результатов, отсортированные от дешевых к дорогим и которые обязательно есть в наличии."]]
 
      [:li
       [:div

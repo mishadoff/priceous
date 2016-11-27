@@ -8,10 +8,13 @@
 (defn config-timbre! []
   (let [colors {:info :green :warn :yellow :error :red :fatal :purple :report :blue}]
     (log/set-config!
-      {:level :debug
+      {:level :info
        :output-fn log/default-output-fn
+
        :appenders
-       {:color-appender
+       {
+
+        :color-appender
         {:enabled?   true
          :async?     false
          :min-level  nil
@@ -22,7 +25,10 @@
                  (if-let [color (colors level)]
                    (println (log/color-str color (output-fn data)))
                    (println (output-fn data)))))}
-        :rotor-appender (rotor/rotor-appender :path "./priceous.log")  
+        
+        :rotor-appender
+        (rotor/rotor-appender {:path "./priceous.log"})
+        
         }})))
 
 (defn- props-from-resource [file]
@@ -36,7 +42,11 @@
        (catch Exception e
          (do (log/error e "Problem reading props from file") {} ))))
 
+;; to avoid inonsistent proerties we allow to read them only once
 (defn read-properties! [external-file]
-  (let [external-map (if external-file (props-from-file external-file) {})
-        internal-map (props-from-resource "priceous.edn") ]
-    (reset! properties (merge internal-map external-map))))
+  (cond @properties @properties
+        :else (do
+                (log/debug "Fill properties -> atom...")
+                (let [external-map (if external-file (props-from-file external-file) {})
+                      internal-map (props-from-resource "priceous.edn") ]
+                  (reset! properties (merge internal-map external-map))))))

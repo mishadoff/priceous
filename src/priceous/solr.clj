@@ -9,13 +9,12 @@
   (:import [org.apache.solr.client.solrj.util ClientUtils]))
 
 ;; TODO test
-(defn query [q]
+(defn query [q ctx]
   (try 
     (flux/with-connection
       (http/create
        (get-in @config/properties [:solr :host])
        (keyword (get-in @config/properties [:solr :collection])))
-      (log/debug (format "-> SolrQuery: [%s]" q))
       (let [processed-query (if (clojure.string/starts-with? q "!")
                               (subs q 1)
                               (ClientUtils/escapeQueryChars q))
@@ -27,7 +26,7 @@
                :start 0 ;; TODO paging later
                :rows 50 ;; TODO ONLY 50 RESULTS RTURNED
                :sort "price asc"}))]
-        (log/debug (format "Completed SolrQuery [%s] found %s items" q
+        (log/info (format "[%s] Completed SolrQuery [%s] found %s items" (:ip ctx) q
                            (get-in response [:response :numFound])))
         {:status :success :data response}))
     (catch Exception e
@@ -43,13 +42,13 @@
                                     (first)
                                     (:count))}) pivot)))
 
-(defn stats []
+(defn stats [ctx]
   (try 
     (flux/with-connection
       (http/create
        (get-in @config/properties [:solr :host])
        (keyword (get-in @config/properties [:solr :collection])))
-      (log/debug (format "-> StatsRequest"))
+      (log/info (format "[%s] Requested StatsRequest" (:ip ctx)))
       (let [response
             (flux/request 
              (query/create-query-request
@@ -95,7 +94,7 @@
        (get-in @config/properties [:solr :host])
        (keyword (get-in @config/properties [:solr :collection])))
       
-      (log/debug "Connections to SOLR established")
+      (log/info "Connections to SOLR established")
       
       ;; delete all documents for this provider because currently we interested
       ;; in recent items
