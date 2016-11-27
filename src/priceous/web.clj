@@ -68,7 +68,7 @@
   (scheduler/schedule-submit-function
    (fn []
      (log/info "Start scrapping..")
-     (core/gather
+     (core/scrap
       (get-in @config/properties [:scrapping :providers])))
    :delay (get-in @config/properties [:scheduler :delay])
    :value (get-in @config/properties [:scheduler :value])

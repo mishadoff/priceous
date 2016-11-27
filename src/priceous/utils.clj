@@ -98,3 +98,14 @@
   (if-let [ips (get-in req [:headers "x-forwarded-for"])]
     (-> ips (clojure.string/split #",") first)
     (:remote-addr req)))
+
+(defn elapsed-so-far [start]
+  (/ (- (System/currentTimeMillis) start) 1000.0))
+
+(defn resolve-provider-by-name [pname]
+  (try (-> (format "priceous.provider.%s/provider" pname)
+           symbol
+           resolve
+           var-get)
+       (catch Exception e
+         (log/error (format "Can not resolve provider [%s]" pname)))))

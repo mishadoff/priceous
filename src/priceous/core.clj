@@ -6,26 +6,27 @@
 
             [clojure.data.csv :as csv]
             [clojure.java.io :as io]            
-            [taoensso.timbre :as log]
-            
-            ;; providers
-            [priceous.provider.goodwine :as gw]
-            [priceous.provider.winetime :as winetime]
-            [priceous.provider.rozetka :as rozetka]
-            [priceous.provider.fozzy :as fozzy]
-            [priceous.provider.metro :as metro]
-            [priceous.provider.novus :as novus]
-            [priceous.provider.auchan :as auchan]
-            [priceous.provider.megamarket :as megamarket]
-            [priceous.provider.elitochka :as elitochka]
-            )
+            [taoensso.timbre :as log])
   (:gen-class))
 
-(defn- monitor-provider [state provider]
-  ;; TODO fix npe
-  (log/info state)
+
+(defn- scrap-provider
+  "Scrap data from specific provider and return results in a state object
+
+  Input:
+   * state - previous state of scrapping, like {:total 1023}
+   * provider - valid provider for scrapping
+
+  Output:
+   * state - accumulated scrapped results from current scrapping and previous state
+     (Example: {:total 1455})
+
+  "
+  [state provider]
   (try
     (let [items
+
+          ;; TODO this logic should be moved to flow ns
           (cond
             (:category provider)
             (let [cat-fn (get-in provider [:functions :categories])
@@ -41,70 +42,45 @@
 
           provider-name (get-in provider [:info :name])]
       (cond
-        ;; nothing found
+        ;; nothing found, return previous state
         (empty? items)
-        (do 
+        (do
           (log/warn (format "[%s] No items found" provider-name))
-          state) 
+          state)
 
         :else
         (do
           (log/info (format "[%s] Found %s items" provider-name (count items)))
 
-          ;; solr appender
-          (solr/write provider items)        
+          ;; TODO externalize APPENDER
+          (solr/write provider items)
 
-          ;; return state as it will be caried to the next
           (update-in state [:total] + (count items)))))
     (catch Exception e
       (log/error e)
-      ;; something bad happened do not update state atom
       state)))
 
-(defn monitor-all [providers]
+
+;; PUBLIC
+
+(defn scrap
+  "Scrap data for all providers sequentially
+
+  Input: list of provider names which will be resolved
+         from their namespaces
+  "
+  [provider-names]
   (try
-    (let [start (System/currentTimeMillis)]
-      (log/info "Start monitoring prices")
-      
-      ;; process each provider
-      (let [final-state
-            (reduce
-             ;; sequentially monitor each provider
-             (fn [acc provider]
-               (monitor-provider acc provider))
-             ;; initial state
-             {:total 0}
-             providers)]
-        
-        (log/info (format "Succecfully processed %s items in %s seconds"
-                          (or (:total final-state) 0)
-                          (/ (- (System/currentTimeMillis) start) 1000.0)))))
-    
+    (log/info "Start monitoring prices for providers " provider-names)
+    (let [start (System/currentTimeMillis)
+          providers (->> (map u/resolve-provider-by-name provider-names)
+                         (remove nil?))
+          final-state (reduce (fn [acc provider] (scrap-provider acc provider))
+                              {:total 0}
+                              providers)]
+      (log/info (format "Succesfully processed %s items in %s seconds"
+                        (:total final-state)
+                        (u/elapsed-so-far start))))
     (catch Exception e
-      (log/error "Processing failed")
-      (log/error e))
-    
-    ))
-
-(def provider-map
-  {
-   "metro"          metro/provider
-   "auchan"         auchan/provider
-   "novus"          novus/provider
-   "fozzy"          fozzy/provider
-   "goodwine"       gw/provider  
-   "rozetka"        rozetka/provider
-   "megamarket"     megamarket/provider
-   "elitochka"      elitochka/provider
-   "winetime"       winetime/provider
-   ;; "polyana"
-   ;; "vintagemarket"
-   ;; "silpo?"
-   ;; "elit-alco"
-   ;; "alcovegas"
-   
-   })
-
-(defn gather [provider-names]
-  (log/info provider-names)
-  (monitor-all (map #(get provider-map %) provider-names)))
+      (log/error "Scrapping failed")
+      (log/error e))))
