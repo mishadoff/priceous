@@ -3,12 +3,15 @@
             [priceous.utils :as u]
             [priceous.config :as config]
             [priceous.flow :as flow]
-
+            
             [clojure.data.csv :as csv]
             [clojure.java.io :as io]            
-            [taoensso.timbre :as log])
+            [taoensso.timbre :as log]
+            )
   (:gen-class))
 
+;; scan folder priceous.provider.* and include all namespaces
+(u/require-all-providers)
 
 (defn- scrap-provider
   "Scrap data from specific provider and return results in a state object
@@ -80,7 +83,8 @@
                               providers)]
       (log/info (format "Succesfully processed %s items in %s seconds"
                         (:total final-state)
-                        (u/elapsed-so-far start))))
+                        (u/elapsed-so-far start)))
+      final-state)
     (catch Exception e
       (log/error "Scrapping failed")
       (log/error e))))

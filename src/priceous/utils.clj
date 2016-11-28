@@ -2,7 +2,9 @@
   (:require [clj-time.coerce :as tc]
             [clj-time.format :as tf]
             [taoensso.timbre :as log]
-            [net.cgrand.enlive-html :as html]))
+            [net.cgrand.enlive-html :as html]
+            [clojure.tools.namespace :as cns]
+            ))
 
 (declare
  die                    ;; TESTED, TODO: move to ex ns
@@ -109,3 +111,10 @@
            var-get)
        (catch Exception e
          (log/error (format "Can not resolve provider [%s]" pname)))))
+
+(defn require-all-providers []
+  ;; Require all namespaces in priceous.provider.* folder
+  (let [symbols (->> (cns/find-namespaces-on-classpath)
+                     (filter (fn [sym] (clojure.string/starts-with? (str sym) "priceous.provider."))))]
+    (doseq [provider-ns symbols]
+      (require provider-ns))))

@@ -3,7 +3,8 @@
             [taoensso.timbre :as log]
             [priceous.flow :as flow]
             [priceous.utils :as u]
-            [priceous.selector-utils :as su]))
+            [priceous.selector-utils :as su]
+            ))
 
 (defn- next-page? [provider page]
   (let [last-page 

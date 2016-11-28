@@ -1,9 +1,11 @@
 (ns priceous.web
-  (:require [compojure.core :refer [defroutes GET POST]]
+  (:require [compojure.core :refer [defroutes routes context GET POST]]
             [compojure.route :as route]
             [compojure.handler :as handler]
             [ring.adapter.jetty :as ring]
-            [ring.util.response :refer [redirect]]
+            [ring.util.response :refer [redirect response]]
+            [ring.middleware.json
+             :refer [wrap-json-response wrap-json-body]]
 
             [ring.middleware.defaults
              :refer [wrap-defaults site-defaults]]
@@ -25,7 +27,7 @@
   (:import [java.util.concurrent TimeUnit])
   (:gen-class))
 
-(defroutes app-routes 
+(defroutes webapp-routes 
   
    (GET "/" [] (redirect "/search"))
 
@@ -38,20 +40,32 @@
                                  params)))))
 
    (GET "/stats" request (t/stats {:title "Whisky Search :: Stats"
-                                     :response (solr/stats {:ip (u/get-client-ip request)} )}))
+                                   :response (solr/stats {:ip (u/get-client-ip request)} )}))
    (GET "/help" [] (t/help {:title "Whisky Search :: Help"}))
    
    (route/resources "/")
-
+   (route/not-found "<h1>Invalid page</h1>")
+   
    )
 
-(def app
-  (-> app-routes
+(defroutes api-routes
+  (context "/api" []
+           (GET "/" request
+                (response [{:op "ip"}]))))
+
+(def api
+  (-> (handler/api api-routes)
+      wrap-json-response))
+
+(def webapp
+  (-> webapp-routes
       (wrap-defaults site-defaults)
       (wrap-ratelimit {:limits [(ip-limit 1000)]}) ;; TODO extract
       wrap-keyword-params
       wrap-params
       wrap-session))
+
+(def app (routes webapp api))
 
 (defn init
   ([] (init nil))

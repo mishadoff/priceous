@@ -5,9 +5,13 @@
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [[org.clojure/clojure "1.9.0-alpha3"]
 
+                 ;; Instrumenting and dynamic providers loading 
+                 [org.clojure/tools.namespace "0.2.11"]
+
                  ;; server and middleware
                  [ring "1.4.0"]
                  [ring/ring-defaults "0.1.5"]
+                 [ring/ring-json "0.4.0"]
 
                  ;; routing
                  [compojure "1.4.0"]
