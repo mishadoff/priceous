@@ -26,39 +26,25 @@
   "
   [state provider]
   (try
-    (let [items
-
-          ;; TODO this logic should be moved to flow ns
-          (cond
-            (:category provider)
-            (let [cat-fn (get-in provider [:functions :categories])
-                  cats (cat-fn provider)]
-              (->> (map (fn [[cat-name cat-url]]
-                          (-> provider
-                              (assoc-in [:state :page-template] cat-url)
-                              (assoc-in [:state :category] cat-name))) cats)
-                   (map flow/process)
-                   (apply concat)))
-            
-            :else (flow/process provider))
-
-          provider-name (get-in provider [:info :name])]
+    (let [items (flow/process provider)
+          pname (get-in provider [:info :name])]
       (cond
         ;; nothing found, return previous state
         (empty? items)
         (do
-          (log/warn (format "[%s] No items found" provider-name))
+          (log/warn (format "[%s] No items found" pname))
           state)
 
+        ;; data found, add to solr
         :else
         (do
-          (log/info (format "[%s] Found %s items" provider-name (count items)))
-
+          (log/info (format "[%s] Found %s items" pname (count items)))
           ;; TODO externalize APPENDER
           (solr/write provider items)
-
           (update-in state [:total] + (count items)))))
     (catch Exception e
+      (log/error (format "[%s] ProviderError"
+                         (get-in provider [:info :name])))
       (log/error e)
       state)))
 

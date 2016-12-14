@@ -86,6 +86,7 @@
                   [(keyword (subs (clojure.string/replace (str k) "-" "_") 1))
                    v]) m)))
 
+
 (defn write [provider items]
   (log/info "Write data to solr")
   (try

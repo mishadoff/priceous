@@ -3,11 +3,23 @@
             [taoensso.timbre :as log]
             [priceous.flow :as flow]
             [priceous.utils :as u]
+            [priceous.provider :as p]
             [priceous.selector-utils :as su]
-            ))
+            )
+  (:import [java.util.concurrent ExecutorService Executors Callable]))
 
-(defn- next-page? [provider page]
-  (let [last-page 
+(def ^ExecutorService pool (Executors/newFixedThreadPool 10))
+(defn future-in-the-pool [^ExecutorService pool ^Callable fun]
+  (.submit pool fun))
+
+
+(defn- get-categories [provider]
+  [["Виски" "http://goodwine.com.ua/viski.html?dir=asc&p=%s"]
+   ["Другие Крепкие" "http://goodwine.com.ua/drugie-krepkie.html?dir=asc&p=%s"]])
+
+;; TODO revisit
+(defn- last-page [provider page]
+  (let [last-page-num 
         (some->> (su/select-mul-req page provider
                                     [:.paginator [:a (html/attr-has :href)]])
                  (map html/text)
@@ -16,12 +28,7 @@
                  (sort)
                  (last)
                  (int))]
-    ;; default page is 1
-    (< (get-in provider [:state :page-current])
-       (or last-page 1))))
-  
-(def ^{:private true} page->urls
-  (su/generic-page-urls [:.catalogListBlock [:a :.title]]))
+    (or last-page-num 1)))
 
 (defn- url->document
   "Read html resource from URL and transforms it to the document"  
@@ -90,19 +97,51 @@
                                     (u/smart-parse-double)))
      :sale-description        nil
      :sale                    false
-
      })))
 
+(defn page->docs
+  "provider -> [new-provider docs]"
+  ;; TODO make parallel
+  [provider]
 
-(defn get-categories [provider]
-  [["Виски" "http://goodwine.com.ua/viski.html?dir=asc&p=%s"]
-   ;; Not enabled yet
-   ["Другие Крепкие" "http://goodwine.com.ua/drugie-krepkie.html?dir=asc&p=%s"]])
+  ;; fetch the page
+  (let [page (u/fetch (p/current-page provider))]
+    (->>
+     page
+
+     ;; get all urls for current page
+     (#((su/generic-page-urls [:.catalogListBlock [:a :.title]]) provider %))
+
+     ;; convert each url into document // parallel
+     (map #(future-in-the-pool
+            pool
+            (cast Callable (fn [] (url->document provider %)))))
+
+     (map #(.get %))
+     ;; make prototype for returning structure
+     ((fn [docs] {:provider provider :docs (into [] docs)}))
+
+     ;; update provider stats
+     (#(update-in % [:provider :state :page-current] inc))
+     (#(update-in % [:provider :state :page-processed] inc))
+
+     ;; if limit reached set done
+     (#(if (>= (get-in % [:provider :state :page-processed])
+               (get-in % [:provider :state :page-limit]))
+         (assoc-in % [:provider :state :done] true)
+         %))
+
+     ;; if current page > last page
+     (#(if (> (get-in % [:provider :state :page-current])
+              (last-page % page))
+         (assoc-in % [:provider :state :done] true)
+         %))
+     )))  
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;  PROVIDER  ;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 
 (def provider
   {
@@ -119,23 +158,15 @@
    :state {
            :page-current   1
            :page-processed 0
-           :page-template "http://goodwine.com.ua/viski.html?p=%s"
+           :page-template  "http://goodwine.com.ua/viski.html?p=%s"
+           :category       :no-category
            :page-limit     Integer/MAX_VALUE
            :done           false
            }
 
-   ;; fetch strategy defines how we will fetch results
-   :fetch-strategy :heavy
-   :category true
-   
-   :functions {
-               :url->document url->document
-               :page->urls    page->urls
-               :last-page?    next-page?
-
-               :categories    get-categories ;; return name [tempalte]
+   :functions {                         
+               :page->docs    page->docs          ;; [provider docs]
+               :categories    get-categories      ;; [[cat template]]
                }
-
-   ;;:skip {:url #{"http://goodwine.com.ua/armagnac/p53825/" "http://goodwine.com.ua/sambuca/p45499/"}}
    
    })

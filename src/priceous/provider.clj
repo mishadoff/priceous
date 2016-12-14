@@ -7,6 +7,10 @@
 
 ;;; Getters
 
+(defn current-page [provider]
+  (format (get-in provider [:state :page-template])
+          (get-in provider [:state :page-current])))
+
 (defn get-page-template
   "Retrieves page-template from provider"
   [provider]
