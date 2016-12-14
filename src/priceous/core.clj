@@ -3,7 +3,6 @@
             [priceous.utils :as u]
             [priceous.config :as config]
             [priceous.flow :as flow]
-            
             [clojure.data.csv :as csv]
             [clojure.java.io :as io]            
             [taoensso.timbre :as log]
@@ -63,14 +62,16 @@
       (log/error e)
       state)))
 
-
 ;; PUBLIC
 
 (defn scrap
   "Scrap data for all providers sequentially
-
+  
   Input: list of provider names which will be resolved
          from their namespaces
+
+  e.g. [rozetka, goodwine, winetime]
+  
   "
   [provider-names]
   (try

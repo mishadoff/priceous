@@ -1,13 +1,13 @@
 (defproject priceous "0.0.3"
   :description "Process to monitor prices for precious items"
-  :url "http://mishadoff.com" ;; TODO Domain?
-  :license {:name "Eclipse Public License" ;; TODO License definition
+  :url "http://priceous.mishadoff.com"
+  :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
-  :dependencies [[org.clojure/clojure "1.9.0-alpha3"]
+  :dependencies [[org.clojure/clojure "1.8.0"]
 
                  ;; Instrumenting and dynamic providers loading 
                  [org.clojure/tools.namespace "0.2.11"]
-
+                 
                  ;; server and middleware
                  [ring "1.4.0"]
                  [ring/ring-defaults "0.1.5"]
@@ -19,14 +19,14 @@
                  ;; templating
                  [hiccup "1.0.5"]
 
-                 ;; for crawling
+                 ;; for api based scrapping
                  [clj-http "2.0.0"]
                  
-                 ;; enlive for selector based scrapping
+                 ;; for selector based scrapping
                  [enlive "1.1.6"]
                  
                  ;; logger
-                 [com.taoensso/timbre "4.3.1"]
+                 [com.taoensso/timbre "4.7.4"]
                  [com.fzakaria/slf4j-timbre "0.3.2"]
                  
                  ;; solr client
@@ -42,9 +42,11 @@
                  ;; json is a must
                  [cheshire "5.6.3"]
 
-                 ;; Rate limiter
+                 ;; Rate limiter per IP / revisit
                  [ring-ratelimit "0.2.2"]
-                 
+
+                 ;; under dmi3iy influence
+                 [org.clojure/test.check "0.9.0"]
                  ]
   :plugins [[lein-ring "0.9.7"]]
   :ring {:handler priceous.web/app
@@ -55,6 +57,8 @@
                              [lein-bikeshed "0.2.0"]
                              [lein-cloverage "1.0.6"]]}}
 
+  ;; no opts for now
+  :jvm-opts []
   
   :aot  [priceous.web]
   :main priceous.web

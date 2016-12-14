@@ -1,33 +1,33 @@
 (ns priceous.utils-test
   (:require [priceous.utils :refer :all]
-            [clojure.test :refer :all]))
+            [clojure.test :refer :all]
+            [clojure.test.check :as tc]
+            [clojure.test.check.generators :as gen]
+            [clojure.test.check.properties :as prop]
+            [clojure.test.check.clojure-test :refer [defspec]]
+            ))
 
-(deftest die-test
-  (testing "Errors thrown" 
-    (is (thrown? IllegalArgumentException (die "Clojure Error")))
-    (is (thrown? AssertionError (die nil))))
+;; make sure debug does not corrupt messages
+(defspec debug--equal-property-test 
+  (prop/for-all [e gen/simple-type] (= e (debug e))))
 
-  (testing "Messages are available in exception"
-    (let [message "Error message which should be available in ex"]
-      (try
-        (die message)
-        (is false) ;; should not enter to this
-        (catch IllegalArgumentException e
-          (is (= message (.getMessage e))))))))
 
-(deftest debug-test
-  (testing "Do not corrupt input"
-    (let [e "Test object for debug"]
-      (is (= e (debug e))))))
+;; Does not work :(
+;;
+;; (defspec die--exception-created-and-contains-message
+;;   (prop/for-all [message gen/string]
+;;                 (try (falsy (die message))
+;;                      (catch IllegalArgumentException ex
+;;                        (.contains (.getMessage ex) message)))))
 
-(deftest now-test
-  (testing "Just check what we can check"
-    (is (string? (now)))))
+(defspec now--looks-like-a-valid-string 
+  (prop/for-all [e (gen/elements [(now)])]
+                (and (string? e) (= 20 (count e))
+                     (.contains e "T") (.contains e "Z"))))
 
 (deftest to-date-test
   (testing "Conversion works"
-    (is (= "2016-06-08T12:26:17Z"
-           (to-date 1465388777222)))))
+    (is (= "2016-06-08T12:26:17Z" (to-date 1465388777222)))))
 
 (deftest fetch-test
   (testing "Hopefully google.com is not down"
@@ -78,9 +78,32 @@
   ;; no-args
   (is (false? ((falsy))))
   ;; one arg
-  (is (false? ((falsy) "soem arg")))
+  (is (false? ((falsy) "some arg")))
   ;; var args
   (is (false? ((falsy) 1 2 3 nil nil :some "ARGS"))))
 
+(deftest truthy-test
+  ;; no-args
+  (is (true? ((truthy))))
+  ;; one arg
+  (is (true? ((truthy) "some arg")))
+  ;; var args
+  (is (true? ((truthy) 1 2 3 nil nil :some "ARGS"))))
 
+(deftest get-client-ip-test
+  (is (= "10.2.1.1" (get-client-ip {:headers {"x-forwarded-for" "10.2.1.1"}})))
+  (is (= "10.2.1.1" (get-client-ip {:headers {"x-forwarded-for" "10.2.1.1,10.2.1.2"}})))
+  )
 
+(defspec elapsed-so-far--time-is-greater-than-passed
+  5 ;; run only 5 tests so far
+  (prop/for-all [pause (gen/choose 10 1000)]
+                (do
+                  (Thread/sleep pause)
+                  (> (elapsed-so-far pause) (/ pause 1000.0)))))
+
+(deftest full-href-test
+  (is (= "a/b" (full-href {:info {:base-url "a"}} "b")))
+  (is (= "a/b" (full-href {:info {:base-url "a/"}} "b")))
+  (is (= "a/b" (full-href {:info {:base-url "a"}} "/b")))
+  (is (= "a/b" (full-href {:info {:base-url "a/"}} "/b"))))
