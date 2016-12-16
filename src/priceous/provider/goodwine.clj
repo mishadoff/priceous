@@ -4,66 +4,39 @@
             [priceous.flow :as flow]
             [priceous.utils :as u]
             [priceous.provider :as p]
-            [priceous.selector-utils :as su]
-            )
-  (:import [java.util.concurrent ExecutorService Executors Callable]))
-
-(def ^ExecutorService pool (Executors/newFixedThreadPool 10))
-(defn future-in-the-pool [^ExecutorService pool ^Callable fun]
-  (.submit pool fun))
-
+            [priceous.selector-utils :as su]))
 
 (defn- get-categories [provider]
   [["Виски" "http://goodwine.com.ua/viski.html?dir=asc&p=%s"]
    ["Другие Крепкие" "http://goodwine.com.ua/drugie-krepkie.html?dir=asc&p=%s"]])
 
-;; TODO revisit
-(defn- last-page [provider page]
-  (let [last-page-num 
-        (some->> (su/select-mul-req page provider
-                                    [:.paginator [:a (html/attr-has :href)]])
-                 (map html/text)
-                 (remove #{"»" "..."})
-                 (map u/smart-parse-double)
-                 (sort)
-                 (last)
-                 (int))]
-    (or last-page-num 1)))
-
-(defn- url->document
+(defn- node->document
   "Read html resource from URL and transforms it to the document"  
-  [provider url]
-  #_(log/debug "Document from URL: " url)
-  (if ((get-in provider [:skip :url] #{}) url)
-    (do (log/warn "Skipping URL: " url) nil)
-    (let [page (u/fetch url) ;; retrieve the page
-          q+ (fn [selector]
-               (su/select-one-req page provider selector))
-          q* (fn [selector]
-               (su/select-mul-req page provider selector))
-          remove-h2-node
-          (fn [node]
-            ;; remove h2.innerTitleProd from content
-            (assoc node :content (remove #(and map?
-                                               (= (get % :tag) :h2)
-                                               (= (get-in % [:attrs :class] "innerTitleProd")))
-                                         (:content node))))
-          ;; some handy local aliases
-          prop (su/property-fn provider page)
-          text (su/text-fn prop)
-          spec-left (su/build-spec-map
-                     provider page
-                     [:.i-colLeft :.innerDiv [:h2 :.innerTitleProd]]
-                     [:.i-colLeft :.innerDiv]
-                     :vals-post-fn remove-h2-node)
-          spec-right (su/build-spec-map
-                      provider page
-                      [:.i-colRight :.innerDiv [:h2 :.innerTitleProd]]
-                      [:.i-colRight :.innerDiv]
-                      :vals-post-fn remove-h2-node)
-          spec (merge spec-left spec-right)
-          available (empty? (su/select-one-opt page provider [:.notAvailableBlock]))
-          ]
+  [provider page]
+  (let [q+ (fn [selector] (su/select-one-req page provider selector))
+        q* (fn [selector] (su/select-mul-req page provider selector))
+        remove-h2-node
+        (fn [node]
+          ;; remove h2.innerTitleProd from content
+          (assoc node :content (remove #(and map?
+                                             (= (get % :tag) :h2)
+                                             (= (get-in % [:attrs :class] "innerTitleProd")))
+                                       (:content node))))
+        ;; some handy local aliases
+        prop (su/property-fn provider page)
+        text (su/text-fn prop)
+        spec-left (su/build-spec-map
+                   provider page
+                   [:.i-colLeft :.innerDiv [:h2 :.innerTitleProd]]
+                   [:.i-colLeft :.innerDiv]
+                   :vals-post-fn remove-h2-node)
+        spec-right (su/build-spec-map
+                    provider page
+                    [:.i-colRight :.innerDiv [:h2 :.innerTitleProd]]
+                    [:.i-colRight :.innerDiv]
+                    :vals-post-fn remove-h2-node)
+        spec (merge spec-left spec-right)
+        available (empty? (su/select-one-opt page provider [:.notAvailableBlock]))]
     {
      ;; provider specific options
      :provider                (get-in provider [:info :name])
@@ -74,7 +47,7 @@
      
      ;; document
      :name                    (text [:.titleProd])
-     :link                    url
+     :link                    (get-in provider [:info :base-url]) ;; TODO fix
      :image                   (-> (q+ [:.imageDetailProd [:img :#mag-thumb]])
                                   (get-in [:attrs :src]))
      :country                 (spec "география")
@@ -97,47 +70,7 @@
                                     (u/smart-parse-double)))
      :sale-description        nil
      :sale                    false
-     })))
-
-(defn page->docs
-  "provider -> [new-provider docs]"
-  ;; TODO make parallel
-  [provider]
-
-  ;; fetch the page
-  (let [page (u/fetch (p/current-page provider))]
-    (->>
-     page
-
-     ;; get all urls for current page
-     (#((su/generic-page-urls [:.catalogListBlock [:a :.title]]) provider %))
-
-     ;; convert each url into document // parallel
-     (map #(future-in-the-pool
-            pool
-            (cast Callable (fn [] (url->document provider %)))))
-
-     (map #(.get %))
-     ;; make prototype for returning structure
-     ((fn [docs] {:provider provider :docs (into [] docs)}))
-
-     ;; update provider stats
-     (#(update-in % [:provider :state :page-current] inc))
-     (#(update-in % [:provider :state :page-processed] inc))
-
-     ;; if limit reached set done
-     (#(if (>= (get-in % [:provider :state :page-processed])
-               (get-in % [:provider :state :page-limit]))
-         (assoc-in % [:provider :state :done] true)
-         %))
-
-     ;; if current page > last page
-     (#(if (> (get-in % [:provider :state :page-current])
-              (last-page % page))
-         (assoc-in % [:provider :state :done] true)
-         %))
-     )))  
-
+     }))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;  PROVIDER  ;;;;;;;;
@@ -164,9 +97,12 @@
            :done           false
            }
 
-   :functions {                         
-               :page->docs    page->docs          ;; [provider docs]
-               :categories    get-categories      ;; [[cat template]]
-               }
-   
+   :configuration {
+                   :categories-fn      get-categories
+                   :parallel-count     10
+                   :strategy           :heavy
+                   :node->document     node->document
+                   :url-selector       [:.catalogListBlock [:a :.title]]
+                   :last-page-selector [:.paginator [:a (html/attr-has :href)]]
+                   }
    })

@@ -1,62 +1,16 @@
-(ns priceous.flow
-  (:require [taoensso.timbre :as log]
+(ns priceous.provider-helper
+  (:require [priceous.selector-utils :as su]
             [priceous.utils :as u]
-            [priceous.selector-utils :as su]
             [priceous.provider :as p]
-            [net.cgrand.enlive-html :as html])
+            [taoensso.timbre :as log]
+            [net.cgrand.enlive-html :as html]
+            )
   (:import [java.util.concurrent ExecutorService Executors Callable]))
 
-(def ^ExecutorService pool (Executors/newFixedThreadPool 10))
-(defn future-in-the-pool [^ExecutorService pool ^Callable fun]
-  (.submit pool fun))
-
-(declare
- process
- process-for-category
- create-page->docs-fn)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(defn process [provider]
-  (->> ((p/category-function provider) provider)         ;; retrieve categories
-       (u/debug)
-       (map (partial p/provider-with-category provider)) ;; modify provider
-       (u/debug)
-       (map process-for-category)                        ;; process for category
-       (u/debug)
-       (apply concat)))                                  ;; merge results
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-;; TODO how to rewrite it in more idiomatic way?
-;; TODO timeout for category?
-(defn- process-for-category [provider]
-  (let [page->docs (create-page->docs-fn (:conf provider))]
-    (loop [p provider docs []]
-      (log/debug p)
-      (cond
-        (p/done? p)
-        (do
-          (log/info (format "[%s | %s] Category processed. Found %s items"
-                            (get-in p [:info :name])
-                            (get-in p [:state :category])
-                            (count docs)))
-          docs)
-
-        ;; not finished processing
-        :else
-        (do
-          (log/info (format "[%s | %s] Processing page %s"
-                            (get-in p [:info :name])
-                            (get-in p [:state :category])
-                            (get-in p [:state :page-current])))
-          ;; TODO validate function return results
-          (let [result (page->docs p)]
-            (recur (:provider result) (into docs (:docs result)))))))))
 
 
 
-(defn- create-page->docs-fn
+(defn create-page->docs-fn
   "Accept configuration and returns function which
   can return all documents for the given provider
   Note: this function should return map with a new state of
@@ -137,7 +91,8 @@
          
          ;; if current page > last page
          (#(if (> (get-in % [:provider :state :page-current])
-                  ((su/create-last-page-fn last-page-selector) % page))
+                  ((create-last-page-fn last-page-selector) % page))
              (assoc-in % [:provider :state :done] true)
              %))         
          )))))
+

@@ -11,6 +11,15 @@
   (format (get-in provider [:state :page-template])
           (get-in provider [:state :page-current])))
 
+(defn category-function [provider]
+  (get-in provider [:functions :categories]
+          (fn [p] [["Без категории" (get-in p [:state :page-template])]])))
+
+(defn provider-with-category [provider [cat-name cat-url :as category]]
+  (-> provider
+      (assoc-in [:state :page-template] cat-url)
+      (assoc-in [:state :category] cat-name)))
+
 (defn get-page-template
   "Retrieves page-template from provider"
   [provider]

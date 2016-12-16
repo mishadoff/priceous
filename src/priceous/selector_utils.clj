@@ -178,3 +178,18 @@
 (defn select-mul-opt [node provider selector]
   ((select-common :required false :count-strategy :multiple)
    node selector provider))
+
+(defn create-last-page-fn [selector]
+  "Create closure on selector and return fn [provider page] -> int
+   which return last page of the current provider or category
+   If failed, returns 1 as a last page"
+  (fn [provider page]
+    (let [last-page-num 
+          (some->> (select-mul-req page provider selector)
+                   (map html/text)
+                   (remove #{"»" "..."})
+                   (map u/smart-parse-double)
+                   (sort)
+                   (last)
+                   (int))]
+      (or last-page-num 1))))

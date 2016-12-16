@@ -81,6 +81,8 @@
   ;; schedule data gathering every 2 hours
   (scheduler/schedule-submit-function
    (fn []
+     ;; sleep 3 seconds just because
+     (Thread/sleep 3000)
      (log/info "Start scrapping..")
      (core/scrap
       (get-in @config/properties [:scrapping :providers])))
