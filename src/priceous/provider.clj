@@ -12,7 +12,7 @@
           (get-in provider [:state :page-current])))
 
 (defn category-function [provider]
-  (get-in provider [:functions :categories]
+  (get-in provider [:configuration :categories-fn]
           (fn [p] [["Без категории" (get-in p [:state :page-template])]])))
 
 (defn provider-with-category [provider [cat-name cat-url :as category]]

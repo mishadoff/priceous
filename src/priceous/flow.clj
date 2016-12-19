@@ -31,9 +31,8 @@
 ;; TODO how to rewrite it in more idiomatic way?
 ;; TODO timeout for category?
 (defn- process-for-category [provider]
-  (let [page->docs (create-page->docs-fn (:conf provider))]
+  (let [page->docs (create-page->docs-fn (:configuration provider))]
     (loop [p provider docs []]
-      (log/debug p)
       (cond
         (p/done? p)
         (do
@@ -94,34 +93,36 @@
     (fn [provider]
       ;; fetch the page
       (let [page (u/fetch (p/current-page provider))]
-        (->> 
-         page
+        (->> page
+             ;; get all urls/nodes for current page
+             ((fn [page]
+                (condp = strategy
+                  :heavy ((su/generic-page-urls url-selector) provider page)
+                  :light (u/die "Not implemented")
+                  :api (u/die "Not implemented")
+                  (u/die "Invalid strategy")
+                  )))
 
-         ;; get all urls/nodes for current page
-         (fn [page]
-           (condp = strategy
-             :heavy ((su/generic-page-urls url-selector) provider page)
-             :light (u/die "Not implemented")
-             :api (u/die "Not implemented")
-             (u/die "Invalid strategy")
-             ))
+             #_(seq)
 
-         ;; fetch all pages by url OR do nothing
-         (fn [urls-or-nodes]
-           (condp = strategy
-             :heavy (-> urls-or-nodes
-                        ;; fetch all urls in parallel
-                        (map #(future-in-the-pool pool (cast Callable (fn [] (u/fetch %)))))
-                        (map #(.get %)))
-             urls-or-nodes))
-         
+             ;; fetch all pages by url OR do nothing
+             ((fn [urls-or-nodes]
+                (condp = strategy
+                  :heavy (->> urls-or-nodes
+                              ;; fetch all urls in parallel
+                              (map (fn [url]
+                                     (future-in-the-pool pool (cast Callable (fn [] (u/fetch url))))))
+                              
+                              (map #(.get %)))
+                  urls-or-nodes)))
+
          ;; Here is the thing:
          ;; at this point we have either list of nodes OR list of pages
          ;; each of node/page represents one document
          ;; good thing, we can process node/page with the same api
          ;; TODO: maybe we need to process documents in parallel as well?
 
-         (map (partial node->document provider))
+             (map (partial node->document provider))
          
          ((fn [docs] {:provider provider :docs (into [] docs)}))
          
@@ -139,5 +140,5 @@
          (#(if (> (get-in % [:provider :state :page-current])
                   ((su/create-last-page-fn last-page-selector) % page))
              (assoc-in % [:provider :state :done] true)
-             %))         
+             %))
          )))))

@@ -27,6 +27,10 @@
 
 (defn debug [e] (log/debug e) e)
 
+(defn debug-lens [e f]
+  (log/debug "\tDEBUGGING LENS\t" (f e))
+  e)
+
 (defn now [] (to-date (System/currentTimeMillis)))
 
 (defn now-dt [] (tc/from-long (System/currentTimeMillis)))
