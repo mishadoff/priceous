@@ -15,6 +15,6 @@
  ;; FIXME: does not work
  :ratelimit 1000 ;; number of requests / per IP / per hour
  
- :scrapping {:providers ["goodwine"]}
+ :scrapping {:providers ["megamarket" "goodwine"]}
 
  }

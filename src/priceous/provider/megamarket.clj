@@ -3,17 +3,21 @@
             [priceous.utils :as u]
             [priceous.selector-utils :as su]))
 
-;; we request all data at once
-(defn last-page [provider page] 1)
-
-(defn page->nodes [provider page]
-  (su/select-mul-req page provider [:.product]))
+;; FIXME (do not request all data at once)
+(defn get-categories [provider]
+  [["Бальзам" "https://megamarket.ua/catalogue/category/1010?show=48000&page=%s"]
+   ["Виски" "https://megamarket.ua/catalogue/category/1020?show=48000&page=%s"]
+   ["Вермут" "https://megamarket.ua/catalogue/category/1030?show=48000&page=%s"]
+   ["Водка" "https://megamarket.ua/catalogue/category/1050?show=48000&page=%s"]
+   ["Джин" "https://megamarket.ua/catalogue/category/1060?show=48000&page=%s"]
+   ["Коньяк" "https://megamarket.ua/catalogue/category/1070?show=48000&page=%s"]
+   ["Ликеры" "https://megamarket.ua/catalogue/category/1080?show=48000&page=%s"]
+   ["Ром" "https://megamarket.ua/catalogue/category/1100?show=48000&page=%s"]])
 
 (defn node->document
   "Transform item html snippet (node) into document"  
-  [provider node]
-  (let [page node
-        ;; some handy local aliases
+  [provider page ctx]
+  (let [;; some handy local aliases
         prop (su/property-fn provider page)
         text (su/text-fn prop)
         sale-price (-> (text [:.price.old-price])
@@ -48,16 +52,14 @@
 
 
 (defn get-categories [provider]
-  [
-   ["Бальзам" "https://megamarket.ua/catalogue/category/1010?show=48000&page=%s"]
+  [["Бальзам" "https://megamarket.ua/catalogue/category/1010?show=48000&page=%s"]
    ["Виски" "https://megamarket.ua/catalogue/category/1020?show=48000&page=%s"]
    ["Вермут" "https://megamarket.ua/catalogue/category/1030?show=48000&page=%s"]
    ["Водка" "https://megamarket.ua/catalogue/category/1050?show=48000&page=%s"]
    ["Джин" "https://megamarket.ua/catalogue/category/1060?show=48000&page=%s"]
    ["Коньяк" "https://megamarket.ua/catalogue/category/1070?show=48000&page=%s"]
    ["Ликеры" "https://megamarket.ua/catalogue/category/1080?show=48000&page=%s"]
-   ["Ром" "https://megamarket.ua/catalogue/category/1100?show=48000&page=%s"]
-   ])
+   ["Ром" "https://megamarket.ua/catalogue/category/1100?show=48000&page=%s"]])
 
 
 ;;; Provider Info
@@ -71,21 +73,22 @@
           :icon-height "34"
           }
 
-   :state {:page-current   1
+   :state {
+           :page-current   1
            :page-processed 0
            :page-template "https://megamarket.ua/catalogue?page=%s"
+           :category       :no-category
            :page-limit     Integer/MAX_VALUE
            :done           false
            }
 
-   :fetch-strategy :light
-   :category true
-   
-   :functions {
-               :node->document node->document
-               :page->nodes page->nodes
-               :last-page last-page
-               :categories    get-categories
-               }
+   :configuration {
+                   :categories-fn       get-categories
+                   :parallel-count      1
+                   :strategy            :light
+                   :node->document      node->document
+                   :node-selector       [:.product]
+                   :last-page-selector  :one-page
+                   }
    
    })
