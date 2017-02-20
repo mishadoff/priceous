@@ -108,9 +108,12 @@
                 (< (get-in provider [:state :page-current]) p)))
              ))))
 
+;; node-selector, url-selector
 (defn generic-page-urls
   "Return a function (fn [provider page])
-  which return all links from the page.
+  which return all links from the page and
+  context in which they were found
+
   Selector should return path to <a> tag"
   [selector]
   (fn [provider page]
@@ -193,3 +196,28 @@
                    (last)
                    (int))]
       (or last-page-num 1))))
+
+
+(defn find-nodes
+  "Given the provider and whole page as a node, return all nodes
+   by using node-selector from provider configuration
+   Return all nodes as a map {:node node}"
+  [provider page]
+  (->> (get-in provider [:configuration :node-selector])
+       (select-mul-req page provider)
+       (map (fn [n] {:node n}))))
+
+(defn find-link
+  "Apply link-selector to the node context to find item urls
+  Despite of link-selector type it always resolves to full href
+  Returns nodemap eith link key assoced"
+  [provider {node :node :as node-map}]
+  (assoc node :link
+         (-> (select-one-req node provider (p/link-selector provider))
+             (get-in [:attrs :href])
+             (#(cond->> % (p/link-selector-relative? provider) (u/full-href provider))))))
+
+(defn last-page [provider page]
+  ((create-last-page-fn (p/last-page-selector provider))
+   provider page))
+

@@ -16,6 +16,7 @@
  fetch
  cleanup
  falsy
+ trim-inside
  )
 
 ;;;;;;;;;;;;;;;;;;;;;;
@@ -60,6 +61,7 @@
 ;; TODO fetch witth retry
 ;; TODO fetch with timeout
 (defn fetch [url]
+  (log/debug "Fetching URL: " url)
   (try 
     (html/html-resource (java.net.URL. url))
     (catch Exception e (log/error e) nil)))
@@ -113,3 +115,7 @@
                      (filter (fn [sym] (clojure.string/starts-with? (str sym) "priceous.provider."))))]
     (doseq [provider-ns symbols]
       (require provider-ns))))
+
+
+(defn trim-inside [s]
+  (-> s (.replaceAll "\\s+" " ") (.trim)))

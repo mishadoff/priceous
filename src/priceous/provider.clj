@@ -1,24 +1,82 @@
-(ns priceous.provider)
+(ns priceous.provider
+  (:require [taoensso.timbre :as log]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Accessors and Mutators for provider structure 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(defn category-function
+  "Returns a function for obtaining categories from provider
+   If provider do not support categories, returns a function, which
+   provides default category with page template."
+  [provider]
+  (get-in provider
+          [:configuration :categories-fn]
+          (fn [p] [["Default" (get-in p [:state :page-template])]])))
 
-;;; Getters
+(defn get-categories
+  "Retrieve categories for provider by applying categories function"
+  [provider]
+  ((category-function provider) provider))
+
+(defn with-category
+  "Modify provider, so we know what category we are currently
+   working in and what it's template for this category."
+  [provider {name :name template :template}]
+  (-> provider
+      (assoc-in [:state :page-template] template)
+      (assoc-in [:state :category] name)))
+
+(defn done?
+  "Is provider in done state?"
+  [provider]
+  (get-in provider [:state :done]))
 
 (defn current-page [provider]
   (format (get-in provider [:state :page-template])
           (get-in provider [:state :page-current])))
 
-(defn category-function [provider]
-  (get-in provider [:configuration :categories-fn]
-          (fn [p] [["Без категории" (get-in p [:state :page-template])]])))
+(defn category-name [provider]
+  (get-in provider [:state :category] "default"))
 
-(defn provider-with-category [provider [cat-name cat-url :as category]]
-  (-> provider
-      (assoc-in [:state :page-template] cat-url)
-      (assoc-in [:state :category] cat-name)))
+(defn validate-configuration [provider]
+  (let [known-str          #{:heavy :light :api}
+        strategy           (get-in provider [:configuration :strategy])
+        node->document     (get-in provider [:configuration :node->document])
+        link-selector       (get-in provider [:configuration :link-selector])
+        node-selector      (get-in provider [:configuration :node-selector])]
+    
+    (assert (known-str strategy) (str "Strategy must be one of " known-str))
+    (assert node->document "node->document must be provided")
+    
+    ;; validate heavy
+    (when (= strategy :heavy)
+      (log/debug "Strategy is :heavy")
+      (assert link-selector "URL Selector must be provided")
+      (assert node-selector "Node Selector must be provided"))
+
+    ;; validate light
+    (when (= strategy :light)
+      (log/debug "Strategy is :light")
+      (assert node-selector "Node selector must be provided"))))
+
+(defn link-selector [provider]
+  (get-in provider [:configuration :link-selector]))
+
+(defn link-selector-relative? [provider]
+  (not= :full-href (get-in provider [:configuration :link-selector-type])))
+
+(defn last-page-selector [provider]
+  (get-in provider [:configuration :last-page-selector]))
+
+(defn node->document [provider]
+  (get-in provider [:configuration :node->document]))
+
+(defn heavy? [provider]
+  (= :heavy (get-in provider [:configuration :strategy])))
+
+(defn light? [provider]
+  (= :heavy (get-in provider [:configuration :strategy])))
 
 (defn get-page-template
   "Retrieves page-template from provider"
@@ -63,10 +121,6 @@
   (>= (get-page-processed provider)
       (get-page-limit provider)))
 
-(defn done?
-  "Is provider in done state?"
-  [provider]
-  (get-in provider [:state :done]))
 
 
 ;;; Setters
@@ -82,3 +136,12 @@
   (cond 
     (limit-reached? provider) (set-done provider) 
     :else                     provider))
+
+(defn set-done-if-last-page
+  [provider last-page-num]
+  (cond
+    (> (get-in provider [:state :page-current]) last-page-num) (set-done provider)
+    :else provider))
+
+(defn threads [provider]
+  (get-in provider [:configuration :threads] 1))

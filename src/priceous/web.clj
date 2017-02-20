@@ -48,15 +48,6 @@
    
    )
 
-(defroutes api-routes
-  (context "/api" []
-           (GET "/" request
-                (response [{:op "ip"}]))))
-
-(def api
-  (-> (handler/api api-routes)
-      wrap-json-response))
-
 (def webapp
   (-> webapp-routes
       (wrap-defaults site-defaults)

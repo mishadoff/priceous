@@ -7,12 +7,16 @@
             [priceous.selector-utils :as su]))
 
 (defn- get-categories [provider]
-  [["Виски" "http://goodwine.com.ua/viski.html?dir=asc&p=%s"]
-   ["Другие Крепкие" "http://goodwine.com.ua/drugie-krepkie.html?dir=asc&p=%s"]])
+  [{:name "Виски"
+    :template "http://goodwine.com.ua/viski.html?dir=asc&p=%s"}
+   
+   #_{:name "Другие Крепкие"
+    :template "http://goodwine.com.ua/drugie-krepkie.html?dir=asc&p=%s"}])
+
 
 (defn- node->document
   "Transform enlive node to provider specific document using context"  
-  [provider page ctx]
+  [provider {page :page link :link :as nodemap}]
   (let [;; these are common
         prop (su/property-fn provider page)
         text (su/text-fn prop)
@@ -41,40 +45,48 @@
         
         ]
     (->
-     {} ;; start with empty document
+     {}
+
      (assoc :provider        (get-in provider [:info :name]))
      (assoc :base-url        (get-in provider [:info :base-url]))
      (assoc :icon-url        (get-in provider [:info :icon]))
      (assoc :icon-url-width  (get-in provider [:info :icon-width]))
      (assoc :icon-url-height (get-in provider [:info :icon-height]))
-     (assoc :name            (text [:.titleProd]))
-     (assoc :link            (:url ctx))
+
+     (assoc :name            (-> (text [:.titleProd :> [:* (html/but [:.articleProd])]])
+                                 (u/trim-inside)))
+     (assoc :link            link)
      (assoc :image           (-> (q+ [:.imageDetailProd [:img :#mag-thumb]])
                                  (get-in [:attrs :src])))
-     (assoc :country         (spec "география"))
+     (assoc :country         (u/trim-inside (spec "география")))
      (assoc :producer        (spec "Производитель"))
-     (assoc :type            (spec "Тип"))
+     (assoc :type            (str (p/category-name provider) " " (spec "Тип")))
      (assoc :alcohol         (-> (spec "Крепость, %") (u/smart-parse-double)))
      (assoc :description     (spec "цвет, вкус, аромат"))
      (assoc :timestamp       (u/now)) ;; maybe parsing date better?
-     (assoc :product-code    (-> (q+ [:.titleProd :.articleProd :span]) (html/text)))
+     (assoc :product-code    (->> (list (get-in provider [:info :name])
+                                        (p/category-name provider)
+                                        (-> (q+ [:.titleProd :.articleProd :span])
+                                            (html/text)))
+                                  (clojure.string/join "_")))
      (assoc :available       (empty? (su/select-one-opt page provider [:.notAvailableBlock])))
 
      ;; volume and price blocks are present if product is available
      ((fn [p] (assoc p :volume
-                     (if (:avalable p)
+                     (if (:available p)
                        (-> (q* [:.additionallyServe :.bottle :p])
                            (first)
                            (html/text)
                            (u/smart-parse-double))))))
 
      ((fn [p] (assoc p :price
-                     (if (:avalable p)
+                     (if (:available p)
                        (-> (q* [:.additionallyServe :.price])
                            (first)
                            (html/text)
                            (u/smart-parse-double))))))
-     
+
+     ;; TODO catch goodwine sales
      (assoc :sale-description nil)
      (assoc :sale             false)
      )))
@@ -106,11 +118,12 @@
 
    :configuration {
                    :categories-fn      get-categories
-                   :parallel-count     10
+                   :threads            8
                    :strategy           :heavy
                    :node->document     node->document
-                   :url-selector       [:.catalogListBlock [:a :.title]]
-                   :url-selector-type  :full-href
+                   :node-selector [:.catalogListBlock :> :ul :> [:li (html/but [:.hide])]]
+                   :link-selector [:.textBlock [:a :.title]]
+                   :link-selector-type :full-href
                    :last-page-selector [:.paginator [:a (html/attr-has :href)]]
                    }
    })
