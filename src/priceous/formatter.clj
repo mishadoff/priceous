@@ -11,3 +11,7 @@
           (get-in provider [:info :name])
           (get-in provider [:state :category])
           size))
+
+(defn succesfully-processed-all [n-items elapsed]
+  (format "Succesfully processed %s items in %s seconds"
+          n-items elapsed))

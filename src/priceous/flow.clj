@@ -16,9 +16,9 @@
 (declare
  process
  process-category
- create-page->docs-fn
+ process-page
  fetch-heavy-nodes
- update-state)
+ update-stats)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -38,54 +38,61 @@
    until state of the provider is not set to :done
    Function for retrieving documents is build based on provider conf"
   [provider]
-  (let [page->docs (create-page->docs-fn provider)
-        p (atom provider) docs (atom [])]
-    
+  (let [p (atom provider) docs (atom [])]
+
     (while (not (p/done? @p))
       (log/info (fmt/processing-page @p))
-      (let [result (page->docs @p)]
+      (let [result (process-page @p)]
         (assert (:provider result) "Processor must return new provider")
         (assert (:docs result)     "Processor must return docs")
         (reset! p (:provider result))          ;; set current provider to new
         (swap! docs into (:docs result))       ;; add docs to the processed
         ))
 
-    (log/info (fmt/category-processed @p (count @docs)))    
+    (log/info (fmt/category-processed @p (count @docs)))
 
     @docs))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defn- create-page->docs-fn
-  "Accept provider with configuration and returns function which
-  can return all documents for the given provider
+(defn- process-page
+  "Accept provider with configuration and retrieve page of results
+  based on the current provider state
   Note: this function should return map with a new state of
   provider and retrieved docs   {:provider provider :docs []}"
   [provider]
   (p/validate-configuration provider)
+  (let [page (u/fetch (p/current-page provider))]
+    (->>
+     page
+     (su/find-nodes provider)
+     (#(cond->> % (p/heavy? provider) (fetch-heavy-nodes provider)))
+     (map (partial (p/node->document provider) provider))
+     ((fn [docs] {:provider provider :docs (into [] docs)}))
+     (update-stats page))))
 
-  (fn [provider]
-    (let [page (u/fetch (p/current-page provider))]
-      (->>
-       page
-       (su/find-nodes provider)
-       (#(cond->> % (p/heavy? provider) (fetch-heavy-nodes provider)))
-       (map (partial (p/node->document provider) provider))
-       ((fn [docs] {:provider provider :docs (into [] docs)}))
-       (update-stats page))))
-  )
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defn- fetch-heavy-nodes [provider nodes]
+(defn- fetch-heavy-nodes
+  "Given provider with heavy strategy and list of nodes (items)
+  from the results page, it process each item in a separate thread
+  and load whole page as enlive node"
+  [provider nodes]
   (->> nodes              
        (map (partial su/find-link provider))
        (map (fn [{link :link :as nodemap}]
               (assoc nodemap :future
                      (future* (cast Callable (fn [] (u/fetch link)))))))
-       (doall) ;; <--- this is very need, so required, much concurrency
+       (doall) ;; <--- this is very need, so lazy, much parallelism
        (map (fn [{future :future :as nodemap}]
               (assoc nodemap :page (.get future))))))
 
-(defn- update-stats [page {provider :provider :as result}]
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defn- update-stats
+  "Advance the provider state and checks if we are done
+   based on limit, or last-page-selector"
+  [page {provider :provider :as result}]
   (assoc result :provider
          (-> provider
              (update-in [:state :page-current] inc)

@@ -88,7 +88,6 @@
 
 
 (defn write [provider items]
-  (log/info "Write data to solr")
   (try
     (flux/with-connection
       (http/create

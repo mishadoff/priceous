@@ -7,16 +7,17 @@
             [priceous.selector-utils :as su]))
 
 (defn- get-categories [provider]
-  [{:name "Виски"
-    :template "http://goodwine.com.ua/viski.html?dir=asc&p=%s"}
-   
-   #_{:name "Другие Крепкие"
-    :template "http://goodwine.com.ua/drugie-krepkie.html?dir=asc&p=%s"}])
+  [{:name "Виски" :template "http://goodwine.com.ua/viski.html?dir=asc&p=%s"}
+   {:name "Вино" :template "http://goodwine.com.ua/vino.html?dir=asc&p=%s"}
+   {:name "Игристое Вино" :template "http://goodwine.com.ua/igristye.html?dir=asc&p=%s"}
+   {:name "Пиво" :template "http://goodwine.com.ua/pivo.html?dir=asc&p=%s"}
+   {:name "Cидр" :template "http://goodwine.com.ua/sidry.html?dir=asc&p=%s"}
+   {:name "Другие Крепкие" :template "http://goodwine.com.ua/drugie-krepkie.html?dir=asc&p=%s"}])
 
 
 (defn- node->document
   "Transform enlive node to provider specific document using context"  
-  [provider {page :page link :link :as nodemap}]
+  [provider {page :page link :link small-node :node :as nodemap}]
   (let [;; these are common
         prop (su/property-fn provider page)
         text (su/text-fn prop)

@@ -61,7 +61,7 @@
 ;; TODO fetch witth retry
 ;; TODO fetch with timeout
 (defn fetch [url]
-  (log/debug "Fetching URL: " url)
+  (log/trace "Fetching URL: " url)
   (try 
     (html/html-resource (java.net.URL. url))
     (catch Exception e (log/error e) nil)))
@@ -118,4 +118,4 @@
 
 
 (defn trim-inside [s]
-  (-> s (.replaceAll "\\s+" " ") (.trim)))
+  (some-> s (.replaceAll "\\s+" " ") (.trim)))

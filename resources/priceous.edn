@@ -7,14 +7,18 @@
 
  :solr {:host "http://localhost:8983/solr"
         :collection "whisky"}
+
+ :csv {:filepath "/Users/mkoz/temp/alcosearch.csv"}
  
- :scheduler {:delay 0
+ :scheduler {:delay 0 
              :value 12
              :time-unit "HOURS"}
 
  ;; FIXME: does not work
  :ratelimit 1000 ;; number of requests / per IP / per hour
  
- :scrapping {:providers ["megamarket" "goodwine"]}
+ :scrapping {:providers ["goodwine"]}
 
+ :appenders [:csv]
+ 
  }

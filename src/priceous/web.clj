@@ -56,7 +56,7 @@
       wrap-params
       wrap-session))
 
-(def app (routes webapp api))
+(def app (routes webapp))
 
 (defn init
   ([] (init nil))

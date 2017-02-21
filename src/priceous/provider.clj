@@ -51,13 +51,13 @@
     
     ;; validate heavy
     (when (= strategy :heavy)
-      (log/debug "Strategy is :heavy")
+      (log/trace "Strategy is :heavy")
       (assert link-selector "URL Selector must be provided")
       (assert node-selector "Node Selector must be provided"))
 
     ;; validate light
     (when (= strategy :light)
-      (log/debug "Strategy is :light")
+      (log/trace "Strategy is :light")
       (assert node-selector "Node selector must be provided"))))
 
 (defn link-selector [provider]
@@ -108,7 +108,7 @@
   [provider]
   (get-in provider [:functions :last-page?]))
 
-(defn get-provider-name
+(defn pname
   "Retrieves provider name"
   [provider]
   (get-in provider [:info :name]))

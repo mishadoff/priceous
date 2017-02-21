@@ -88,8 +88,8 @@
         {:keys [result status message]} (apply retrieve nodes kseq)]
     (cond
       (= :success status) result
-      (= :warn status)    (do (log/warn (format message (p/get-provider-name provider) selector)) result)
-      (= :error status)   (do (log/error (format message (p/get-provider-name provider) selector))  result)
+      (= :warn status)    (do (log/warn (format message (p/pname provider) selector)) result)
+      (= :error status)   (do (log/error (format message (p/pname provider) selector))  result)
       :else               (u/die "Invalid status"))))
 
 (defn generic-next-page?

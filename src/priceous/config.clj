@@ -5,6 +5,8 @@
 
 (def properties (atom nil))
 
+(defn prop [path] (get-in @properties path))
+
 (defn config-timbre! []
   (let [colors {:info :green :warn :yellow :error :red :fatal :purple :report :blue}]
     (log/set-config!
@@ -42,7 +44,7 @@
        (catch Exception e
          (do (log/error e "Problem reading props from file") {} ))))
 
-;; to avoid inonsistent proerties we allow to read them only once
+;; to avoid inonsistent properties we allow to read them only once
 (defn read-properties! [external-file]
   (cond @properties @properties
         :else (do
