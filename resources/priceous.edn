@@ -19,6 +19,6 @@
  
  :scrapping {:providers ["goodwine"]}
 
- :appenders [:csv]
+ :appenders [:solr]
  
  }

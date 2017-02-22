@@ -70,7 +70,9 @@
 (defn cleanup
   "Remove whitespace charaters from string"
   [s]
-  (clojure.string/trim s))
+  (some-> s
+   (.replaceAll "\\s+" " ")
+   (clojure.string/trim)))
 
 (defn falsy []
   "Returns function which accepts any number of arguments
@@ -115,7 +117,3 @@
                      (filter (fn [sym] (clojure.string/starts-with? (str sym) "priceous.provider."))))]
     (doseq [provider-ns symbols]
       (require provider-ns))))
-
-
-(defn trim-inside [s]
-  (some-> s (.replaceAll "\\s+" " ") (.trim)))

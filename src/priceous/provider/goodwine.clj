@@ -6,6 +6,8 @@
             [priceous.provider :as p]
             [priceous.selector-utils :as su]))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (defn- get-categories [provider]
   [{:name "Виски" :template "http://goodwine.com.ua/viski.html?dir=asc&p=%s"}
    {:name "Вино" :template "http://goodwine.com.ua/vino.html?dir=asc&p=%s"}
@@ -14,87 +16,83 @@
    {:name "Cидр" :template "http://goodwine.com.ua/sidry.html?dir=asc&p=%s"}
    {:name "Другие Крепкие" :template "http://goodwine.com.ua/drugie-krepkie.html?dir=asc&p=%s"}])
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defn- node->document
-  "Transform enlive node to provider specific document using context"  
-  [provider {page :page link :link small-node :node :as nodemap}]
-  (let [;; these are common
-        prop (su/property-fn provider page)
-        text (su/text-fn prop)
-        q+ (fn [selector] (su/select-one-req page provider selector))
-        q* (fn [selector] (su/select-mul-req page provider selector))
-        
-        ;; these are specific to goodwine
-        remove-h2-node
-        (fn [node]
-          ;; remove h2.innerTitleProd from content
-          (assoc node :content (remove #(and map? 
-                                             (= (get % :tag) :h2)
-                                             (= (get-in % [:attrs :class] "innerTitleProd")))
-                                       (:content node))))
-        spec-left (su/build-spec-map
-                   provider page
-                   [:.i-colLeft :.innerDiv [:h2 :.innerTitleProd]]
-                   [:.i-colLeft :.innerDiv]
-                   :vals-post-fn remove-h2-node)
-        spec-right (su/build-spec-map
-                    provider page
-                    [:.i-colRight :.innerDiv [:h2 :.innerTitleProd]]
-                    [:.i-colRight :.innerDiv]
-                    :vals-post-fn remove-h2-node)
-        spec (merge spec-left spec-right)
-        
-        ]
-    (->
-     {}
+  "Transform enlive node to provider specific document using node context.
+  For heavy strategy, in context available whole :page, partial :node
+  and :link by which whole page was retrieved.
 
-     (assoc :provider        (get-in provider [:info :name]))
-     (assoc :base-url        (get-in provider [:info :base-url]))
-     (assoc :icon-url        (get-in provider [:info :icon]))
-     (assoc :icon-url-width  (get-in provider [:info :icon-width]))
-     (assoc :icon-url-height (get-in provider [:info :icon-height]))
+  If scrapper finds a broken page, it returns whole doc as a nil."
+  [provider {page :page node :node link :link :as nodemap}]
+  (su/with-selectors provider nodemap
+    ;; process only if page is available and product is valid
+    (when (and page (q? [:.mainInfoProd]))
+      (let [spec (->> (q* [:.innerDiv])
+                      (map (fn [n]
+                             (->> [(html/select n [:.innerTitleProd])
+                                   (html/at n [:.innerTitleProd] nil)]
+                                  (mapv first)
+                                  (mapv html/text)
+                                  (mapv u/cleanup))))
+                      (into {}))]
+        (-> {}
+            (assoc :provider (p/pname provider))
+            (assoc :name (text+ [:.titleProd :> [:* (html/but [:.articleProd])]]))
+            (assoc :link link)
+            (assoc :image (-> (q+ [:.imageDetailProd [:img :#mag-thumb]])
+                              (get-in [:attrs :src])))
+            (assoc :country (spec "география"))
+            (assoc :wine_sugar (some-> (spec "Сахар, г/л") (u/smart-parse-double)))
+            (assoc :wine_grape (some->> (spec "Сортовой состав")
+                                        (#(clojure.string/split % #";"))
+                                        (map u/cleanup)
+                                        (remove empty?)
+                                        (clojure.string/join ", ")))
+            (assoc :vintage (spec "Винтаж"))
+            (assoc :producer (spec "Производитель"))
+            (assoc :type (-> (str (p/category-name provider) " " (spec "Тип"))
+                             (u/cleanup)))
+            (assoc :alcohol (-> (spec "Крепость, %") (u/smart-parse-double)))
+            (assoc :description (spec "цвет, вкус, аромат"))
+            (assoc :timestamp (u/now))
+            (assoc :product-code (->> (list (get-in provider [:info :name])
+                                            (-> (q+ [:.titleProd :.articleProd :span])
+                                                (html/text)))
+                                      (clojure.string/join "_")))
+            (assoc :available (empty? (q? [:.notAvailableBlock])))
+            (assoc :item_new  (boolean (some-> (q? [:.medalIcon :img])
+                                               (get-in [:attrs :src])
+                                               (.contains "New_"))))
+            
+            ;; volume and price blocks are present if product is available
+            ((fn [p] (assoc p :volume
+                            (if (:available p)
+                              (-> (q* [:.additionallyServe :.bottle :p])
+                                  (first)
+                                  (html/text)
+                                  (u/smart-parse-double))))))
+            
+            ((fn [p] (assoc p :price
+                            (if (:available p)
+                              (-> (q* [:.additionallyServe :.price])
+                                  (first)
+                                  (html/text)
+                                  (u/smart-parse-double))))))
 
-     (assoc :name            (-> (text [:.titleProd :> [:* (html/but [:.articleProd])]])
-                                 (u/trim-inside)))
-     (assoc :link            link)
-     (assoc :image           (-> (q+ [:.imageDetailProd [:img :#mag-thumb]])
-                                 (get-in [:attrs :src])))
-     (assoc :country         (u/trim-inside (spec "география")))
-     (assoc :producer        (spec "Производитель"))
-     (assoc :type            (str (p/category-name provider) " " (spec "Тип")))
-     (assoc :alcohol         (-> (spec "Крепость, %") (u/smart-parse-double)))
-     (assoc :description     (spec "цвет, вкус, аромат"))
-     (assoc :timestamp       (u/now)) ;; maybe parsing date better?
-     (assoc :product-code    (->> (list (get-in provider [:info :name])
-                                        (p/category-name provider)
-                                        (-> (q+ [:.titleProd :.articleProd :span])
-                                            (html/text)))
-                                  (clojure.string/join "_")))
-     (assoc :available       (empty? (su/select-one-opt page provider [:.notAvailableBlock])))
+            ;; process sales
+            (assoc :sale-description (some->> (su/select? node provider
+                                                    [:.price.red] :context nodemap)
+                                        (html/text)
+                                        (#(clojure.string/split % #"\?"))
+                                        (first)
+                                        (u/smart-parse-double)
+                                        (format "Цена при покупке любых 6+ бутылок, %.2f грн")))
+            ((fn [p] (assoc p :sale (not (empty? (:sale-description p))))))
+            
+            )))))
 
-     ;; volume and price blocks are present if product is available
-     ((fn [p] (assoc p :volume
-                     (if (:available p)
-                       (-> (q* [:.additionallyServe :.bottle :p])
-                           (first)
-                           (html/text)
-                           (u/smart-parse-double))))))
-
-     ((fn [p] (assoc p :price
-                     (if (:available p)
-                       (-> (q* [:.additionallyServe :.price])
-                           (first)
-                           (html/text)
-                           (u/smart-parse-double))))))
-
-     ;; TODO catch goodwine sales
-     (assoc :sale-description nil)
-     (assoc :sale             false)
-     )))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;  PROVIDER  ;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (def provider
   {
@@ -122,8 +120,8 @@
                    :threads            8
                    :strategy           :heavy
                    :node->document     node->document
-                   :node-selector [:.catalogListBlock :> :ul :> [:li (html/but [:.hide])]]
-                   :link-selector [:.textBlock [:a :.title]]
+                   :node-selector      [:.catalogListBlock :> :ul :> [:li (html/but [:.hide])]]
+                   :link-selector      [:.textBlock [:a :.title]]
                    :link-selector-type :full-href
                    :last-page-selector [:.paginator [:a (html/attr-has :href)]]
                    }

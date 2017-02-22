@@ -19,8 +19,8 @@
 
 (defmethod append :solr [apn provider items]
   (log/info "Start writing data into SOLR...")
-  #_(solr/write provider items)
+  (solr/write provider items)
   (log/info "Writing data into SOLR DONE."))
 
 (defmethod append :default [apn provider items]
-  (log/error (format "Cant found appender for %s" apn)))
+  (log/error (format "Cannot found appender for %s" apn)))

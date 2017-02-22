@@ -17,8 +17,7 @@
 
 (declare
  scrap
- scrap-provider
- )
+ scrap-provider)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

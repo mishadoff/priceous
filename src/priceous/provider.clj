@@ -63,6 +63,9 @@
 (defn link-selector [provider]
   (get-in provider [:configuration :link-selector]))
 
+(defn node-selector [provider]
+  (get-in provider [:configuration :node-selector]))
+
 (defn link-selector-relative? [provider]
   (not= :full-href (get-in provider [:configuration :link-selector-type])))
 

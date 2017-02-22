@@ -6,15 +6,13 @@
 
     <!-- Provider related fields -->
     <field name="provider" type="text_general" indexed="true" stored="true" required="true"/>
-    <field name="base_url" type="string" indexed="false" stored="true" required="false"/>
-    <field name="icon_url" type="string" indexed="false" stored="true" required="false"/>
-    <field name="icon_url_width" type="string" indexed="false" stored="true" required="false"/>
-    <field name="icon_url_height" type="string" indexed="false" stored="true" required="false"/>    
-    <!-- Whisky related fields -->
     <field name="name" type="text_general" indexed="true" stored="true" required="true"/>
     <field name="link" type="string" indexed="false" stored="true" required="false"/>
     <field name="image" type="string" indexed="false" stored="true" required="false"/>
     <field name="country" type="text_general" indexed="true" stored="true" required="false"/>
+    <field name="wine_sugar" type="float" indexed="true" stored="true" required="false"/>
+    <field name="wine_grape" type="text_general" indexed="true" stored="true" required="false"/>
+    <field name="vintage" type="int" indexed="true" stored="true" required="false"/>
     <field name="producer" type="text_general" indexed="true" stored="true" required="false"/>
     <field name="type" type="text_general" indexed="true" stored="true" required="false"/>
     <field name="product_code" type="string" indexed="true" stored="true" required="false"/>
@@ -22,12 +20,11 @@
     <field name="description" type="text_general_ru" indexed="true" stored="true" required="false"/>
     <field name="timestamp" type="date" indexed="true" stored="true" required="true"/>
     <field name="available" type="boolean" indexed="true" stored="true" required="false"/>
+    <field name="item_new" type="boolean" indexed="true" stored="true" required="false"/>
     <field name="volume" type="float" indexed="true" stored="true" required="false"/>
-    <field name="sale" type="boolean" indexed="true" stored="true" required="false"/>
     <field name="price" type="float" indexed="true" stored="true" required="false"/>
+    <field name="sale" type="boolean" indexed="true" stored="true" required="false"/>
     <field name="sale_description" type="text_general" indexed="true" stored="true" required="false"/>
-    <field name="old_price" type="float" indexed="true" stored="true" required="false"/>
-
 
     <!-- Duplicated fields -->
     
@@ -40,6 +37,8 @@
     <copyField source="provider" dest="text"/>
     <copyField source="name" dest="text"/>
     <copyField source="country" dest="text"/>
+    <copyField source="wine_grape" dest="text"/>
+    <copyField source="vintage" dest="text"/>
     <copyField source="producer" dest="text"/>
     <copyField source="type" dest="text"/>
     <copyField source="alcohol" dest="text"/>

@@ -68,7 +68,7 @@
      (su/find-nodes provider)
      (#(cond->> % (p/heavy? provider) (fetch-heavy-nodes provider)))
      (map (partial (p/node->document provider) provider))
-     ((fn [docs] {:provider provider :docs (into [] docs)}))
+     ((fn [docs] {:provider provider :docs (into [] (remove empty? docs))}))
      (update-stats page))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
