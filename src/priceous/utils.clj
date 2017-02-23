@@ -125,3 +125,12 @@
                  (format "%2d")
                  ((fn [s] (clojure.string/replace s " " "0"))))]
     [grn kop]))
+
+(defn format-decimal-up-to-2 [decimal]
+  (let [decimal-fmt (format "%.2f" decimal)]
+    (-> (cond
+          (.endsWith decimal-fmt "00")
+          (.substring decimal-fmt 0 (- (count decimal-fmt) 3))
+          (.endsWith decimal-fmt "0")
+          (.substring decimal-fmt 0 (- (count decimal-fmt) 1))
+          :else decimal-fmt))))

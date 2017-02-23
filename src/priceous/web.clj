@@ -62,7 +62,6 @@
 
 (def webapp
   (-> webapp-routes
-      ;; TODO wrap ip
       (wrap-defaults site-defaults)
       (wrap-ratelimit {:limits [(ip-limit 1000)]}) ;; TODO extract
       wrap-keyword-params

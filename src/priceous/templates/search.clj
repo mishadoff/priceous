@@ -58,21 +58,13 @@
 
 (defn render-item [item]
   [:div {:class "item"}
+   [:div {:class "item-container"}
+    [:div {:class "item-left"}
+     [:div {:class "item-image-container"}
+      [:img {:src (:image item)}]]
+     ]
 
-   ;; IMAGE
-   [:div {:class "item-images-container"}
-    [:div {:class "item-image"} [:img {:src (:image item)}]]]
-
-   ;; NAME AND LINK
-   [:div {:class "item-main-container"}
-    [:div {:class "item-main-top"}
-     [:span {:class "item-name"}
-      [:a {:href (:link item)
-           :target "_blank"
-           :class "itemlink"} (:name item)]]]
-    
-    ;; PRICE
-    [:div {:class "item-main-bottom"}
+    [:div {:class "item-right"}
      [:div {:class "item-price"}
       (let [price (:price item)]
         (cond
@@ -83,24 +75,50 @@
           
           ;; if price not available
           :else [:div {:class "price-na"} "Цены нет"]))]
-     
-     ;; PROVIDER / SHOP
-     ;; TODO memoize provider resolution
-     (let [p (u/resolve-provider-by-name (.toLowerCase (:provider item)))]
-       [:div {:class "provider-element"}
+
+     ;; provider
+     [:div {:class "item-provider"}
+      (let [p (u/resolve-provider-by-name (.toLowerCase (:provider item)))]
         [:a {:href (get-in p [:info :base-url])}
          [:img {:src (get-in p [:info :icon])
                 :title (:provider item)
                 :alt (:provider item)
                 :width (get-in p [:info :icon-width] "70")
-                :height (get-in p [:info :icon-height] "34")}]]])
-    
-     (let [{:keys [sale sale_description]} item]
-       (if sale
-         [:div {:class "sale-description"}
-          (format "Акция: %s" sale_description)]))
-     
+                :height (get-in p [:info :icon-height] "34")}]])]
+
      ]
+
+    
+    [:div {:class "item-center"}
+     [:div {:class "item-name"}
+      [:a {:href (:link item)
+           :target "_blank"
+           :class "link external"} (:name item)]]
+
+     ;; alcohol
+     (if (:alcohol item)
+       [:div (format "Крепость: %s%%" (u/format-decimal-up-to-2 (:alcohol item)))])
+
+     (if (:type item)
+       [:div (format "Тип: %s" (:type item))])
+
+     (if (:country item)
+       [:div (format "Регион: %s" (:country item))])
+
+     ;; only for wines
+     (if (:wine_grape item)
+       [:div (format "Сорт: %s" (:wine_grape item))])
+     
+     (if (:wine_sugar item)
+       [:div (format "Сахар: %s г/л" (:wine_sugar item))])
+     
+     (if (:sale item)
+       [:div {:class "sale"}
+        (format "Акция: %s" (:sale_description item))])
+
+
+     ]
+
     ]])
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -155,6 +173,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defn query-example [name href]
-  [:li [:a {:class "amber" :href href} name]])
+  [:li [:a {:class "link" :href href} name]])
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

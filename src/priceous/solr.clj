@@ -63,7 +63,6 @@
                      type:terms,
                      field:available}}}"
                }))]
-        (log/info response)
         {:status :success
          :response {:total (get-in response [:response :numFound])
                     :providers (->> (get-in response [:facets :providers :buckets])

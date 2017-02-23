@@ -19,28 +19,28 @@
     [:div {:id "main"}
      (header content)
      (container-fn content)
-     (footer content)]]))
+     #_(footer content)]]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defn header [content]
   [:div {:class "header"}
-   [:div {:class "header_icon"}
-    [:a {:href "/search" :class "amber h100"}
-     [:div {:class "header_whisky_block"}
-      [:div {:class "header_whisky_block_text"} [:div "Whisky"] [:div "Search"]]
-      [:div {:class "header_whisky_block_image"}
-       [:img {:src "/images/glencairn.png" :width "30" :height "46"}]]
-      ]
-     ]]
+   [:div 
+    [:a {:href "/search" :class "h100"}
+     [:img {:src "/images/priceous_logo_2x.png" :width "150" :height "75"}]]]
+   
+   [:div {:class "mp-root"} 
+    [:div {:class "mp-child"}
+     [:a {:href "/about"  :class "link h20"} "О проекте"]]]
 
-   ;; link to help page
-   [:div {:class "header_link"}
-    [:a {:href "/help" :class "amber h100"} "Помощь"]]
+   [:div {:class "mp-root"} 
+    [:div {:class "mp-child"}
+     [:a {:href "/help"  :class "link h20"} "Помощь"]]]
 
-   ;; stats
-   [:div {:class "header_link"}
-    [:a {:href "/stats" :class "amber h100"} "Статистика"]]])
+   [:div {:class "mp-root"} 
+    [:div {:class "mp-child"}
+     [:a {:href "/stats" :class "link h20"} "Статистика"]]]
+   ])
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -50,7 +50,7 @@
         site-name   (config/prop [:app :name])]
     [:div {:class "footer"}
      [:div {:class "footer-left"}
-      [:div {:class "footer-name"} site-name]
+      [:div {:class "footer-name"} "priceous"]
       [:div {:class "footer-copyright"} "©"]
       [:div {:class "footer-author"}
        [:a {:href "http://mishadoff.com"

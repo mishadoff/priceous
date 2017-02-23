@@ -1,14 +1,9 @@
 html, body {
-    font-family: 'Noto Sans', sans-serif;
-    font-size: 18px;
+    font-family: 'Verdana', sans-serif;
+    font-size: 16px;
     margin: 0;
     padding: 0;
     height: 100%;
-    background-image: url("/images/beton.jpg");
-    background-repeat: no-repeat;
-    background-position: center;
-    background-attachment: fixed;
-    background-size: cover;
 }
 
 #main {
@@ -19,83 +14,38 @@ html, body {
     position: relative;
 }
 
+/* HEADER */
+
 .header {
-    height: 50px;
+    height: 75px;
     width: 100%;
-    border-bottom: 1px solid;
-    background-color: lightgrey;
 }
 
 .header > div {
-    display: inline-block;
     height: 100%;
+    float: left;
 }
 
-.header_whisky_block {
-    width: 100%;
+.h20 {
+    font-size: 20px;
 }
 
-.header_whisky_block > div {
-    display: inline-block;
-    height: 100%;
+a.link:link, a.link:visited {
+    color: black;
+    text-decoration: none;
+    font-weight: bold;
 }
 
-.header_whisky_block_text {
-    padding-right: 5px;
-    vertical-align: top;
+a.link:hover, a.link:active {
+    color: #00bbff;
 }
 
-.header_whisky_block_image {
-    padding-top: 3px;
+.header_motto {
+    padding-left: 30px;
+    padding-right: 50px;
 }
 
-.footer {
-    border-top: 1px solid;
-    height: 50px;
-    font-size: 14px;
-    background-color: lightgrey;
-    width: 100%;
-}
-
-.footer > div, .footer-left > div, .footer-center > div, .footer-right > div {
-    display: inline-block;
-}
-
-.footer-left {
-    height: 100%;
-    width: 40%;
-}
-
-.footer-left > div {
-    margin-top: 10px;
-}
-
-
-.footer-center {
-    width: 20%;
-}
-
-.footer-right {
-    height: 100%;
-    width: 40%;
-}
-
-.footer-name {
-    padding-left: 20px;
-}
-
-.footer-copyright {
-    padding: 5px;
-}
-
-.footer-right-content {
-    padding-right: 20px;
-}
-
-/* .container { */
-/*     /\* position: absolute; *\/ */
-/*     top: 50px; */
-/* } */
+/* TODO FOOTER */
 
 .full-container {
     float: left;
@@ -107,58 +57,42 @@ html, body {
 
 .search-left-panel {
     left: 1%;
-    width: 24%;
+    width: 19%;
     float: left;
     height: 100%;
     position: absolute;
-    background-color: #f2f2f2;
-    overflow: auto;	
+    overflow: auto;
 }
 
 .search-right-panel {
-    width: 73%;
-    left: 26%;
+    width: 78%;
+    left: 21%;
     float: left;
     height: 100%;
-    position: absolute;
-    background-color: #f2f2f2;
+    position: relative;
     overflow: auto;
 }
 
 
-/* OLD STYLES */ 
+/* OLD STYLES */
 
-
-.header > div {
-    float: left;
+.mp-root {
     height: 100%;
+    widht: 100%;
+    padding-left: 10px;
+    padding-right: 10px;
+    display: table;
 }
 
-.h100 {
-    border-right: 1px solid;
-    height: 100%;
+.mp-child {
+    display: table-cell;
+    vertical-align: middle;
 }
 
 /* Ugly hack to hide submit button */
 #search_submit {
     position: absolute;
     left: -9999px;
-}
-
-.item {
-    border: 1px solid;
-    padding: 20px;
-    margin: 20px;
-    background: white;
-    font-size: 20px;
-    overflow: hidden;
-
-    
-    height: 100px;
-    width: 50%;
-    /* Center the div */
-    margin-left: auto;
-    margin-right: auto;
 }
 
 .query-container {
@@ -190,42 +124,6 @@ html, body {
     color: #ff8c00;
 }
 
-/* Links management */
-
-
-a.amber:link, a.amber:visited {
-    background-color: grey;
-    color: white;
-    text-align: center;
-    padding-left: 5px;
-    padding-right: 5px;
-    text-decoration: none;
-    display: inline-block;
-}
-
-a.amber:hover, a.amber:active {
-    background-color: #ff8c00;
-}
-
-
-
-a.itemlink:link, a.itemlink:visited {
-    background-color: white;
-    color: dimgrey;
-    font-weight: bold;
-    text-align: left;
-    padding-left: 5px;
-    padding-right: 5px;
-    text-decoration: none;
-    display: inline-block;
-}
-
-a.itemlink:hover, a.itemlink:active {
-    background-color: #ff8c00;
-    color: white;		   
-}
-
-
 
 .provider-element {
     postion: relative;
@@ -240,41 +138,61 @@ a.itemlink:hover, a.itemlink:active {
     width: 100%;
 }
 
-.item-image > img {
-    height: 100px;
-}
-
-.item-images-container {
-    width: 20%;
-    float: left;
-}
-
-.item-main-container {
-    float: right;
-    width: 80%;
-    height: 100%;
+.item {
+    overflow: hidden;
+    height: 150px;
+    padding: 10px;
+    margin: 20px;
+    width: 75%;
     position: relative;
 }
 
-.item-main-bottom {
-    bottom: 0;
-    position: absolute;
+.item-container {
     width: 100%;
+    height: 100%;
+}
+
+.item-left {
+    float: left;
+    width: 150px;
+    height: 100%;
+}
+
+.item-right {
+    float:right;
+    width:100px;
+    text-align: right;
+}
+
+.item-center {
+    margin:0 auto;
+    max-height: 100%;
+}
+
+.item-image-container {
+    height: 150px;
+    weight: 150px;
+}
+
+.item-image-container > img {
+    max-height: 100%;
+    max-width: 100%;
+    display:block;
+    margin:auto;
+}
+
+.item-name {
+    font-size: 18px;
+    padding-bottom: 10px;
 }
 
 .item-price {
-    border: 1px solid;
     position: relative;
     float: right;
     margin-left: 20px;
     padding: 5px;
-    background-color: yellow;
-    font-size: 24px;
+    font-size: 36px;
     line-height: 1;    
-}
-
-div {
-    border: 0px solid;
 }
 
 .kop {
@@ -296,14 +214,9 @@ div {
     padding-left: 10px;
 }
 
-.sale-description {
-    border: 1px solid;
-    background-color: #FFB6C1;
-    padding: 5px;
-    font-size: 12px;
-    margin-right: 10px;
-    position: relative;
-    float: right;
+.sale {
+    color: red;
+    padding-top: 5px;
 }
 
 .help-list > li {
