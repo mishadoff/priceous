@@ -93,27 +93,32 @@
      [:div {:class "item-name"}
       [:a {:href (:link item)
            :target "_blank"
-           :class "link external"} (:name item)]]
+           :class "itemlink"} (:name item)]]
 
      ;; alcohol
      (if (:alcohol item)
-       [:div (format "Крепость: %s%%" (u/format-decimal-up-to-2 (:alcohol item)))])
+       [:div {:class "itemprop"}
+        (format "Крепость: %s%%" (u/format-decimal-up-to-2 (:alcohol item)))])
 
      (if (:type item)
-       [:div (format "Тип: %s" (:type item))])
+       [:div {:class "itemprop"}
+        (format "Тип: %s" (:type item))])
 
      (if (:country item)
-       [:div (format "Регион: %s" (:country item))])
+       [:div {:class "itemprop"}
+        (format "Регион: %s" (:country item))])
 
      ;; only for wines
      (if (:wine_grape item)
-       [:div (format "Сорт: %s" (:wine_grape item))])
+       [:div {:class "itemprop"}
+        (format "Сорт: %s" (:wine_grape item))])
      
      (if (:wine_sugar item)
-       [:div (format "Сахар: %s г/л" (:wine_sugar item))])
+       [:div {:class "itemprop"}
+        (format "Сахар: %s г/л" (:wine_sugar item))])
      
      (if (:sale item)
-       [:div {:class "sale"}
+       [:div {:class "itemprop sale"}
         (format "Акция: %s" (:sale_description item))])
 
 
@@ -134,7 +139,7 @@
      "Введите запрос, например "
 
      ;; TODO make this generatable
-     [:a {:href "/search?query=springbank" :class "amber"}
+     [:a {:href "/search?query=springbank" :class "link"}
       "springbank"]]
 
     ;; Query entered, but nothing found

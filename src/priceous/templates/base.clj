@@ -31,15 +31,15 @@
    
    [:div {:class "mp-root"} 
     [:div {:class "mp-child"}
-     [:a {:href "/about"  :class "link h20"} "О проекте"]]]
+     [:a {:href "/about"  :class "headerlink h20"} "О проекте"]]]
 
    [:div {:class "mp-root"} 
     [:div {:class "mp-child"}
-     [:a {:href "/help"  :class "link h20"} "Помощь"]]]
+     [:a {:href "/help"  :class "headerlink h20"} "Помощь"]]]
 
    [:div {:class "mp-root"} 
     [:div {:class "mp-child"}
-     [:a {:href "/stats" :class "link h20"} "Статистика"]]]
+     [:a {:href "/stats" :class "headerlink h20"} "Статистика"]]]
    ])
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

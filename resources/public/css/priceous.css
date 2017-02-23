@@ -31,13 +31,35 @@ html, body {
 }
 
 a.link:link, a.link:visited {
-    color: black;
+    color: #999;
     text-decoration: none;
-    font-weight: bold;
 }
 
 a.link:hover, a.link:active {
     color: #00bbff;
+}
+
+a.itemlink:link, a.itemlink:visited {
+    color: black;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+a.headerlink:link, a.headerlink:visited {
+    color: black;
+    text-decoration: none;
+}
+
+a.itemlink:hover, a.itemlink:active {
+    color: #00bbff;
+}
+
+a.headerlink:hover, a.headerlink:active {
+    color: #00bbff;
+}
+
+.bold {
+    font-weight: bold;
 }
 
 .header_motto {
@@ -204,9 +226,12 @@ a.link:hover, a.link:active {
 .query-examples {
     padding: 10px;
     list-style-type: none;
+    
 }
 
 .query-examples > li {
+    padding-left: 20px;
+    font-size: 14px;
     margin-bottom: 5px;
 }
 
@@ -221,4 +246,8 @@ a.link:hover, a.link:active {
 
 .help-list > li {
     margin-bottom: 5px;
+}
+
+.itemprop {
+    font-size: 14px;
 }
