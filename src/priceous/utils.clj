@@ -109,7 +109,7 @@
            resolve
            var-get)
        (catch Exception e
-         (log/error (format "Can not resolve provider [%s]" pname)))))
+         (log/error (format "Can not resolve provider [%s] %s" pname (.getMessage e))))))
 
 (defn require-all-providers []
   ;; Require all namespaces in priceous.provider.* folder
@@ -117,3 +117,11 @@
                      (filter (fn [sym] (clojure.string/starts-with? (str sym) "priceous.provider."))))]
     (doseq [provider-ns symbols]
       (require provider-ns))))
+
+
+(defn split-price [price]
+  (let [grn (bigint (Math/floor price))
+        kop (->> (int (* 100 (- price grn)))
+                 (format "%2d")
+                 ((fn [s] (clojure.string/replace s " " "0"))))]
+    [grn kop]))

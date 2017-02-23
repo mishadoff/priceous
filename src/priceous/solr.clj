@@ -45,9 +45,8 @@
 (defn stats [ctx]
   (try 
     (flux/with-connection
-      (http/create
-       (get-in @config/properties [:solr :host])
-       (keyword (get-in @config/properties [:solr :collection])))
+      (http/create (config/prop [:solr :host])
+                   (keyword (config/prop [:solr :collection])))
       (log/info (format "[%s] Requested StatsRequest" (:ip ctx)))
       (let [response
             (flux/request 
@@ -64,6 +63,7 @@
                      type:terms,
                      field:available}}}"
                }))]
+        (log/info response)
         {:status :success
          :response {:total (get-in response [:response :numFound])
                     :providers (->> (get-in response [:facets :providers :buckets])

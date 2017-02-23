@@ -5,7 +5,9 @@
 
 (def properties (atom nil))
 
-(defn prop [path] (get-in @properties path))
+(defn prop
+  ([path] (get-in @properties path))
+  ([path not-found] (get-in @properties path not-found)))
 
 (defn config-timbre! []
   (let [colors {:info :green :warn :yellow :error :red :fatal :purple :report :blue}]

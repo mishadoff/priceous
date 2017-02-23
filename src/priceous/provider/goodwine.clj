@@ -114,7 +114,7 @@
            :page-limit     Integer/MAX_VALUE
            :done           false
            }
-
+   
    :configuration {
                    :categories-fn      get-categories
                    :threads            8
