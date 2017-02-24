@@ -131,7 +131,7 @@
    which return last page of the current provider or category
    If failed, returns 1 as a last page"
   (let [last-page-num 
-        (some->> (select*+ page provider (p/last-page-selector provider))
+        (some->> (select*? page provider (p/last-page-selector provider))
                  (map html/text)
                  (remove #{"»" "..."})
                  (map u/smart-parse-double)

@@ -70,7 +70,9 @@
 (defn cleanup
   "Remove whitespace charaters from string"
   [s]
-  (some-> s
+  (some->
+   s
+   (.replaceAll "&nbsp;" " ")
    (.replaceAll "\\s+" " ")
    (clojure.string/trim)))
 

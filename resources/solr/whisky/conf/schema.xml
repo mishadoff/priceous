@@ -12,7 +12,7 @@
     <field name="country" type="text_general" indexed="true" stored="true" required="false"/>
     <field name="wine_sugar" type="float" indexed="true" stored="true" required="false"/>
     <field name="wine_grape" type="text_general" indexed="true" stored="true" required="false"/>
-    <field name="vintage" type="int" indexed="true" stored="true" required="false"/>
+    <field name="vintage" type="text_general" indexed="true" stored="true" required="false"/>
     <field name="producer" type="text_general" indexed="true" stored="true" required="false"/>
     <field name="type" type="text_general" indexed="true" stored="true" required="false"/>
     <field name="product_code" type="string" indexed="true" stored="true" required="false"/>

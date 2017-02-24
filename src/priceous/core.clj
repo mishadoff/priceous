@@ -51,12 +51,15 @@
      (Example: {:total 1455})"
   [state provider]
   (try
-    (let [items (flow/process provider) pname (p/pname provider)]
+    (let [start (System/currentTimeMillis)
+          items (flow/process provider)
+          pname (p/pname provider)]
       (cond (empty? items)
             (do (log/warn (format "[%s] No items found" pname)) state)
 
             :else
-            (do (log/info (format "[%s] Found %s items" pname (count items)))
+            (do (log/info (format "[%s] Found %s items in %.2f seconds"
+                                  pname (count items) (u/elapsed-so-far start)))
                 ;; write data to every appender
                 (log/info (format "Available appenders %s" (config/prop [:appenders])))
                 (doseq [apn (config/prop [:appenders])]
@@ -66,3 +69,13 @@
       (log/error (format "[%s] ProviderError" (get-in provider [:info :name])))
       (log/error e)
       state)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defn -main
+  "This main needed to test scrapping without starting webserver
+   lein run -m priceous.core goodwine rozetka ..."
+  [& args]
+  (config/config-timbre!)
+  (config/read-properties! nil)
+  (scrap args))
