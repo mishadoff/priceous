@@ -1,10 +1,11 @@
 (ns priceous.formatter)
 
-(defn processing-page [provider]
-  (format "[%s | %s] Processing page %s"
+(defn processing-page [provider last-page-num]
+  (format "[%s | %s] Processing page %s/%s"
           (get-in provider [:info :name])
           (get-in provider [:state :category])
-          (get-in provider [:state :page-current])))
+          (get-in provider [:state :page-current])
+          last-page-num))
 
 (defn category-processed [provider size]
   (format "[%s | %s] Category processed. Found %s items"

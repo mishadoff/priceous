@@ -41,7 +41,6 @@
   (let [p (atom provider) docs (atom [])]
 
     (while (not (p/done? @p))
-      (log/info (fmt/processing-page @p))
       (let [result (process-page @p)]
         (assert (:provider result) "Processor must return new provider")
         (assert (:docs result)     "Processor must return docs")
@@ -65,6 +64,10 @@
   (let [page (u/fetch (p/current-page provider))]
     (->>
      page
+     ((fn [page]
+        (log/info (fmt/processing-page provider
+                                       (su/last-page provider page)))
+        page))
      (su/find-nodes provider)
      (#(cond->> % (p/heavy? provider) (fetch-heavy-nodes provider)))
      (map (partial (p/node->document provider) provider))

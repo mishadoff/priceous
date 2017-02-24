@@ -159,6 +159,7 @@
          ~'q+ (fn [selector#] (select+ node# ~provider selector# :context ~nodemap))
          ~'q? (fn [selector#] (select? node# ~provider selector# :context ~nodemap))
          ~'q* (fn [selector#] (select*+ node# ~provider selector# :context ~nodemap))
+         ~'q*? (fn [selector#] (select*? node# ~provider selector# :context ~nodemap))
          ~'text+ (text-fn ~'q+)
          ~'text? (text-fn ~'q?)]
      ~@body))

@@ -196,7 +196,7 @@ a.headerlink:hover, a.headerlink:active {
     weight: 150px;
 }
 
-.item-image-container > img {
+.nested_fixed_img {
     max-height: 100%;
     max-width: 100%;
     display:block;
@@ -216,6 +216,32 @@ a.headerlink:hover, a.headerlink:active {
     font-size: 36px;
     line-height: 1;    
 }
+
+.item-price {
+    position: relative;
+    float: right;
+    margin-left: 20px;
+    padding: 5px;
+    font-size: 36px;
+    line-height: 1;    
+}
+
+.item-price {
+    position: relative;
+    float: right;
+    margin-left: 20px;
+    padding: 5px;
+    font-size: 36px;
+    line-height: 1;    
+}
+
+.item-provider {
+    height: 100px;
+    width: 70px;
+    position: relative;
+    float: right;
+}
+
 
 .kop {
     font-size: 12px;

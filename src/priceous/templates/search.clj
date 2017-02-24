@@ -61,7 +61,9 @@
    [:div {:class "item-container"}
     [:div {:class "item-left"}
      [:div {:class "item-image-container"}
-      [:img {:src (:image item)}]]
+      [:a {:href (:link item) :target "_blank" :class "itemlink"}
+      [:img {:class "nested_fixed_img" :src (:image item)}]
+       ]]
      ]
 
     [:div {:class "item-right"}
@@ -80,11 +82,10 @@
      [:div {:class "item-provider"}
       (let [p (u/resolve-provider-by-name (.toLowerCase (:provider item)))]
         [:a {:href (get-in p [:info :base-url])}
-         [:img {:src (get-in p [:info :icon])
+         [:img {:class "nested_fixed_img"
+                :src (get-in p [:info :icon])
                 :title (:provider item)
-                :alt (:provider item)
-                :width (get-in p [:info :icon-width] "70")
-                :height (get-in p [:info :icon-height] "34")}]])]
+                :alt (:provider item)}]])]
 
      ]
 
@@ -118,7 +119,7 @@
         (format "Сахар: %s г/л" (:wine_sugar item))])
      
      (if (:sale item)
-       [:div {:class "itemprop sale"}
+       [:div {:class "sale"}
         (format "Акция: %s" (:sale_description item))])
 
 

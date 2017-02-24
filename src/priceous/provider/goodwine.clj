@@ -9,12 +9,26 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defn- get-categories [provider]
-  [{:name "Виски" :template "http://goodwine.com.ua/viski.html?dir=asc&p=%s"}
-   {:name "Вино" :template "http://goodwine.com.ua/vino.html?dir=asc&p=%s"}
-   {:name "Игристое Вино" :template "http://goodwine.com.ua/igristye.html?dir=asc&p=%s"}
-   {:name "Пиво" :template "http://goodwine.com.ua/pivo.html?dir=asc&p=%s"}
-   {:name "Cидр" :template "http://goodwine.com.ua/sidry.html?dir=asc&p=%s"}
-   {:name "Другие Крепкие" :template "http://goodwine.com.ua/drugie-krepkie.html?dir=asc&p=%s"}])
+  (->>
+   [["Виски" "http://goodwine.com.ua/viski.html"]
+    ["Вино" "http://goodwine.com.ua/vino.html"]
+    ["Игристое Вино" "http://goodwine.com.ua/igristye.html"]
+    ["Пиво" "http://goodwine.com.ua/pivo.html"]
+    ["Cидр" "http://goodwine.com.ua/sidry.html"]
+    ["Ром" "http://goodwine.com.ua/drugie-krepkie/rom/vse-romy.html"]
+    ["Коньяк" "http://goodwine.com.ua/drugie-krepkie/prochie-krepkie/cognac.html"]
+    ["Арманьяк" "http://goodwine.com.ua/drugie-krepkie/prochie-krepkie/armagnac.html"]
+    ["Бренди" "http://goodwine.com.ua/drugie-krepkie/prochie-krepkie/brandy.html"]
+    ["Ликер" "http://goodwine.com.ua/drugie-krepkie/prochie-krepkie/liquer.html"]
+    ["Биттер" "http://goodwine.com.ua/drugie-krepkie/prochie-krepkie/bitter.html"]
+    ["Кальвадос" "http://goodwine.com.ua/drugie-krepkie/prochie-krepkie/calvados.html"]
+    ["Джин" "http://goodwine.com.ua/drugie-krepkie/prochie-krepkie/gin.html"]
+    ["Водка" "http://goodwine.com.ua/drugie-krepkie/prochie-krepkie/vodka.html"]
+    ["Граппа" "http://goodwine.com.ua/drugie-krepkie/prochie-krepkie/grappa.html"]
+    ["Текила" "http://goodwine.com.ua/drugie-krepkie/prochie-krepkie/tequilla.html"]
+    ["Писко" "http://goodwine.com.ua/drugie-krepkie/prochie-krepkie/pisko.html"]
+    ["Мескаль" "http://goodwine.com.ua/drugie-krepkie/prochie-krepkie/meskal.html"]]
+   (mapv (fn [[name url]] {:name name :template (str url "?dir=asc&p=%s")}))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -96,7 +110,6 @@
 
 (def provider
   {
-   ;; provider specific information
    :info {
           :name          "Goodwine"
           :base-url      "http://goodwine.com.ua/"
