@@ -13,8 +13,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defn stats-container [content]
-  [:div {:class "full-container"}
-   (let [{:keys [status response]} content]
+  (let [{:keys [status response]} content]
      (cond
 
        (not= :success status) [:div "Статистика недоступна."]
@@ -39,4 +38,4 @@
                           (:total p)
                           (-> (:ts p)
                               (clojure.string/replace "T" " ")
-                              (clojure.string/replace "Z" " ")))])]]]]))])
+                              (clojure.string/replace "Z" " ")))])]]]])))

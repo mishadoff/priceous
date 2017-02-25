@@ -27,7 +27,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defn search-container [content]
-  [:div {:class "full-container"}
+  [:div
    [:div {:class "search-left-panel"}
     [:p {:class "query-examples-title"} "Примеры запросов:"]
     [:ul {:class "query-examples"}
@@ -50,9 +50,7 @@
        (cond
          (or (= :success status) (empty? (:query content)))
          [:div
-          [:div (for [i (get-in data [:response :docs])] (render-item i))]]))]]
-
-   ])
+          [:div (for [i (get-in data [:response :docs])] (render-item i))]]))]]])
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

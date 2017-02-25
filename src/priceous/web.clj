@@ -23,6 +23,8 @@
             [priceous.templates.help :as help]
             [priceous.templates.stats :as stats]
             [priceous.templates.search :as search]
+            [priceous.templates.contacts :as contacts]
+            [priceous.templates.about :as about]
 
             [priceous.utils :as u]
             [priceous.scheduler :as scheduler]
@@ -52,6 +54,8 @@
 
   (GET "/stats" request (stats/view (solr/stats {:ip (u/get-client-ip request)})))
   (GET "/help" [] (help/view {}))
+  (GET "/about" [] (about/view {}))
+  (GET "/contacts" [] (contacts/view {}))
   
   (route/resources "/")
   (route/not-found "<h1>Invalid page</h1>") ;; TODO error page

@@ -18,48 +18,44 @@
    [:body
     [:div {:id "main"}
      (header content)
-     (container-fn content)
-     #_(footer content)]]))
+     [:div {:class "full-container"}
+      (container-fn content)]
+     (footer content)]]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defn header [content]
   [:div {:class "header"}
-   [:div 
+   [:div {:class "priceous_logo"}
     [:a {:href "/search" :class "h100"}
      [:img {:src "/images/priceous_logo_2x.png" :width "150" :height "75"}]]]
    
    [:div {:class "mp-root"} 
     [:div {:class "mp-child"}
-     [:a {:href "/about"  :class "headerlink h20"} "О проекте"]]]
+     [:a {:href "/about"  :class "headerlink"} "О проекте"]]]
 
    [:div {:class "mp-root"} 
     [:div {:class "mp-child"}
-     [:a {:href "/help"  :class "headerlink h20"} "Помощь"]]]
+     [:a {:href "/help"  :class "headerlink"} "Помощь"]]]
 
    [:div {:class "mp-root"} 
     [:div {:class "mp-child"}
-     [:a {:href "/stats" :class "headerlink h20"} "Статистика"]]]
+     [:a {:href "/stats" :class "headerlink"} "Статистика"]]]
+
+   [:div {:class "mp-root"} 
+    [:div {:class "mp-child"}
+     [:a {:href "/contacts" :class "headerlink"} "Контакты"]]]
    ])
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defn footer [content]
-  (let [version     (config/prop [:app :version])
-        build-date  (config/prop [:meta :build-date] (u/now))
-        site-name   (config/prop [:app :name])]
-    [:div {:class "footer"}
-     [:div {:class "footer-left"}
-      [:div {:class "footer-name"} "priceous"]
-      [:div {:class "footer-copyright"} "©"]
-      [:div {:class "footer-author"}
-       [:a {:href "http://mishadoff.com"
-            :class "amber"
-            :target "_blank"} "mishadoff.com"]]]
-
-     [:div {:class "footer-center"}]
-
-     [:div {:class "footer-right"
-            :align "right"}
-      [:div {:class "footer-right-content"}
-       (format "Version %s" version)]]]))
+  [:div {:class "footer"}
+   [:div {:class "footer_left"}
+    [:a {:href "/" :class "link"} "priceous.mishadoff.com"]
+    [:span {:class "footer_pause"}]
+    [:span "Агрегатор цен на алкоголь"]]
+   [:div {:class "footer_right"}
+    [:div "version 0.3.1"]]
+   [:div {:class "footer_center"}]
+   ])

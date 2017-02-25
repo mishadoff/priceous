@@ -26,10 +26,6 @@ html, body {
     float: left;
 }
 
-.h20 {
-    font-size: 20px;
-}
-
 a.link:link, a.link:visited {
     color: #999;
     text-decoration: none;
@@ -67,7 +63,24 @@ a.headerlink:hover, a.headerlink:active {
     padding-right: 50px;
 }
 
-/* TODO FOOTER */
+.footer {
+    border-top: 1px solid;
+    border-color: lightgray;
+    padding: 10px;
+    font-size: 10px;
+}
+
+.footer_pause {
+    padding-left: 10px;
+}
+
+.footer_left {
+    float: left;
+}
+
+.footer_right {
+    float: right;
+}
 
 .full-container {
     float: left;
@@ -157,7 +170,8 @@ a.headerlink:hover, a.headerlink:active {
     font-size: 24px;
     line-height: 1;
     background-color: #ffffff;
-    width: 100%;
+    width: 80%;
+    padding: 7px;
 }
 
 .item {
@@ -276,4 +290,44 @@ a.headerlink:hover, a.headerlink:active {
 
 .itemprop {
     font-size: 14px;
+}
+
+.priceous_logo {
+    margin-right: 100px;
+}
+
+.about-container {
+    margin: 20px;
+    font-size: 14px;
+    width: 80%;
+}
+
+.more-info {
+    border-bottom: 1px dotted;
+    display: inline-block;
+    position: relative;
+}
+
+.more-info .more-info-text {
+    visibility: hidden;
+    background-color: lightyellow;
+    width: 250px;
+    text-align: center;
+    border-radius: 5px;
+    border: 1px dotted;
+    padding: 5px;
+    position: absolute;
+    z-index: 1;
+}
+
+.more-info:hover {
+    cursor: help;
+}
+
+.more-info:hover .more-info-text {
+    visibility: visible;
+}
+
+.contacts-main {
+    padding: 20px;
 }
