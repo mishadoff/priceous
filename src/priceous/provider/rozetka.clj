@@ -49,7 +49,12 @@
                     (into {}))]
       (-> {}
           (assoc :provider (p/pname provider))
-          (assoc :name (text+ [:.detail-title]))
+          (assoc :name (let [name (text+ [:.detail-title])
+                             rzt-code (first (re-seq #" ?\(\d{6,}\)\s*" name))]
+                         (-> (if (and name rzt-code)
+                               (.replace name rzt-code "")
+                               name)
+                             (u/cleanup))))
           (assoc :link link)
           (assoc :image (-> (q+ [:#detail_image_container :.responsive-img :img])
                             (get-in [:attrs :src])))
@@ -75,7 +80,13 @@
                              (str (spec "Категория")))
                            (u/cleanup)))
           
-          (assoc :alcohol (some-> (spec "Крепость, %") (u/smart-parse-double)))
+          (assoc :alcohol (let [alco (spec "Крепость")]
+                            (-> (if (.contains alco "-")
+                                  (some-> (.split alco "-")
+                                          (seq)
+                                          (first))
+                                  alco)
+                                (u/smart-parse-double))))
           (assoc :product-code (format "%s_%s"
                                        (p/pname provider)
                                        (text+ [[:span (html/attr= :name "goods_code")]])))

@@ -5,33 +5,49 @@
             [taoensso.timbre :as log]
             [clj-time.coerce :as tc]
             [priceous.config :as config]
+            [priceous.provider :as p]
             [priceous.utils :as u])
   (:import [org.apache.solr.client.solrj.util ClientUtils]))
 
-;; TODO test
-(defn query [q ctx]
-  (try 
-    (flux/with-connection
-      (http/create
-       (get-in @config/properties [:solr :host])
-       (keyword (get-in @config/properties [:solr :collection])))
-      (let [processed-query (if (clojure.string/starts-with? q "!")
-                              (subs q 1)
-                              (ClientUtils/escapeQueryChars q))
-            response
-            (flux/request
-             (query/create-query-request
-              {:q processed-query
-               :fq "available:true" ;; TODO remove if available true
-               :start 0 ;; TODO paging later
-               :rows 50 ;; TODO ONLY 50 RESULTS RTURNED
-               :sort "price asc"}))]
-        (log/info (format "[%s] Completed SolrQuery [%s] found %s items" (:ip ctx) q
-                           (get-in response [:response :numFound])))
-        {:status :success :data response}))
-    (catch Exception e
-      (log/error e)
-      {:status :error :response {}})))
+(declare
+ resolve-page
+ resolve-sort
+ resolve-available)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defn query [params ctx]
+  (let [q (:query params)
+        page (resolve-page params)
+        sorting (resolve-sort params)
+        available (resolve-available params)
+        perpage (config/prop [:view :per-page] 10)]
+    (try 
+      (flux/with-connection
+        (http/create
+         (get-in @config/properties [:solr :host])
+         (keyword (get-in @config/properties [:solr :collection])))
+        (let [processed-query (if (clojure.string/starts-with? q "!")
+                                (subs q 1)
+                                (ClientUtils/escapeQueryChars q))
+              response
+              (flux/request
+               (query/create-query-request
+                (-> {:q processed-query
+                     :start (* perpage (dec page))
+                     :rows perpage
+                     :sort sorting}
+                    ((fn [req]
+                       (cond (= available "all") req
+                             :else (assoc req :fq
+                                          (format "available:%s" available)))))
+                    )))]
+          (log/info (format "[%s] Completed SolrQuery [%s] found %s items" (:ip ctx) q
+                            (get-in response [:response :numFound])))
+          {:status :success :data response}))
+      (catch Exception e
+        (log/error e)
+        {:status :error :response {}}))))
 
 (defn- process-provider-pivots [response]
   (let [pivot (first (vals (get-in response [:facet_counts :facet_pivot])))]
@@ -94,6 +110,16 @@
        (keyword (get-in @config/properties [:solr :collection])))
       
       (log/info "Connections to SOLR established")
+
+      ;; log deltas
+      (let [num-before (-> (flux/request (query/create-query-request
+                                          {:q "*" :rows 0
+                                           :fq (format "provider:%s" (p/pname provider))}))
+                           (get-in [:response :numFound]))
+            delta (- (count items) num-before)]
+        (log/info (format "[%s] Items delta %d" (p/pname provider) delta))
+        (when (< delta -50) ;; TODO configurable alert for deltas
+          (log/warn "High delta change detected, probably something wrong")))
       
       ;; delete all documents for this provider because currently we interested
       ;; in recent items
@@ -109,3 +135,35 @@
     (catch Exception e
       (log/error "Pushing to solr failed")
       (log/error e))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defn- resolve-page
+  "Parse the page from params into number
+  If cannot parse, return 1"
+  [params]
+  (let [page (:page params)]
+    (or (some-> page
+                (try (Integer/parseInt page)
+                     (catch NumberFormatException e nil)))
+        1)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defn- resolve-sort
+  "Parse the sort info from params, and build solr query sort params
+  If cannot parse, use default price+asc"
+  [params]
+  (get {"cheap" "price asc"
+        "expensive" "price desc"
+        "relevant" "score desc"}
+       (:sort params)
+       "price asc"))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defn- resolve-available
+  "Parse the available info from params, and build solr query available param
+  If cannot parse, use default available:true"
+  [params]
+  (get #{"true" "false" "all"} (:available params) "true"))

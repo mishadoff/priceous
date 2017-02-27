@@ -6,7 +6,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defn view [response] (base/page contacts-container response))
+(defn view [response] (base/page contacts-container response {:title "Контакты"}))
 
 (defn- contacts-container [response]
   [:div {:class "contacts-main"}

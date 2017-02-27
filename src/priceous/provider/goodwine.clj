@@ -75,9 +75,11 @@
                                                 (html/text)))
                                       (clojure.string/join "_")))
             (assoc :available (empty? (q? [:.notAvailableBlock])))
-            (assoc :item_new  (boolean (some-> (q? [:.medalIcon :.stamp])
-                                               (get-in [:attrs :src])
-                                               (.contains "/New_"))))
+            (assoc :item_new (->> (q*? [:.medalIcon :.stamp])
+                                  (map (fn [n]
+                                         (.contains (get-in n [:attrs :src])
+                                                    "/New_")))
+                                  (some true?)))
             
             ;; volume and price blocks are present if product is available
             ((fn [p] (assoc p :volume

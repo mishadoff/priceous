@@ -6,7 +6,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defn view [response] (base/page about-container response))
+(defn view [response] (base/page about-container response {:title "О проекте"}))
 
 (defn- about-container [response]
   [:div {:class "about-container"}

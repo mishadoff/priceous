@@ -5,6 +5,7 @@
             [hiccup.form :refer :all]
             [hiccup.page :as page]
             [priceous.templates.base :as base]
+            [priceous.templates.query-examples :as qe]
             [priceous.config :as config]
             [priceous.utils :as u]
             [taoensso.timbre :as log]))
@@ -15,14 +16,13 @@
  render-item
  status-bar
  search-input
- query-example
- )
+ pagination)
 
 (u/require-all-providers)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defn view [response] (base/page search-container response))
+(defn view [response] (base/page search-container response {:title "Priceous"}))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -31,26 +31,33 @@
    [:div {:class "search-left-panel"}
     [:p {:class "query-examples-title"} "Примеры запросов:"]
     [:ul {:class "query-examples"}
-     (query-example "Миниатюры (0.05)" "/search?query=0.05")
-     (query-example "Glenfiddich 12yo 0.7" "/search?query=glenfiddich+12+0.7")
-     (query-example "Односолодовый виски" "/search?query=односолодовый")
-     (query-example "Бленды" "/search?query=бленд")
-     (query-example "Бурбоны" "/search?query=бурбон")
-     (query-example "Страна: Шотландия" "/search?query=шотландия")
-     (query-example "Только Goodwine" "/search?query=Goodwine")
-     ]
-    ]
+     (for [[name href] qe/queries]
+       (qe/query-example name href))]]
 
    [:div {:class "search-right-panel"}
     (search-input content)
     (status-bar content)
 
+    [:div {:class "search-controls"}
+     [:div {:class "pagination-parent"}
+      (pagination content)]
+     [:div {:clsss "sorting-parent"}
+      (sorting content)]]
+    
     [:div {:class "search-container"}
-     (let [{:keys [status data]} (:response content)]
+     (let [{:keys [status data]} (get-in content [:solr :response])]
        (cond
-         (or (= :success status) (empty? (:query content)))
+         (or (= :success status) (empty? (get-in content [:params :query])))
          [:div
-          [:div (for [i (get-in data [:response :docs])] (render-item i))]]))]]])
+          [:div (for [i (get-in data [:response :docs])] (render-item i))]]))]
+
+
+    [:div {:class "search-controls"}
+     [:div {:class "pagination-parent"}
+      (pagination content)]]
+    
+
+    ]])
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -129,36 +136,38 @@
 
 (defn status-bar [content]
   (cond
-    (= :error (get-in content [:response :status]))
+    (= :error (get-in content [:solr :response :status]))
     [:div {:class "status-bar-error"} "Ошибка: Неправильный запрос"]
     
     ;; Query not entered, first time here
-    (empty? (:query content))
+    (empty? (get-in content [:params :query]))
     [:div {:class "status-bar-small"}
      "Введите запрос, например "
-
-     ;; TODO make this generatable
-     [:a {:href "/search?query=springbank" :class "link"}
-      "springbank"]]
-
+     
+     (let [[name href] (rand-nth qe/queries)]
+       [:a {:href href :class "link"} name])]
+    
     ;; Query entered, but nothing found
-    (and (not (empty? (:query content)))
-         (zero? (get-in content [:response :data :response :numFound])))
+    (and (not (get-in content [:params :query]))
+         (zero? (get-in content [:solr :response :data :response :numFound])))
     [:div {:class "status-bar-regular"}
      "Ничего не найдено."]
     
     :else
-    [:div {:class "status-bar-small"}
-     (format "Найдено %s товаров за %s секунд. "
-             (get-in content [:response :data :response :numFound])
-             (some-> (get-in content [:response :data :responseHeader :QTime])
-                     (/ 1000.0)))
-     (if (> (get-in content [:response :data :response :numFound] 0)
-            (count (get-in content [:response :data :response :docs] [])))
-       [:span {:class "status-bar-warning"}
-        "(показано только первых 50 товаров)"])
+    [:div 
+     [:div {:class "status-bar-small"}
+      (format "Найдено %s товаров за %s секунд. "
+              (get-in content [:solr :response :data :response :numFound])
+              (some-> (get-in content [:solr :response :data :responseHeader :QTime])
+                      (/ 1000.0)))]
      
-     ]))
+
+      ;; TODO build links based for this use query DO not use page
+      ;; TODO ALL from query params
+     
+      ]
+
+     ))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   
@@ -170,13 +179,61 @@
      (text-field
       {:size 50 :rows 1 :class "query-text-field"}
       "query"
-      (:query content))]]
+      (get-in content [:params :query]))]]
     [:div
      [:input {:id "search_submit" :type "submit" :value "Search" :tabindex "-1"}]]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defn query-example [name href]
-  [:li [:a {:class "link" :href href} name]])
+(defn- pagination [content]
+  (when (not (empty? (get-in content [:params :query])))
+    (let [numfound (get-in content [:solr :response :data :response :numFound])
+          perpage (config/prop [:view :per-page] 10)
+          current-page ;; TODO extract
+          (or (try (Integer/parseInt (get-in content [:params :page]))
+                   (catch NumberFormatException e nil)) 1)
+          pages (int (Math/ceil (/ numfound perpage)))
+          page-context ;; TODO extract
+          (->> (into [] (range (max (- current-page 2) 1)  (inc (min pages (+ current-page 2)))))
+               ((fn [ctx]
+                  (cond
+                    (empty? ctx) ctx
+                    (= (first ctx) 1) ctx
+                    (> (first ctx) 2) (into [1 :..] ctx)
+                    :else (-> []
+                              (into (range 1 (first ctx)))
+                              (into ctx)))))
+               ((fn [ctx]
+                  (cond
+                    (empty? ctx) ctx
+                    (= last pages) ctx
+                    (<= (last ctx) (- pages 2)) (into ctx [:.. pages])
+                    :else (into ctx (range (inc (last ctx)) (inc pages)))))))]
+      ;; TODO if one page do not show pagination
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+      (when (and (> pages 1) (not (empty? page-context)))
+        [:div {:class "pagination"}
+         (for [page-index page-context]
+           (cond (= current-page page-index)
+                 [:span {:class "pagination_current_page"} page-index]
+                 (= page-index :..) [:span {:class "pagination-dots"} ".."]
+                 :else
+                 [:a {:href (format "/search?query=%s&sort=%s&page=%d" 
+                                    (java.net.URLEncoder/encode (get-in content [:params :query]))
+                                    (or (get-in content [:params :sort]) "cheap") page-index)
+                      :class "link"} page-index]))]))))
+
+(defn- sorting [content]
+  ;; TODO iterate on all params /except page
+  (let [q (get-in content [:params :query])
+        cursort (get #{"cheap" "expensive" "relevant"}
+                     (get-in content [:params :sort]) "cheap")]
+    [:div {:class "sorting"}
+     (for [[s label] [["cheap" "Дешевые"] ["expensive" "Дорогие"]
+                      #_["relevant" "Релевантные"]]]
+       (if (= s cursort)
+         [:span {:class "sorting-current"} label]
+         [:a {:href (format "/search?query=%s&sort=%s" (java.net.URLEncoder/encode q) s)
+              :class "link"}
+          label]))
+     ]))

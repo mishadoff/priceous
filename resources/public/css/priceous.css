@@ -231,26 +231,7 @@ a.headerlink:hover, a.headerlink:active {
     line-height: 1;    
 }
 
-.item-price {
-    position: relative;
-    float: right;
-    margin-left: 20px;
-    padding: 5px;
-    font-size: 36px;
-    line-height: 1;    
-}
-
-.item-price {
-    position: relative;
-    float: right;
-    margin-left: 20px;
-    padding: 5px;
-    font-size: 36px;
-    line-height: 1;    
-}
-
 .item-provider {
-    height: 100px;
     width: 70px;
     position: relative;
     float: right;
@@ -329,5 +310,82 @@ a.headerlink:hover, a.headerlink:active {
 }
 
 .contacts-main {
+    padding: 20px;
+}
+
+.stats-main {
+    padding: 20px;
+}
+
+.stats-table {
+    padding: 5px;
+}
+
+.stats-table th {
+    padding: 10px;
+    text-align: center;
+}
+
+.stats-table td {
+    padding-bottom: 15px;
+    padding-left: 10px;
+    padding-right: 10px;
+    text-align: center;
+}
+
+.stats-table tr {
+    margin-bottom: 10px;
+}
+
+.stats-last-row td {
+    padding-top: 20px;
+}
+
+.stats-time-today {
+    color: #32c132;
+}
+
+.stats-time-yesterday {
+    color: #e2e25a;
+}
+
+.stats-time-outdated {
+    color: red;
+}
+
+.pagination {
+    display: inline-block;
+    float: left;
+    padding-left: 20px;
+}
+
+.sorting {
+    display: inline-block;
+    float: right;
+}
+
+.sorting-current {
+    padding-left: 10px;
+}
+
+.sorting a {
+    padding-left: 10px;
+}
+
+.pagination a {
+    padding-left: 5px;
+}
+
+.pagination_current_page {
+    padding-left: 5px;
+}
+
+.pagination-dots {
+    padding-left: 5px;
+}
+
+.search-controls {
+    width: 75%;
+    margin: 20px;
     padding: 20px;
 }

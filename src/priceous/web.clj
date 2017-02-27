@@ -47,9 +47,8 @@
 
                 ;; if query is present execute solr query
                 :else (assoc response :response
-                             (solr/query (:query params)
-                                         {:ip (u/get-client-ip request)})))))
-           (merge params)
+                             (solr/query params {:ip (u/get-client-ip request)})))))
+           ((fn [solr-response] {:solr solr-response :params params}))
            (search/view)))
 
   (GET "/stats" request (stats/view (solr/stats {:ip (u/get-client-ip request)})))

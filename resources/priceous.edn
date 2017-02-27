@@ -20,5 +20,9 @@
  :scrapping {:providers ["goodwine"]}
 
  :appenders [:solr]
- 
+
+ :view {
+        :per-page 10
+        
+        }
  }

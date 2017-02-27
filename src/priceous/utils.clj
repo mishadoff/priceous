@@ -1,6 +1,7 @@
 (ns priceous.utils
   (:require [clj-time.coerce :as tc]
             [clj-time.format :as tf]
+            [clj-time.core :as t]
             [taoensso.timbre :as log]
             [clojure.string :as s]
             [net.cgrand.enlive-html :as html]
@@ -68,13 +69,15 @@
 
 
 (defn cleanup
-  "Remove whitespace charaters from string"
+  "Remove whitespace charaters from string
+   Empty string becames nil"
   [s]
   (some->
    s
    (.replaceAll "&nbsp;" " ")
    (.replaceAll "\\s+" " ")
-   (clojure.string/trim)))
+   (clojure.string/trim)
+   ((fn [s] (if (empty? s) nil s)))))
 
 (defn falsy []
   "Returns function which accepts any number of arguments
@@ -136,3 +139,16 @@
           (.endsWith decimal-fmt "0")
           (.substring decimal-fmt 0 (- (count decimal-fmt) 1))
           :else decimal-fmt))))
+
+
+(defn readable-time [ts-string]
+  (let [jt (tf/parse (tf/formatters :date-time-no-ms) ts-string)
+        jt-now (now-dt)
+        mid (fn [dt] (t/date-midnight (t/year dt) (t/month dt) (t/day dt)))
+        jt-mid (mid jt) jt-now (mid jt-now)
+        diff-in-days (t/in-days (t/interval jt-mid jt-now))]
+    (cond
+      (= diff-in-days 0) "Сегодня"
+      (= diff-in-days 1) "Вчера"
+      (> diff-in-days 1) "Давно"
+      :else nil)))
