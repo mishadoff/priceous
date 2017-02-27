@@ -16,7 +16,8 @@
  render-item
  status-bar
  search-input
- pagination)
+ pagination
+ sorting)
 
 (u/require-all-providers)
 
