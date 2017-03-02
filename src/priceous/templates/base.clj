@@ -16,7 +16,6 @@
    [:head [:link {:rel "shortcut icon" :href "/images/favicon.png"}]
     (page/include-js "/js/ga.js")
     (page/include-css "/css/priceous.css")
-    (page/include-css "https://fonts.googleapis.com/css?family='Noto+Sans'")
     [:title (:title xmap)]]
    [:body
     [:div {:id "main"}

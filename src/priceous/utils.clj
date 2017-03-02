@@ -17,7 +17,6 @@
  fetch
  cleanup
  falsy
- trim-inside
  )
 
 ;;;;;;;;;;;;;;;;;;;;;;
@@ -152,3 +151,12 @@
       (= diff-in-days 1) "Вчера"
       (> diff-in-days 1) "Давно"
       :else nil)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defn re-pos [re s]
+  (loop [m (re-matcher re s)
+         res {}]
+    (if (.find m)
+      (recur m (assoc res (.start m) (.group m)))
+      res)))
