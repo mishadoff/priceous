@@ -277,10 +277,14 @@ a.headerlink:hover, a.headerlink:active {
     margin-right: 100px;
 }
 
-.about-container {
+.about-container, .help-container {
     margin: 20px;
     font-size: 14px;
     width: 80%;
+}
+
+.help-container {
+    line-height: 1.5;
 }
 
 .more-info {

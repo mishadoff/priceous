@@ -32,7 +32,9 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defn query-example [name href]
-  [:li [:a {:class "link" :href href} name]])
+(defn query-example
+  ([name] (query-example name (format "/search?query=%s"
+                                      (java.net.URLEncoder/encode name))))
+  ([name href] [:a {:class "link" :href href} name]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

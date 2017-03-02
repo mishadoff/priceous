@@ -1,10 +1,10 @@
-(defproject priceous "0.0.3"
-  :description "Process to monitor prices for precious items"
+(defproject priceous "0.2.0"
+  :description "Price aggregator for alcohol products"
   :url "http://priceous.mishadoff.com"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [[org.clojure/clojure "1.8.0"]
-
+                 
                  ;; Instrumenting and dynamic providers loading 
                  [org.clojure/tools.namespace "0.2.11"]
                  
@@ -47,6 +47,9 @@
 
                  ;; under dmi3iy influence
                  [org.clojure/test.check "0.9.0"]
+
+                 ;; extract version of the project into app
+                 [trptcolin/versioneer "0.2.0"]
                  ]
   :plugins [[lein-ring "0.9.7"]]
   :ring {:handler priceous.web/app

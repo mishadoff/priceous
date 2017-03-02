@@ -1,6 +1,7 @@
 (ns priceous.templates.help
   (:require [hiccup.core :refer :all]
-            [priceous.templates.base :as base]))
+            [priceous.templates.base :as base]
+            [priceous.templates.query-examples :as qe]))
 
 (declare view help-container)
 
@@ -11,84 +12,77 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defn help-container [content]
-  [:div
-   [:ul {:class "help-list"}
-    [:li 
-     [:div
-      "Просто введите название виски, который вы ищете в строку поиска, например: "
-      [:a {:href "/search?query=springbank" :class "link"} "springbank"] ","
-      [:a {:href "/search?query=glenfiddich" :class "link"} "glenfiddich"] ","
-      [:a {:href "/search?query=jameson" :class "link"} "jameson"]]]
-    [:li
-     [:div
-      "Не нужно никаких кавычек, если это два и больше слов, например: "
-      [:a {:href "/search?query=tullamore+dew" :class "link"} "tullamore dew"] ","
-      [:a {:href "/search?query=balvenie+sherry" :class "link"} "balvenie sherry"] ","
-      [:a {:href "/search?query=clynelish+marsala+finish" :class "link"} "clynelish marsala finish"]
-      ]]
-    [:li
-     [:div
-      "Можно уточнять свой запрос, добавляя выдержку и обьем бутылки, например: "
-      [:a {:href "/search?query=glenfiddich+12+0.7" :class "link"} "glenfiddich 12 0.7"]]]
-    [:li
-     [:div
-      "Также можно уточнять крепость, например: "
-      [:a {:href "/search?query=caol+ila+52.8%25" :class "link"} "caol ila 52.8%"]]]
-    [:li
-     [:div
-      "Можно искать по странам, например:  "
-      [:a {:href "/search?query=шотландия" :class "link"} "шотландия"] ","
-      [:a {:href "/search?query=США" :class "link"} "США"] ","
-      [:a {:href "/search?query=тайвань" :class "link"} "тайвань"]]]
-    [:li
-     [:div
-      "Можно искать по производителям, например:  "
-      [:a {:href "/search?query=maltbarn" :class "link"} "maltbarn"] ","
-      [:a {:href "/search?query=gordon+%26+macphail" :class "link"} "gordon & macphail"]]]
-    [:li
-     [:div
-      "Можно даже искать по категории напитка, например: "
-      [:a {:href "/search?query=бленд" :class "link"} "бленд"] ","
-      [:a {:href "/search?query=бурбон" :class "link"} "бурбон"]]]
-    [:li
-     [:div
-      "Если вы забыли правильное название виски, пишите как слышите, а мы попробуем угадать: "
-      [:a {:href "/search?query=гленфидик" :class "link"} "гленфидик"] ","
-      [:a {:href "/search?query=туламор+дью" :class "link"} "туламор дью"]]]
-
-    [:li
-     [:div
-      "Всегда показывается только первых 50 результатов, отсортированные от дешевых к дорогим и которые обязательно есть в наличии."]]
-
-    [:li
-     [:div
-      "Для более продвинутого поиска используйте специальный синтаксис, начинающийся с символа !"]]
-
-    [:li
-     [:div
-      "Например, поиск только по названию: "
-      [:a {:href "/search?query=%21name%3Abourbon" :class "link"} "! name:bourbon"]]]
-
-    [:li
-     [:div
-      "Поиск виски в определенном ценовом диапазоне: "
-      [:a {:href "/search?query=%21+price%3A%5B*+TO+200%5D" :class "link"} "! price:[* TO 200]"] ","
-      [:a {:href "/search?query=%21+price%3A%5B400+TO+800%5D" :class "link"} "! price:[400 TO 800]"] ","
-      [:a {:href "/search?query=%21+price%3A%5B10000+TO+*%5D" :class "link"} "! price:[10000 TO *]"]]]
-
-    [:li
-     [:div
-      "Поиск по крепости: "
-      [:a {:href "/search?query=%21+alcohol%3A%5B60+TO+*%5D" :class "link"} "! alcohol:[60 TO *]"]]]
-
-    [:li
-     [:div
-      "Можно даже попробовать поискать виски с определенным ароматом или вкусом, например:"
-      [:a {:href "/search?query=%21+description%3Aбанан" :class "link"} "! description:банан"]]]
-
-    [:li
-     [:div
-      "Все запросы можно комбинировать для получения очень четких запросов, например: "
-      [:a {:href "/search?query=%21type%3Aодносолодовый+AND+volume%3A0.7+AND+price%3A%5B*+TO+1500%5D+AND+alcohol%3A%5B45+TO+*%5D+AND+%28description%3Aторф+OR+description%3Aторфяной+OR+description%3Aторфом%29" :class "link"} "Торфяные односолодовые виски, в бюджете до 1500грн и некомерческой крепостью (45% и више)"]]]
+  [:div {:class "help-container"}
+   [:h3 "Простые запросы"]
+   [:p
+    "Введите, то что вы ищете в строку поиска. "
+    "Это может быть как общий запрос ("
+    (qe/query-example "виски") ", " (qe/query-example "вино")
+    "), так и более конкретный (" 
+    (qe/query-example "espolon") ", " (qe/query-example "jameson") ")"
+    [:br]
     
-    ]])
+    "Не нужно никаких кавычек, если в вашем запросе два или больше слов ("
+    (qe/query-example "laphroaig quarter cask") ", "
+    (qe/query-example "текила jose cuervo") ")"
+    [:br]
+
+    "Можно уточнять запрос указывая обьем, выдержку или крепость продукта ("
+    (qe/query-example "glenfiddich 12 лет 0.7") ", "
+    (qe/query-example "wild turkey 50.5%") ", "
+    (qe/query-example "ром 23 года") ")"
+    [:br]
+    
+    "Также можно уточнять страну, регион и производителя ("
+    (qe/query-example "вино франция бордо") ", "
+    (qe/query-example "ром ямайка") ", "
+    (qe/query-example "виски maltbarn") ")"
+    [:br]
+
+    "Если вы не знаете как пишется напиток, пишите как слышите, а мы попробуем угадать ("
+    (qe/query-example "лафройг") ", "
+    (qe/query-example "гленфидик") ", "
+    (qe/query-example "туламор дью") ")"
+    [:br]
+
+    "Вообще, все что вас интересует просто пишите в строку поиска, мы разберемся ("
+    (qe/query-example "акции") ", "
+    (qe/query-example "новинки") ", "
+    (qe/query-example "виски с бокалами") ")"
+    ]
+
+   [:h3 "Фильтры"]
+   [:p
+    "Если ваш запрос возвращает много результатов, попробуйте ограничить результаты по цене, крепости или обьему, используя соответствующие ключевые слова \"цена\", \"крепость\" или \"обьем\" и задайте границы фильтра используя слова \"от\" и \"до\" ("
+    (qe/query-example "вино цена до 300 грн обьем от 0.75") ", "
+    (qe/query-example "ром крепость от 50") ", "
+    (qe/query-example "виски цена от 1000 до 2000 грн") "). "
+    "Кстати, слово \"цена\" можно не писать ("
+    (qe/query-example "виски бленд до 500") ", "
+    (qe/query-example "вино от 1000") ", "
+    (qe/query-example "игристое от 100 до 300") ")"
+    ]
+
+   [:h3 "Вино"]
+   [:p
+    "Если вы ищете вина, то можно искать по типу ("
+    (qe/query-example "вино красное сухое") ", "
+    (qe/query-example "вино белое полусладкое") ", "
+    (qe/query-example "вино игристое") ")"
+    [:br]
+
+    "Также можно добавить винтаж или сорт винограда ("
+    (qe/query-example "вино 1984") ", "
+    (qe/query-example "каберне фран 1989") ", "
+    (qe/query-example "шардоне пино нуар") ")"
+    [:br]
+    
+    "Некоторые магазины показывают сколько сахара в вине (из расчета грам на литр). "
+    "Вы можете использовать этот параметр в фильтрах ("
+    (qe/query-example "красное вино сахар от 5 до 10") ", "
+    (qe/query-example "вино сахар от 150")
+    ")"
+    
+
+    ]
+   ])

@@ -4,7 +4,8 @@
             [hiccup.page :as page]
             [priceous.config :as config]
             [priceous.utils :as u]
-            [taoensso.timbre :as log]))
+            [taoensso.timbre :as log]
+            [trptcolin.versioneer.core :as v]))
 
 (declare page header footer)
 
@@ -58,6 +59,7 @@
     [:span {:class "footer_pause"}]
     [:span "Агрегатор цен на алкоголь"]]
    [:div {:class "footer_right"}
-    [:div "version 0.3.1"]]
+    [:div (format "version %s"
+               (v/get-version "priceous" "priceous"))]]
    [:div {:class "footer_center"}]
    ])

@@ -33,7 +33,7 @@
     [:p {:class "query-examples-title"} "Примеры запросов:"]
     [:ul {:class "query-examples"}
      (for [[name href] qe/queries]
-       (qe/query-example name href))]]
+       [:li (qe/query-example name href)])]]
 
    [:div {:class "search-right-panel"}
     (search-input content)
@@ -226,15 +226,16 @@
 
 (defn- sorting [content]
   ;; TODO iterate on all params /except page
-  (let [q (get-in content [:params :query])
-        cursort (get #{"cheap" "expensive" "relevant"}
-                     (get-in content [:params :sort]) "cheap")]
-    [:div {:class "sorting"}
-     (for [[s label] [["cheap" "Дешевые"] ["expensive" "Дорогие"]
-                      #_["relevant" "Релевантные"]]]
-       (if (= s cursort)
-         [:span {:class "sorting-current"} label]
-         [:a {:href (format "/search?query=%s&sort=%s" (java.net.URLEncoder/encode q) s)
-              :class "link"}
-          label]))
-     ]))
+  (when (not (empty? (get-in content [:params :query])))
+    (let [q (get-in content [:params :query])
+          cursort (get #{"cheap" "expensive" "relevant"}
+                       (get-in content [:params :sort]) "cheap")]
+      [:div {:class "sorting"}
+       (for [[s label] [["cheap" "Дешевые"] ["expensive" "Дорогие"]
+                        #_["relevant" "Релевантные"]]]
+         (if (= s cursort)
+           [:span {:class "sorting-current"} label]
+           [:a {:href (format "/search?query=%s&sort=%s" (java.net.URLEncoder/encode q) s)
+                :class "link"}
+            label]))
+       ])))
