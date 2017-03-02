@@ -49,6 +49,15 @@
           ;; swap empty string with nils to be handled by some->
           ((fn [s] (if (empty? s) nil s))) 
           ;; if it is still not valid string
+
+          ;; if it contains more than one period drop it
+          ((fn [s]
+             (let [dots (re-seq #"\." s)]
+               (if (< (count dots) 2) s
+                   (let [dot-index (.indexOf s ".")
+                         dot-index-2 (.indexOf s "." (inc dot-index))]
+                     (subs s 0 dot-index-2))))))
+          
           ((fn [s]
              (try (Double/parseDouble s)
                   (catch NumberFormatException e

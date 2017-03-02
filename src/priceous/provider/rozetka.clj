@@ -148,6 +148,9 @@
            :page-template  "http://rozetka.com.ua/krepkie-napitki/c4594292/filter/page=%s"
            :page-limit     Integer/MAX_VALUE
            :done           false
+           :current-val    1
+           :init-val       1
+           :advance-fn     inc
            }
 
    :fetch-strategy :heavy

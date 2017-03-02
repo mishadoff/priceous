@@ -25,7 +25,9 @@
   [provider {name :name template :template}]
   (-> provider
       (assoc-in [:state :page-template] template)
-      (assoc-in [:state :category] name)))
+      (assoc-in [:state :category] name)
+      (assoc-in [:state :current-val] (get-in provider [:state :init-val]))
+      ))
 
 (defn done?
   "Is provider in done state?"
@@ -34,7 +36,7 @@
 
 (defn current-page [provider]
   (format (get-in provider [:state :page-template])
-          (get-in provider [:state :page-current])))
+          (get-in provider [:state :current-val])))
 
 (defn category-name [provider]
   (get-in provider [:state :category] "default"))

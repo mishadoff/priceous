@@ -1,7 +1,6 @@
 (ns priceous.provider.goodwine
   (:require [net.cgrand.enlive-html :as html]
             [taoensso.timbre :as log]
-            [priceous.flow :as flow]
             [priceous.utils :as u]
             [priceous.provider :as p]
             [priceous.selector-utils :as su]))
@@ -128,6 +127,11 @@
            :category       :no-category
            :page-limit     Integer/MAX_VALUE
            :done           false
+           
+           :current-val    1
+           :init-val       1
+           :advance-fn     inc
+
            }
    
    :configuration {

@@ -100,5 +100,6 @@
          (-> provider
              (update-in [:state :page-current] inc)
              (update-in [:state :page-processed] inc)
+             (update-in [:state :current-val] (get-in provider [:state :advance-fn]))
              (p/set-done-if-limit-reached)
              (p/set-done-if-last-page (su/last-page provider page)))))
