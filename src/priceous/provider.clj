@@ -12,7 +12,8 @@
   [provider]
   (get-in provider
           [:configuration :categories-fn]
-          (fn [p] [["Default" (get-in p [:state :page-template])]])))
+          (fn [p] [{:name "Default"
+                    :template (get-in p [:state :page-template])}])))
 
 (defn get-categories
   "Retrieve categories for provider by applying categories function"
@@ -34,6 +35,9 @@
   [provider]
   (get-in provider [:state :done]))
 
+(defn strategy [provider]
+  (get-in provider [:configuration :strategy]))
+
 (defn current-page [provider]
   (format (get-in provider [:state :page-template])
           (get-in provider [:state :current-val])))
@@ -45,22 +49,30 @@
   (let [known-str          #{:heavy :light :api}
         strategy           (get-in provider [:configuration :strategy])
         node->document     (get-in provider [:configuration :node->document])
-        link-selector       (get-in provider [:configuration :link-selector])
-        node-selector      (get-in provider [:configuration :node-selector])]
+        link-selector      (get-in provider [:configuration :link-selector])
+        node-selector      (get-in provider [:configuration :node-selector])
+        api-fn             (get-in provider [:configuration :api-fn])]
     
     (assert (known-str strategy) (str "Strategy must be one of " known-str))
-    (assert node->document "node->document must be provided")
     
     ;; validate heavy
     (when (= strategy :heavy)
       (log/trace "Strategy is :heavy")
+      (assert node->document "node->document must be provided")
       (assert link-selector "URL Selector must be provided")
       (assert node-selector "Node Selector must be provided"))
 
     ;; validate light
     (when (= strategy :light)
       (log/trace "Strategy is :light")
-      (assert node-selector "Node selector must be provided"))))
+      (assert node->document "node->document must be provided")
+      (assert node-selector "Node selector must be provided"))
+
+    (when (= strategy :api)
+      (log/trace "Strategy is :api")
+      (assert api-fn "api-fn must be provided"))
+
+    ))
 
 (defn link-selector [provider]
   (get-in provider [:configuration :link-selector]))
@@ -77,11 +89,17 @@
 (defn node->document [provider]
   (get-in provider [:configuration :node->document]))
 
+(defn query-api-fn [provider]
+  (get-in provider [:configuration :api-fn]))
+
 (defn heavy? [provider]
   (= :heavy (get-in provider [:configuration :strategy])))
 
+(defn api? [provider]
+  (= :api (get-in provider [:configuration :strategy])))
+
 (defn light? [provider]
-  (= :heavy (get-in provider [:configuration :strategy])))
+  (= :light (get-in provider [:configuration :strategy])))
 
 (defn get-page-template
   "Retrieves page-template from provider"
