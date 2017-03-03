@@ -18,15 +18,15 @@
 (defn- node->document
   [provider {page :page node :node link :link :as nodemap}]
   (su/with-selectors provider nodemap
-    (let [spec (->> (concat (q* [:.harakter_tovar :p])
-                            (q* [:table.details_about :p]))
+    (let [spec (->> (concat (q*? [:.harakter_tovar :p])
+                            (q*? [:table.details_about :p]))
                     (map html/text)
                     (map (fn [s]
                            (some->> (.split s ":" 2)
                                     (seq)
                                     (map u/cleanup)
                                     (into []))))
-                    (remove nil?)
+                    (filter (fn [v] (= (count v) 2)))
                     (into {}))]
       (-> {}
           (assoc :provider (p/pname provider))
@@ -67,10 +67,15 @@
           (assoc :volume (or
                           (-> (text+ [:.product-details_info-block :.size]) (u/smart-parse-double))
                           (-> (spec "Объём") (u/smart-parse-double))))
-          (assoc :price (some-> (text+ [:.show_all_sum])
-                                (u/smart-parse-double)
-                                (/ 100.0)))
 
+          ;; price only if 
+          ((fn [doc]
+             (if (:available doc)
+               (assoc doc :price (some-> (text+ [:.show_all_sum])
+                                         (u/smart-parse-double)
+                                         (/ 100.0)))
+               doc)))
+          
           ;; TODO 8% sale
           ((fn [p]
              (let [oldprice (some-> (q*? [:.buying_block_compare :span])
@@ -103,7 +108,7 @@
            :page-processed 0
            :category :no-category
            :page-template "http://winetime.com.ua/alcohol/?size=10000"
-           :page-limit     3;Integer/MAX_VALUE
+           :page-limit     Integer/MAX_VALUE
            :done           false
 
            ;; for paging (across category)
@@ -122,7 +127,7 @@
                    :node-selector      [:.item-block_main]
                    :link-selector      [:.item-block-head_main :a]
                    :link-selector-type :relative
-                   :last-page-selector [:.pagination :li :.pag]
+                   :last-page-selector [:.pagination :.pag]
                    }
    })
 
