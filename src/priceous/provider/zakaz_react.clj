@@ -54,7 +54,7 @@
       (assoc :name (get-in item [:name]))
       (assoc :alcohol (-> (get-in item [:extended_info :alcohol])
                           (u/smart-parse-double)))
-      (assoc :type (get-in item [:extended_info :type]))
+      #_(assoc :type (get-in item [:extended_info :type])) ;; some wrong type
       (assoc :producer (get-in item [:extended_info :tm]))
       (assoc :volume (let [v (get-in item [:volume])]
                        (if v (/ v 1000) v)))
