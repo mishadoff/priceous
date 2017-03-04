@@ -44,6 +44,11 @@
   (some-> st
           ;; replace commas to periods
           (clojure.string/replace "," ".")
+          ;; drop everything after dash
+          ((fn [s]
+             (let [dash-index (.indexOf s "-")]
+               (if (= dash-index -1) s (subs s 0 dash-index)))))
+          
           ;; remove all alien symbols
           (clojure.string/replace #"[^0-9\\.]+" "")
           ;; swap empty string with nils to be handled by some->
