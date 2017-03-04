@@ -101,6 +101,9 @@
 (defn light? [provider]
   (= :light (get-in provider [:configuration :strategy])))
 
+(defn custom? [provider]
+  (= :custom (get-in provider [:configuration :strategy])))
+
 (defn get-page-template
   "Retrieves page-template from provider"
   [provider]
@@ -168,3 +171,6 @@
 
 (defn threads [provider]
   (get-in provider [:configuration :threads] 1))
+
+(defn custom-process-fn [provider]
+  (get-in provider [:configuration :custom-process-fn]))

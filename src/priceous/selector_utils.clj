@@ -132,6 +132,9 @@
    If failed, returns 1 as a last page"
   (let [last-page-num 
         (some->> (select*? page provider (p/last-page-selector provider))
+                 ((fn [nodes]
+                    (let [select-post-fn (get-in provider [:configuration :last-page-process-fn])]
+                      (if select-post-fn (map select-post-fn nodes) nodes))))
                  (map html/text)
                  (remove #{"»" "..."})
                  (map u/smart-parse-double)

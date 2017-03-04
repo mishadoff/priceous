@@ -40,9 +40,11 @@
    Function for retrieving documents is build based on provider conf"
   [provider]
   (let [p (atom provider) docs (atom [])
-        process-page-fn (if (= :api (p/strategy provider))
-                          process-query-api
-                          process-page)]
+        process-page-fn (cond
+                          (p/api? provider) process-query-api
+                          (or (p/heavy? provider) (p/light? provider)) process-page
+                          :else (u/die "Invalid strategy")
+                          )]
 
     (while (not (p/done? @p))
       (let [result (process-page-fn @p)]
@@ -65,7 +67,9 @@
   provider and retrieved docs   {:provider provider :docs []}"
   [provider]
   (p/validate-configuration provider)
-  (let [page (u/fetch (p/current-page provider))]
+  (let [fetch-page-fn (or (get-in provider [:configuration :fetch-page-fn])
+                          #(u/fetch (p/current-page %)))
+        page (fetch-page-fn provider)]
     (->>
      page
      ((fn [page]
@@ -139,3 +143,4 @@
        (update-stats nil))) ;; no page needed for api call
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
