@@ -1,4 +1,4 @@
-(ns priceous.provider.elitochka
+(ns priceous.provider.alcostore
   (:require [net.cgrand.enlive-html :as html]
             [taoensso.timbre :as log]
             [priceous.utils :as u]
@@ -10,12 +10,11 @@
 (defn- get-categories [provider]
   (->> (su/select*+ (u/fetch (get-in provider [:info :base-url]))
                     provider
-                    [:.journal-menu :li :a])
+                    [:#menu :> :ul :> :li :> :a])
        (map (fn [node]
               {:name (html/text node)
-               :template (str (u/full-href provider (get-in node [:attrs :href]))
-                              "?page=%s#breadcrumb")}))
-       ))
+               :template (str (get-in node [:attrs :href]) "?page=%s")}))
+       (remove (fn [node] (#{"Новинки" "Продукты" "Главная"} (:name node))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -30,32 +29,41 @@
                     (into {}))]
       (-> {}
           (assoc :provider (p/pname provider))
-          (assoc :name (text+ [:.heading-title]))
+          (assoc :name (text+ [[:h1 (html/attr= :itemprop "name")]]))
           (assoc :link (:link nodemap))
           (assoc :image (some-> (q+ [:.image [:img :#image]])
                                 (get-in [:attrs :src])))
-          (assoc :country (spec "Страна производитель:"))
-          (assoc :type (str (p/category-name provider) " " (spec "Тип:")))
-          (assoc :alcohol (some-> (spec "Крепость:") (u/smart-parse-double)))
+          (assoc :country (spec "Регион"))
+          (assoc :type (str (p/category-name provider) " " (spec "Тип")))
+          (assoc :alcohol (some-> (spec "Крепость") (u/smart-parse-double)))
           (assoc :timestamp (u/now))
-          (assoc :volume (some-> (spec "Объем:") (u/smart-parse-double)))
-          (assoc :available (boolean (some->> (text? [:.price [:span (html/attr= :itemprop "availability")]]) (re-seq #"В наличии"))))
+          (assoc :volume (some-> (spec "Литраж") (u/smart-parse-double)))
 
           (assoc :description (text? [:.category1_desc]))
           
           ;; prices
           ((fn [doc]
-             (let [price (some-> (text? [:.price [:span (html/attr= :itemprop "price")]])
+             (let [price (some-> (text? [:.price-tag])
                                  (u/smart-parse-double))
-                   oldprice (some-> (text? [:.price-old])
-                                    (u/smart-parse-double))
+                   oldprice-all (some->> (q*? [:.price-old])
+                                         (map html/text)
+                                         (map u/smart-parse-double))
+                   oldprice-box (some->> (q*? [:.box :.price-old])
+                                         (map html/text)
+                                         (map u/smart-parse-double))
+                   oldprice (if (and (= (count oldprice-all) (count oldprice-box)))
+                              nil
+                              (first oldprice-all))
+                   available (not (some->> (text? [:.description])
+                                          (re-seq #"Нет в наличии")))
                    sale (boolean oldprice)
                    sale-desc (if (and price oldprice (< price oldprice))
                                (format "старая цена %.2f" oldprice))]
-             (-> doc
-                 (assoc :sale sale)
-                 (assoc :sale-description sale-desc)
-                 (assoc :price price)))))
+               (-> doc
+                   (assoc :available (and available (> price 0)))
+                   (assoc :sale sale)
+                   (assoc :sale-description sale-desc)
+                   (assoc :price price)))))
           
           ))))
 
@@ -65,11 +73,11 @@
   {
    ;; provider specific information
    :info {
-          :name          "Elitochka"
-          :base-url      "http://elitochka.com.ua/"
-          :icon          "/images/elitochka.png"
-          :icon-width    "94"
-          :icon-height   "34"
+          :name          "Alcostore"
+          :base-url      "http://alcostore.com.ua/"
+          :icon          "http://alcostore.com.ua/image/data/fdsschieschk%20(2).png"
+          :icon-width    "195"
+          :icon-height   "89"
           }
    
    ;; provider state, will be changed by flow processor
@@ -92,8 +100,9 @@
                    :node->document      node->document
                    :node-selector       [:.product-list :> :div]
                    :link-selector       [:.image :a]
-                   :link-selector-type  :relative
+                   :link-selector-type  :full-href
                    :last-page-selector  [:.pagination :.links #{:a :b}]
                }
    
    })
+

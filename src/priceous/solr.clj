@@ -71,6 +71,7 @@
                :json.facet.providers
                "{type:terms,
                  field:provider,
+                 limit:100,
                  facet:{
                    ts:\"max(timestamp)\",
                    available:{
@@ -178,6 +179,7 @@
       ;; special hidden syntax allow to pass raw query
       ;; should start with #
       ;; filters not applied
+      
       (clojure.string/starts-with? q "!") {:q (subs q 1) :fq []}
       :else
       (-> {:q (.toLowerCase q) :fq []}

@@ -26,7 +26,7 @@
          [:th "#Товаров"]
          [:th "#В наличии"]
          [:th "Последняя сборка"]]
-        
+
         (for [p (get-in response [:providers])]
           [:tr
            [:td
