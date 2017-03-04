@@ -25,10 +25,13 @@
 
 (defn process [provider]
   (binding [*pool* (Executors/newFixedThreadPool (p/threads provider))]
+    (log/info (format "Created pool for %d threads." (p/threads provider)))
     (let [result (->> (p/get-categories provider)
                       (map (partial p/with-category provider))
                       (map process-category)
-                      (apply concat))]
+                      (apply concat)
+                      (doall))]
+      ;; we need result before shutdown the pool
       (.shutdown *pool*)
       result)))
 

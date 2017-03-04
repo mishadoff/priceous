@@ -40,8 +40,8 @@
   (->> (tc/from-long unix-time)
        (tf/unparse (tf/formatters :date-time-no-ms))))
 
-(defn smart-parse-double [s]
-  (some-> s
+(defn smart-parse-double [st]
+  (some-> st
           ;; replace commas to periods
           (clojure.string/replace "," ".")
           ;; remove all alien symbols
@@ -61,7 +61,7 @@
           ((fn [s]
              (try (Double/parseDouble s)
                   (catch NumberFormatException e
-                    (log/error "Can't parse value " s)
+                    (log/error (format "Can't parse value %s original was %s" s st))
                     nil))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
