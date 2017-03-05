@@ -74,8 +74,13 @@
 
 (defn -main
   "This main needed to test scrapping without starting webserver
-   lein run -m priceous.core goodwine rozetka ..."
+   lein run -m priceous.core goodwine rozetka ...
+   or
+   lein run -m all
+  "
   [& args]
   (config/config-timbre!)
   (config/read-properties! nil)
-  (scrap args))
+  (cond
+    (= "all" (first args)) (scrap (u/find-all-providers))
+    :else (scrap args)))

@@ -136,6 +136,19 @@
     (doseq [provider-ns symbols]
       (require provider-ns))))
 
+(defn find-all-providers []
+  (->> (cns/find-namespaces-on-classpath)
+       (map str)
+       (filter (fn [ns-name] (clojure.string/starts-with? ns-name "priceous.provider.")))
+       (filter (fn [ns-name]
+                 (not (nil?
+                       (some-> (format "%s/provider" ns-name)
+                               symbol
+                               resolve
+                               var-get)))))
+       (map (fn [ns-name] (last (seq (.split ns-name "\\.")))))
+       (doall)))
+
 
 (defn split-price [price]
   (let [grn (bigint (Math/floor price))

@@ -138,6 +138,7 @@
                  (map html/text)
                  (remove #{"»" "..."})
                  (map u/smart-parse-double)
+                 (remove nil?)
                  (sort)
                  (last)
                  (int))]

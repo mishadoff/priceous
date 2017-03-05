@@ -81,7 +81,7 @@
                   (str (get-in provider [:info :base-url]) "/api/query.json")
                   {:body (json/generate-string (query-struct provider))
                              :content-type :json
-                             :accept :json})]
+                   :accept :json})]
       (if (not= 200 (:status result))
         (do (log/error (format "Problem sending request, status %s" (:status result)))
             {:status :error :response {}})
