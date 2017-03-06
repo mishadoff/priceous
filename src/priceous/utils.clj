@@ -187,3 +187,8 @@
     (if (.find m)
       (recur m (assoc res (.start m) (.group m)))
       res)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defn force-pos [n]
+  (if (and n (pos? n)) n nil))

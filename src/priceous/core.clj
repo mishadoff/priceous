@@ -27,7 +27,7 @@
           e.g. [rozetka, goodwine, winetime]"
   [provider-names]
   (try
-    (log/info "Start monitoring prices for providers " provider-names)
+    (log/info "Start monitoring prices for providers " (seq provider-names))
     (let [start (System/currentTimeMillis)
           providers (->> provider-names
                          (map u/resolve-provider-by-name)

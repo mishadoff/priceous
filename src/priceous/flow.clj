@@ -33,6 +33,8 @@
                       (doall))]
       ;; we need result before shutdown the pool
       (.shutdown *pool*)
+      ;; POOL await termination?
+      ;; close?
       result)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

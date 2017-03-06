@@ -136,7 +136,8 @@
                     (let [select-post-fn (get-in provider [:configuration :last-page-process-fn])]
                       (if select-post-fn (map select-post-fn nodes) nodes))))
                  (map html/text)
-                 (remove #{"»" "..."})
+                 (map #(re-matches #"\d+" %))
+                 (remove nil?)
                  (map u/smart-parse-double)
                  (remove nil?)
                  (sort)
