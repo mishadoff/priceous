@@ -95,12 +95,10 @@
    
    :configuration {
                    :categories-fn      get-categories
-                   :threads            8
+                   :threads            1
                    :strategy           :light
                    :node->document     node->document
                    :node-selector      [:.itemlist]
                    :last-page-selector [:.invalid-class] ;; TODO we don't use paging
                    }
    })
-
-

@@ -40,7 +40,11 @@
   (assoc node-map :link
          (-> (select+ node provider (p/link-selector provider))
              (get-in [:attrs :href])
-             (#(cond->> % (p/link-selector-relative? provider) (u/full-href provider))))))
+             (#(cond->> % (p/link-selector-relative? provider) (u/full-href provider)))
+             ((fn [link]
+                (let [link-fix-fn (get-in provider [:configuration :link-fixer])]
+                  (if link-fix-fn (link-fix-fn link) link))))
+             )))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
