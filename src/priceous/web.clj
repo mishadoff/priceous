@@ -27,6 +27,7 @@
             [priceous.templates.about :as about]
 
             [priceous.utils :as u]
+            [priceous.ssl :as ssl]
             [priceous.scheduler :as scheduler]
             [priceous.solr :as solr]
             [priceous.core :as core])
@@ -80,6 +81,7 @@
 (defn init
   ([] (init nil))
   ([args]
+   (ssl/trust-all-certificates)
    (config/config-timbre!)
    (config/read-properties! (first args))))
 

@@ -2,6 +2,7 @@
   (:require [priceous.solr :as solr]
             [priceous.utils :as u]
             [priceous.provider :as p]
+            [priceous.ssl :as ssl]
             [priceous.appender :as a]
             [priceous.formatter :as fmt]
             [priceous.config :as config]
@@ -81,6 +82,7 @@
   [& args]
   (config/config-timbre!)
   (config/read-properties! nil)
+  (ssl/trust-all-certificates)
   (cond
     (= "all" (first args)) (scrap (u/find-all-providers))
     :else (scrap args)))
