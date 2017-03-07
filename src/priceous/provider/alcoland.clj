@@ -9,8 +9,7 @@
 
 (defn- get-categories [provider]
   (->>
-   [["Собственный импорт" "http://alcoland.com.ua/sobstvennyj-import/"]
-    ["Абсент" "http://alcoland.com.ua/absent/"]
+   [["Абсент" "http://alcoland.com.ua/absent/"]
     ["Аперитив" "http://alcoland.com.ua/aperitiv/"]
     ["Бальзам" "http://alcoland.com.ua/balzam/"]
     ["Вермут" "http://alcoland.com.ua/vermut/"]
@@ -40,7 +39,21 @@
         (assoc :image (some-> (q? [:.image :a :img]) (get-in [:attrs :src])))
         (assoc :type (p/category-name provider))
         (assoc :timestamp (u/now))
-        (assoc :price (some-> (text? [:.price]) (u/smart-parse-double)))
+
+        ;; price/sales block
+        ((fn [doc]
+           (let [priceold (some-> (text? [:.price-old]) (u/smart-parse-double))
+                 pricenew (some-> (text? [:.price-new]) (u/smart-parse-double))
+                 price (some-> (text? [:.price]) (u/smart-parse-double))
+                 sale (boolean priceold)
+                 sale-description (if sale (format "старая цена %.2f" priceold))
+                 realprice (or pricenew price)]
+             
+             (-> doc
+                 (assoc :sale sale)
+                 (assoc :sale-description sale-description)
+                 (assoc :price realprice)))))
+
         (assoc :available (not (re-seq #"Нет в наличии" (text? [:.stock]))))
         )))
 

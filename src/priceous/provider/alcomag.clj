@@ -73,16 +73,15 @@
                                       (text+ [:.articul :b])))
             ;; assume everything available for now
             (assoc :available true)
-            #_(assoc :price (some-> (text+ [:.item_price :.snt-detail-price])
-                                    (u/smart-parse-double)))
+
             (assoc :price (some-> (q+ [:.bx_price])
                                   (html/at [:span] nil)
                                   (first)
                                   (html/text)
                                   (u/cleanup)
                                   (u/smart-parse-double)))
-            #_((fn [doc]
-               (let [oldprice (some-> (text+ [:.bx_price [:span html/last-child]])
+            ((fn [doc]
+               (let [oldprice (some-> (text? [:.bx_price [:span (html/but (html/has-class "snt-catalog-currency"))]])
                                       (u/smart-parse-double))
                      sale (boolean oldprice)
                      sale-desc (if sale (format "старая цена %.2f" oldprice) nil)]

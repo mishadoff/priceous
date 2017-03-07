@@ -87,10 +87,6 @@
         <filter class="solr.SynonymFilterFactory" synonyms="synonyms.txt" ignoreCase="true" expand="true"/>
       </analyzer>
     </fieldType>
-
-
-
-
     
     <!-- Field using for russian Stemmed Words -->
     <fieldType name="text_general_ru" class="solr.TextField" positionIncrementGap="100">
@@ -124,9 +120,6 @@
       </analyzer>
 
     </fieldType>
-
-
-
     
   </types>
 
