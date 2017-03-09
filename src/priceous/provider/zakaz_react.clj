@@ -58,8 +58,8 @@
       (assoc :producer (get-in item [:extended_info :tm]))
       (assoc :volume (let [v (get-in item [:volume])]
                        (if v (/ v 1000) v)))
-      (assoc :country (str (get-in item [:extended_info :country]) " "
-                           (get-in item [:extended_info :region])))
+      (assoc :country (u/cleanup (str (get-in item [:extended_info :country]) " "
+                                      (get-in item [:extended_info :region]))))
       (assoc :product-code (str (p/pname provider) "_" (get-in item [:sku])))
       (assoc :sale (get-in item [:sale]))
       (assoc :available (get-in item [:available]))

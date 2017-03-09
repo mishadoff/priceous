@@ -233,7 +233,6 @@ a.headerlink:hover, a.headerlink:active {
 
 .item-provider {
     width: 80px;
-    /* max-height: 100px; */
     position: relative;
     float: right;
 }

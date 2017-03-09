@@ -75,9 +75,7 @@
    :info {
           :name          "Alcovegas"
           :base-url      "http://alcovegas.com.ua/"
-          :icon          "http://alcovegas.com.ua/uploads/2173/images/logo-alkovegas%20logo1.png"
-;;          :icon-width    "263"
-;;          :icon-height   "84"
+          :icon          "/images/alcovegas.png"
           }
    
    ;; provider state, will be changed by flow processor
