@@ -1,9 +1,9 @@
 ;; Properties for Priceous
 {
- :app {:name "Whisky Search"
-       :version "0.0.3"}
+ :app {:name "Priceous"
+       :version "0.2.0"}
 
- :server {:port 3000 }
+ :server {:port 8080 }
 
  :solr {:host "http://localhost:8983/solr"
         :collection "whisky"}
@@ -17,12 +17,33 @@
  ;; FIXME: does not work
  :ratelimit 1000 ;; number of requests / per IP / per hour
  
- :scrapping {:providers ["goodwine"]}
+ :scrapping {:providers
+             ["alcoland"
+              "alcomag"
+              "alcoparty"
+              "alcostore"
+              "alcovegas"
+              "auchan"
+              "barbados"
+              "bestwine"
+              "dutyfreeshop"
+              "dutyfreestore"
+              "elitalco"
+              "eliteclub"
+              "elitochka"
+              "etelefon"
+              "fozzy"
+              "goodwine"
+              "kavist"
+              "megamarket"
+              "metro"
+              "novus"
+              "rozetka"
+              "winetime"]}
 
  :appenders [:solr]
 
  :view {
-        :per-page 10
-        
+        :per-page 10        
         }
  }

@@ -103,6 +103,7 @@
 
 (defn -main [& args]
   (init args)
+  (log/info "Server conf: " @config/properties)
   (log/info "Server started.")
   (init-scheduler)
   (ring/run-jetty #'app {:port (config/prop [:server :port]) :join? false}))
