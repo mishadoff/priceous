@@ -188,7 +188,8 @@
           ((fn [req] (if (= a "all")
                        req
                        (update req :fq conj (format "available:%s" a)))))
-          
+
+          ;; TODO DSL for this?
           ;; add sale filter
           ((fn [req]
              (let [sale-regex #"\b(акция|акции)\b"
@@ -211,9 +212,7 @@
           (range-processor "обьем" "volume")
           (range-processor "сахар" "wine_sugar")
           (range-processor "цена" "price")
-          
 
-          
           ;; cleanup and escape query
           (update :q (fn [query]
                        (let [qc (u/cleanup query)]
