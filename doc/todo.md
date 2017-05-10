@@ -8,3 +8,4 @@
 * Unified SOLR Document
 * Structured information in SOLR
 * Link to whiskybase/masterofmalt
+* Integration with cocktailDB?

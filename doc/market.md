@@ -1,6 +1,9 @@
-# List of Ukrainian Online Shops for Whisky
+# List of Ukrainian Online Shops for Alcoholic Beverages
 
-- **DONE** [GoodWine](http://goodwine.com.ua/)
+- [GoodWine](http://goodwine.com.ua/)
+
+## Not verified
+
 - **DONE** [Rozetka](http://rozetka.com)
 - **DONE** [Fozzy](http://fozzy.zakaz.ua)
 - **PROGRESS** [Novus](http://novus.zakaz.ua) 

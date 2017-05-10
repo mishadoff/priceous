@@ -1,3 +1,9 @@
+# Priceous 0.3.0 [DATA QUALITY]
+
+- Revisit approaches to parse data from different providers
+
+- Fixed plenty of bugs
+
 # Priceous 0.2.0 [DESIGN]
 
 - Improved design

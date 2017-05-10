@@ -12,10 +12,10 @@
             [ring.middleware.params :refer [wrap-params]]
             [ring.middleware.keyword-params
              :refer [wrap-keyword-params]]
-            
+
             [ring.middleware.session :refer [wrap-session]]
             [ring.middleware.ratelimit :refer [wrap-ratelimit ip-limit]]
-            
+
             [taoensso.timbre :as log]
 
             [priceous.config :as config]
@@ -36,7 +36,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defroutes webapp-routes 
+(defroutes webapp-routes
   (GET "/" [] (redirect "/search"))
 
   (GET "/search" {:keys [params] :as request}
@@ -56,10 +56,10 @@
   (GET "/help" [] (help/view {}))
   (GET "/about" [] (about/view {}))
   (GET "/contacts" [] (contacts/view {}))
-  
+
   (route/resources "/")
   (route/not-found "<h1>Invalid page</h1>") ;; TODO error page
-  
+
   )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -96,8 +96,7 @@
      (core/scrap (config/prop [:scrapping :providers])))
    :delay (config/prop [:scheduler :delay])
    :value (config/prop [:scheduler :value])
-   :time-unit (java.util.concurrent.TimeUnit/valueOf
-               (config/prop [:scheduler :time-unit]))))
+   :time-unit (TimeUnit/valueOf (config/prop [:scheduler :time-unit]))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

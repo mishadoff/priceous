@@ -2,7 +2,7 @@
   (:require [taoensso.timbre :as log]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Accessors and Mutators for provider structure 
+;; Accessors and Mutators for provider structure
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defn category-function
@@ -27,8 +27,8 @@
   (-> provider
       (assoc-in [:state :page-template] template)
       (assoc-in [:state :category] name)
-      (assoc-in [:state :current-val] (get-in provider [:state :init-val]))
-      ))
+      (assoc-in [:state :current-val] (get-in provider [:state :init-val]))))
+
 
 (defn done?
   "Is provider in done state?"
@@ -52,9 +52,9 @@
         link-selector      (get-in provider [:configuration :link-selector])
         node-selector      (get-in provider [:configuration :node-selector])
         api-fn             (get-in provider [:configuration :api-fn])]
-    
+
     (assert (known-str strategy) (str "Strategy must be one of " known-str))
-    
+
     ;; validate heavy
     (when (= strategy :heavy)
       (log/trace "Strategy is :heavy")
@@ -70,9 +70,9 @@
 
     (when (= strategy :api)
       (log/trace "Strategy is :api")
-      (assert api-fn "api-fn must be provided"))
+      (assert api-fn "api-fn must be provided"))))
 
-    ))
+
 
 (defn link-selector [provider]
   (get-in provider [:configuration :link-selector]))
@@ -151,7 +151,7 @@
 
 ;;; Setters
 
-(defn set-done 
+(defn set-done
   "Set provider state to done"
   [provider]
   (assoc-in provider [:state :done] true))
@@ -159,8 +159,8 @@
 
 (defn set-done-if-limit-reached
   [provider]
-  (cond 
-    (limit-reached? provider) (set-done provider) 
+  (cond
+    (limit-reached? provider) (set-done provider)
     :else                     provider))
 
 (defn set-done-if-last-page

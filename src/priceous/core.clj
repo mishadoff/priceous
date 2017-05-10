@@ -7,12 +7,10 @@
             [priceous.formatter :as fmt]
             [priceous.config :as config]
             [priceous.flow :as flow]
-            [clojure.java.io :as io]            
-            [taoensso.timbre :as log]
-            )
+            [clojure.java.io :as io]
+            [taoensso.timbre :as log])
   (:gen-class))
 
-;; TODO: "dependency injection"
 ;; scan folder priceous.provider.* and include all namespaces
 (u/require-all-providers)
 
@@ -34,8 +32,7 @@
                          (map u/resolve-provider-by-name)
                          (remove nil?))
           final-state (reduce scrap-provider {:total 0} providers)]
-      (log/info (fmt/succesfully-processed-all
-                 (:total final-state) (u/elapsed-so-far start)))
+      (log/info (fmt/succesfully-processed-all (:total final-state) (u/elapsed-so-far start)))
       final-state)
     (catch Exception e
       (log/error "Scrapping failed" e))))
@@ -77,7 +74,7 @@
   "This main needed to test scrapping without starting webserver
    lein run -m priceous.core goodwine rozetka ...
    or
-   lein run -m all
+   lein run -m priceous.core all
   "
   [& args]
   (config/config-timbre!)

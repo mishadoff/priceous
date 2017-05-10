@@ -48,11 +48,11 @@
           ((fn [s]
              (let [dash-index (.indexOf s "-")]
                (if (= dash-index -1) s (subs s 0 dash-index)))))
-          
+
           ;; remove all alien symbols
           (clojure.string/replace #"[^0-9\\.]+" "")
           ;; swap empty string with nils to be handled by some->
-          ((fn [s] (if (empty? s) nil s))) 
+          ((fn [s] (if (empty? s) nil s)))
           ;; if it is still not valid string
 
           ;; if it contains more than one period drop it
@@ -62,7 +62,7 @@
                    (let [dot-index (.indexOf s ".")
                          dot-index-2 (.indexOf s "." (inc dot-index))]
                      (subs s 0 dot-index-2))))))
-          
+
           ((fn [s]
              (try (Double/parseDouble s)
                   (catch NumberFormatException e
@@ -76,7 +76,7 @@
 ;; TODO fetch with timeout
 (defn fetch [url]
   (log/trace "Fetching URL: " url)
-  (try 
+  (try
     (html/html-resource (java.net.URL. url))
     (catch Exception e (log/error e) nil)))
 
@@ -129,12 +129,16 @@
        (catch Exception e
          (log/error (format "Can not resolve provider [%s] %s" pname (.getMessage e))))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (defn require-all-providers []
   ;; Require all namespaces in priceous.provider.* folder
   (let [symbols (->> (cns/find-namespaces-on-classpath)
                      (filter (fn [sym] (clojure.string/starts-with? (str sym) "priceous.provider."))))]
     (doseq [provider-ns symbols]
       (require provider-ns))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defn find-all-providers []
   (->> (cns/find-namespaces-on-classpath)
@@ -149,6 +153,7 @@
        (map (fn [ns-name] (last (seq (.split ns-name "\\.")))))
        (doall)))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defn split-price [price]
   (let [grn (bigint (Math/floor price))
@@ -156,6 +161,8 @@
                  (format "%2d")
                  ((fn [s] (clojure.string/replace s " " "0"))))]
     [grn kop]))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defn format-decimal-up-to-2 [decimal]
   (let [decimal-fmt (format "%.2f" decimal)]
@@ -166,6 +173,7 @@
           (.substring decimal-fmt 0 (- (count decimal-fmt) 1))
           :else decimal-fmt))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defn readable-time [ts-string]
   (let [jt (tf/parse (tf/formatters :date-time-no-ms) ts-string)
@@ -178,15 +186,6 @@
       (= diff-in-days 1) "Вчера"
       (> diff-in-days 1) "Давно"
       :else nil)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(defn re-pos [re s]
-  (loop [m (re-matcher re s)
-         res {}]
-    (if (.find m)
-      (recur m (assoc res (.start m) (.group m)))
-      res)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

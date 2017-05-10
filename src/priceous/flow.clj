@@ -12,7 +12,7 @@
 
 (def ^ExecutorService ^:dynamic *pool*)
 (defn future* [^Callable fun] (.submit *pool* fun))
- 
+
 (declare
  process
  process-category
@@ -31,10 +31,9 @@
                       (map process-category)
                       (apply concat)
                       (doall))]
+
       ;; we need result before shutdown the pool
       (.shutdown *pool*)
-      ;; POOL await termination?
-      ;; close?
       result)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -48,8 +47,7 @@
         process-page-fn (cond
                           (p/api? provider) process-query-api
                           (or (p/heavy? provider) (p/light? provider)) process-page
-                          :else (u/die "Invalid strategy")
-                          )]
+                          :else (u/die "Invalid strategy"))]
 
     (while (not (p/done? @p))
       (let [result (process-page-fn @p)]
@@ -85,7 +83,7 @@
      (map (partial (p/node->document provider) provider))
 
      ;; here docs
-     
+
      ((fn [docs] {:provider provider :docs (into [] (remove empty? docs))}))
      (update-stats page))))
 
@@ -96,7 +94,7 @@
   from the results page, it process each item in a separate thread
   and load whole page as enlive node"
   [provider nodes]
-  (->> nodes              
+  (->> nodes
        (map (partial su/find-link provider))
        (map (fn [{link :link :as nodemap}]
               (assoc nodemap :future

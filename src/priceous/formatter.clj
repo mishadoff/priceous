@@ -14,5 +14,4 @@
           size))
 
 (defn succesfully-processed-all [n-items elapsed]
-  (format "Succesfully processed %s items in %s seconds"
-          n-items elapsed))
+  (format "Succesfully processed %s items in %s seconds" n-items elapsed))

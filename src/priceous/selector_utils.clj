@@ -131,9 +131,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defn last-page [provider page]
-  "Create closure on selector and return fn [provider page] -> int
-   which return last page of the current provider or category
-   If failed, returns 1 as a last page"
+  "Return the last page for provider, given page enlive structure"
   (let [last-page-num 
         (some->> (select*? page provider (p/last-page-selector provider))
                  ((fn [nodes]
