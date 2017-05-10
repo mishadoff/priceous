@@ -4,6 +4,25 @@
             [net.cgrand.enlive-html :as enlive]
             [hiccup.core :as hiccup]))
 
+(deftest test--get-categories
+  (testing "Just validate get-categories follows the contract"
+    (let [cats (gw/get-categories gw/provider)]
+      (is (pos? (count cats))) ;; at least one category exists
+      (is (vector? cats))      ;; we don't break the type
+
+      (doseq [{name :name template :template} cats] ;; for each category
+        (is (not (empty? name))) ;; category name is not empty
+        (is (.startsWith template "http://")) ;; template is url
+        (is (.contains template "%s")) ;; template has a placeholder
+        )
+
+      ;; no duplicate categeory names found
+      (is (= (count cats) (count (->> cats (map :name) (into #{})))))
+      ;; no duplicate urls found
+      (is (= (count cats) (count (->> cats (map :template) (into #{})))))
+
+      )))
+
 (deftest test--node->document-edge-cases
 
   (testing "Empty page"

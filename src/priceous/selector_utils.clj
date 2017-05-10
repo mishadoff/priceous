@@ -73,7 +73,7 @@
 (defn- retrieve+log
   "Ensures all nodes found and return them from the
    specified list of nodes
-  
+
   Examples:
     {:result nil :status :error}
     {:result 1   :status :success}
@@ -85,14 +85,14 @@
                    context {}}}]
   ;; SELECTOR AND PROVIDER ARE REQUIRED
   ;; TODO validate count strategy as well
-  {:pre [provider selector]} 
+  {:pre [provider selector]}
 
   (let [context-str (or (:link context) (:tag (:node context)))]
     (cond
-      
+
       ;; No nodes found, log error if it was required adn return empty
       (empty? nodes)
-      (do 
+      (do
         (when required
           (log/error
            (format "[%s] No elements found using selector %s in context %s"
@@ -105,7 +105,7 @@
         (= count-strategy :single) (first nodes)
         (= count-strategy :multiple) nodes
         :else (u/die (format "Invalid count strategy [%s]" count-strategy)))
-      
+
       ;; Found multiple nodes
       (> (count nodes) 1)
       (cond
@@ -115,7 +115,7 @@
            (format "[%s] Multiple elements found = %d using selector [%s] in context %s, using first"
                    (p/pname provider) (count nodes) selector context-str))
           (first nodes))
-        
+
         (= count-strategy :multiple) nodes
         :else (u/die (format "Invalid count strategy [%s]" count-strategy)))
       :else (u/die "Should not happen"))))
@@ -132,7 +132,7 @@
 
 (defn last-page [provider page]
   "Return the last page for provider, given page enlive structure"
-  (let [last-page-num 
+  (let [last-page-num
         (some->> (select*? page provider (p/last-page-selector provider))
                  ((fn [nodes]
                     (let [select-post-fn (get-in provider [:configuration :last-page-process-fn])]
@@ -161,7 +161,7 @@
     q*     query by selector, result should be multiple items, required
     text+  query text by selector, same as q+
   "
-  
+
   [provider nodemap & body]
   `(let [node# (if (p/heavy? ~provider) (:page ~nodemap) (:node ~nodemap))
          ~'q+ (fn [selector#] (select+ node# ~provider selector# :context ~nodemap))
@@ -171,3 +171,20 @@
          ~'text+ (text-fn ~'q+)
          ~'text? (text-fn ~'q?)]
      ~@body))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; TODO tests
+(defn spec-with-only-key
+  "Create map of specs by providing only key selector,
+   value for this key will be full node content with key selector removed
+  "
+  [nodes selector]
+  (->> nodes
+       (map (fn [n]
+              (->> [(html/select n selector)
+                    (html/at n selector nil)]
+                   (mapv first)
+                   (mapv html/text)
+                   (mapv u/cleanup))))
+       (into {})))

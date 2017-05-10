@@ -7,7 +7,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defn- get-categories [provider]
+(defn get-categories [provider]
   (->>
     [["Виски" "http://goodwine.com.ua/viski.html"]
      ["Вино" "http://goodwine.com.ua/vino.html"]
@@ -43,14 +43,7 @@
     provider
     nodemap
     (when (and page (q? [:.mainInfoProd]))
-      (let [spec (->> (q* [:.innerDiv])                     ;; TODO utils for specs
-                      (map (fn [n]
-                             (->> [(html/select n [:.innerTitleProd])
-                                   (html/at n [:.innerTitleProd] nil)]
-                                  (mapv first)
-                                  (mapv html/text)
-                                  (mapv u/cleanup))))
-                      (into {}))]
+      (let [spec (su/spec-with-only-key (q* [:.innerDiv]) [:.innerTitleProd])]
         (-> {}
             (assoc :provider (p/pname provider))
             (assoc :name (text+ [:.titleProd :> [:* (html/but [:.articleProd])]]))
@@ -71,17 +64,11 @@
             (assoc :alcohol (-> (spec "Крепость, %") (u/smart-parse-double)))
             (assoc :description (spec "цвет, вкус, аромат"))
             (assoc :timestamp (u/now))
-            ;; TODO product code generator
-            (assoc :product-code (->> (list (get-in provider [:info :name])
-                                            (-> (q+ [:.titleProd :.articleProd :span])
-                                                (html/text)))
-                                      (clojure.string/join "_")))
+            (assoc :product-code (str (p/pname provider) "_" (text+ [:.titleProd :.articleProd :span])))
             (assoc :available (empty? (q? [:.notAvailableBlock])))
 
-            (assoc :item_new (->> (q*? [:.medalIcon :.stamp]) ;; TODO more pages
-                                  (map (fn [n]
-                                         (.contains (get-in n [:attrs :src])
-                                                    "/New_")))
+            (assoc :item_new (->> (q*? [:.medalIcon :.stamp]) ;; TODO more medals
+                                  (map #(.contains (get-in % [:attrs :src]) "/New_"))
                                   (some true?)))
 
             ;; volume and price blocks are present if product is available
