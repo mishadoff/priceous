@@ -5,7 +5,7 @@
             [clojure.test.check.generators :as gen]
             [clojure.test.check.properties :as prop]
             [clojure.test.check.clojure-test :refer [defspec]]
-            ))
+            [priceous.utils :as u]))
 
 ;; make sure debug does not corrupt messages
 (defspec debug--equal-property-test
@@ -111,6 +111,7 @@
   (is (nil? (force-pos 0)))
   (is (nil? (force-pos -100))))
 
+(u/require-all-providers)
 (deftest test--find-all-providers
   (is (= #{"alcoland" "alcomag" "alcoparty" "alcostore"
            "alcovegas" "auchan" "barbados" "bestwine"
