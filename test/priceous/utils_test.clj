@@ -8,22 +8,19 @@
             ))
 
 ;; make sure debug does not corrupt messages
-(defspec debug--equal-property-test 
+(defspec debug--equal-property-test
   (prop/for-all [e gen/simple-type] (= e (debug e))))
 
+(deftest debug-lens-test
+  (is (= 1 (debug-lens 1 inc))))
 
-;; Does not work :(
-;;
-;; (defspec die--exception-created-and-contains-message
-;;   (prop/for-all [message gen/string]
-;;                 (try (falsy (die message))
-;;                      (catch IllegalArgumentException ex
-;;                        (.contains (.getMessage ex) message)))))
-
-(defspec now--looks-like-a-valid-string 
+(defspec now--looks-like-a-valid-string
   (prop/for-all [e (gen/elements [(now)])]
                 (and (string? e) (= 20 (count e))
                      (.contains e "T") (.contains e "Z"))))
+
+(deftest die-test
+  (is (thrown? IllegalArgumentException (die "ExpectedException"))))
 
 (deftest to-date-test
   (testing "Conversion works"
@@ -64,7 +61,7 @@
   ;; other edge cases
   (is (= 0.0 (smart-parse-double "0000")))
   (is (nil? (smart-parse-double "..")))
-  
+
   )
 
 (deftest cleanup-test
@@ -74,25 +71,10 @@
   (is (= "CLEAN" (cleanup "       CLEAN       ")))
   (is (= "CLE AN" (cleanup " CLE AN "))))
 
-(deftest falsy-test
-  ;; no-args
-  (is (false? ((falsy))))
-  ;; one arg
-  (is (false? ((falsy) "some arg")))
-  ;; var args
-  (is (false? ((falsy) 1 2 3 nil nil :some "ARGS"))))
-
-(deftest truthy-test
-  ;; no-args
-  (is (true? ((truthy))))
-  ;; one arg
-  (is (true? ((truthy) "some arg")))
-  ;; var args
-  (is (true? ((truthy) 1 2 3 nil nil :some "ARGS"))))
-
 (deftest get-client-ip-test
   (is (= "10.2.1.1" (get-client-ip {:headers {"x-forwarded-for" "10.2.1.1"}})))
   (is (= "10.2.1.1" (get-client-ip {:headers {"x-forwarded-for" "10.2.1.1,10.2.1.2"}})))
+  (is (= "10.1.2.3" (get-client-ip {:remote-addr "10.1.2.3"})))
   )
 
 (defspec elapsed-so-far--time-is-greater-than-passed
@@ -107,3 +89,46 @@
   (is (= "a/b" (full-href {:info {:base-url "a/"}} "b")))
   (is (= "a/b" (full-href {:info {:base-url "a"}} "/b")))
   (is (= "a/b" (full-href {:info {:base-url "a/"}} "/b"))))
+
+(deftest split-price-test
+  (is (= [100 "00"] (split-price 100)))
+  (is (= [100 "01"] (split-price 100.01)))
+  (is (= [200 "37"] (split-price 200.37)))
+  (is (= [0 "00"] (split-price 0.00)))
+  (is (= [0 "19"] (split-price 0.19)))
+  )
+
+(deftest format-decimal-up-to-2-test
+  (is (= "100" (format-decimal-up-to-2 100.0)))
+  (is (= "100.54" (format-decimal-up-to-2 100.542234)))
+  (is (= "1" (format-decimal-up-to-2 0.9999999)))
+  (is (= "0.44" (format-decimal-up-to-2 0.4444444)))
+  (is (= "0.5" (format-decimal-up-to-2 0.5))))
+
+(deftest force-pos-test
+  (is (= 100 (force-pos 100)))
+  (is (nil? (force-pos nil)))
+  (is (nil? (force-pos 0)))
+  (is (nil? (force-pos -100))))
+
+(deftest test--find-all-providers
+  (is (= #{"alcoland" "alcomag" "alcoparty" "alcostore"
+           "alcovegas" "auchan" "barbados" "bestwine"
+           "dutyfreeshop" "dutyfreestore" "elitalco"
+           "eliteclub" "elitochka" "etelefon" "fozzy"
+           "goodwine" "megamarket" "metro" "novus"
+           "rozetka" "winetime"} (set (find-all-providers)))))
+
+(deftest test--find-provider-by-name
+  (is (not (nil? (resolve-provider-by-name "goodwine"))))
+  (is (nil? (resolve-provider-by-name "superstore"))))
+
+(deftest test--readable-time
+  ;; parse time, current time
+  (is (= "Сегодня" (readable-time "2017-05-11T08:35:46Z" "2017-05-11T12:00:00Z")))
+  (is (= "Сегодня" (readable-time "2017-05-11T08:35:46Z" "2017-05-11T23:59:59Z")))
+  (is (= "Сегодня" (readable-time "2017-05-11T00:00:00Z" "2017-05-11T23:59:59Z")))
+  (is (= "Вчера" (readable-time "2017-05-11T23:59:59Z" "2017-05-12T00:00:00Z")))
+  (is (= "Вчера" (readable-time "2017-05-11T00:00:00Z" "2017-05-12T00:00:00Z")))
+  (is (= "Давно" (readable-time "2016-05-11T00:00:00Z" "2017-05-12T00:00:00Z")))
+  )

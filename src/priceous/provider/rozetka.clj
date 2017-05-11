@@ -9,15 +9,13 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defn- get-categories [provider]
+(defn get-categories [provider]
   (->> [["Вино" "http://rozetka.com.ua/vino/c4594285/"]
         ["Другие Крепкие" "http://rozetka.com.ua/krepkie-napitki/c4594292/"]
         ["Ликеры" "http://rozetka.com.ua/liquor-vermouth-syrup/c4625409/"]
         ["Пиво" "http://rozetka.com.ua/pivo/c4626589/"]
         ["Слабоалкогольные напитки" "Http://rozetka.com.ua/slaboalkogoljnye-napitki/c4628313/"]]
-       (map (fn [[name template]] {:name name :template (str template "filter/page=%s/")}))
-       ))
-
+       (map (fn [[name template]] {:name name :template (str template "filter/page=%s/")}))))
 
 (defn- parse-price-rozetka-json [s]
   (-> (re-seq #"var pricerawjson = \"(.*)\";" s)
@@ -64,7 +62,7 @@
           (assoc :wine_grape (-> (spec "Сорт винограда") (u/cleanup)))
           (assoc :vintage (let [vintage (spec "Год (винтаж)")]
                             (if (= vintage "Не винтажное") nil vintage)))
-          
+
           (assoc :producer (some-> (q*? [:.breadcrumbs-i :.breadcrumbs-title])
                                    (last)
                                    (html/text)
@@ -75,11 +73,11 @@
                                       (= "Игристое" (spec "Категория"))
                                       (str "Вино Игристое " (spec "Содержание сахара"))
                                       :else (str "Вино" " " (spec "Цвет") " " (spec "Содержание сахара")))
-                             
+
                              "Пиво" (str (spec "Категория") " " (spec "Тип") " " (spec "Вид"))
                              (str (spec "Категория")))
                            (u/cleanup)))
-          
+
           (assoc :alcohol (let [alco (spec "Крепость")]
                             (-> (if (.contains alco "-")
                                   (some-> (.split alco "-")
@@ -90,7 +88,7 @@
           (assoc :product-code (format "%s_%s"
                                        (p/pname provider)
                                        (text+ [[:span (html/attr= :name "goods_code")]])))
-          (assoc :timestamp (u/now))                                            
+          (assoc :timestamp (u/now))
           (assoc :description (-> (str (spec "Вкус") " " (spec "Аромат"))
                                   (u/cleanup)))
           (assoc :available (some-> (q? [:.detail-available])
@@ -98,7 +96,7 @@
           (assoc :volume (-> (spec "Объем") (u/smart-parse-double)))
 
           ((fn [p]
-             (let [priceblock (q+ [[:div (html/attr= :name "block_desc")] 
+             (let [priceblock (q+ [[:div (html/attr= :name "block_desc")]
                                    [:script (html/pred #(.contains (html/text %) "pricerawjson"))]])
                    old-price (some-> priceblock (html/text)
                                      (parse-price-rozetka-json)
@@ -124,7 +122,7 @@
                    (assoc :price actual-price)
                    (assoc :sale sale)
                    (assoc :sale-description sale-description)))))
-          
+
           ;; TODO :item_new
 
           ))))
@@ -141,7 +139,7 @@
           :icon-width "134"
           :icon-height "34"
           }
-   
+
    :state {
            :page-current   1
            :page-processed 0
@@ -152,8 +150,6 @@
            :init-val       1
            :advance-fn     inc
            }
-
-   :fetch-strategy :heavy
 
    :configuration {
                    :categories-fn      get-categories

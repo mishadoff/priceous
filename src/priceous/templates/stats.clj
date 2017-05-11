@@ -17,7 +17,7 @@
   (let [{:keys [status response]} content]
     (cond
       (not= :success status) [:div "Статистика недоступна."]
-      
+
       :else
       [:div {:class "stats-main"}
        [:table {:class "stats-table"}
@@ -37,12 +37,12 @@
                        :src (get-in p [:info :icon])
                        :title (:name p)
                             :alt (:name p)}]])]
-            
+
             ]
            [:td (:total p)]
            [:td (:available p)]
            [:td
-            (let [readable-time (u/readable-time (:ts p))
+            (let [readable-time (u/readable-time (:ts p) (u/now))
                   fmt-time (-> (:ts p)
                                (clojure.string/replace "T" " ")
                                (clojure.string/replace "Z" " "))]

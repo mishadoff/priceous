@@ -3,7 +3,6 @@
 ## Stats
 
 - Link:  [http://goodwine.com.ua/](http://goodwine.com.ua/)
-- Image: local
 - Excise: true
 - Items: ~5000
 - Scrapping time: ~20min

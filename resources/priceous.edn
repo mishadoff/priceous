@@ -9,14 +9,14 @@
         :collection "whisky"}
 
  :csv {:filepath "/Users/mkoz/temp/alcosearch.csv"}
- 
- :scheduler {:delay 0 
+
+ :scheduler {:delay 0
              :value 12
              :time-unit "HOURS"}
 
  ;; FIXME: does not work
  :ratelimit 1000 ;; number of requests / per IP / per hour
- 
+
  :scrapping {:providers
              ["alcoland"
               "alcomag"
@@ -34,7 +34,6 @@
               "etelefon"
               "fozzy"
               "goodwine"
-              "kavist"
               "megamarket"
               "metro"
               "novus"
@@ -44,6 +43,6 @@
  :appenders [:solr]
 
  :view {
-        :per-page 10        
+        :per-page 10
         }
  }

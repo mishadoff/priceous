@@ -72,7 +72,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
-;; TODO fetch witth retry
+;; TODO fetch with retry
 ;; TODO fetch with timeout
 (defn fetch [url]
   (log/trace "Fetching URL: " url)
@@ -86,21 +86,11 @@
    Empty string becames nil"
   [s]
   (some->
-   s
-   (.replaceAll "&nbsp;" " ")
-   (.replaceAll "\\s+" " ")
-   (clojure.string/trim)
-   ((fn [s] (if (empty? s) nil s)))))
-
-(defn falsy []
-  "Returns function which accepts any number of arguments
-   and always return false"
-  (fn [& _] false))
-
-(defn truthy []
-  "Returns function which accepts any number of arguments
-   and always return true"
-  (fn [& _] true))
+    s
+    (.replaceAll "&nbsp;" " ")
+    (.replaceAll "\\s+" " ")
+    (clojure.string/trim)
+    ((fn [s] (if (empty? s) nil s)))))
 
 (defn full-href [provider part-href]
   (let [base-url (get-in provider [:info :base-url])]
@@ -175,9 +165,9 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defn readable-time [ts-string]
+(defn readable-time [ts-string current-ts-string]
   (let [jt (tf/parse (tf/formatters :date-time-no-ms) ts-string)
-        jt-now (now-dt)
+        jt-now (tf/parse (tf/formatters :date-time-no-ms) current-ts-string)
         mid (fn [dt] (t/date-midnight (t/year dt) (t/month dt) (t/day dt)))
         jt-mid (mid jt) jt-now (mid jt-now)
         diff-in-days (t/in-days (t/interval jt-mid jt-now))]

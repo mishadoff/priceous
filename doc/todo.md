@@ -9,3 +9,6 @@
 * Structured information in SOLR
 * Link to whiskybase/masterofmalt
 * Integration with cocktailDB?
+* New SOLR fields? [1]
+  * Excise
+  

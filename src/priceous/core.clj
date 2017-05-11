@@ -64,7 +64,7 @@
                   (a/append apn provider items))
                 (update-in state [:total] + (count items)))))
     (catch Exception e
-      (log/error (format "[%s] ProviderError" (get-in provider [:info :name])))
+      (log/error (format "[%s] ProviderError" (p/pname provider)))
       (log/error e)
       state)))
 

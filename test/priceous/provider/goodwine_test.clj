@@ -7,6 +7,7 @@
 (deftest test--get-categories
   (testing "Just validate get-categories follows the contract"
     (let [cats (gw/get-categories gw/provider)]
+      ;; TODO extract to common_test
       (is (pos? (count cats))) ;; at least one category exists
       (is (vector? cats))      ;; we don't break the type
 

@@ -48,7 +48,7 @@
             (assoc :provider (p/pname provider))
             (assoc :name (text+ [:.titleProd :> [:* (html/but [:.articleProd])]]))
             (assoc :link link)
-            (assoc :image (-> (q+ [:.imageDetailProd [:img :#mag-thumb]]) ;; TODO introduce link
+            (assoc :image (-> (q+ [:.imageDetailProd [:img :#mag-thumb]]) ;; TODO introduce image
                               (get-in [:attrs :src])))
             (assoc :country (spec "география"))
             (assoc :wine_sugar (some-> (spec "Сахар, г/л") (u/smart-parse-double)))
@@ -105,7 +105,7 @@
    :info {
           :name          "Goodwine"
           :base-url      "http://goodwine.com.ua/"
-          :icon          "/images/goodwine.png"
+          :icon          "http://goodwine.ua/sites/all/themes/goodwine/img/logo_black.png"
           :icon-width    "70"
           :icon-height   "34"}
 
