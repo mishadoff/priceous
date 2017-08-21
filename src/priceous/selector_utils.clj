@@ -130,6 +130,13 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(defn img-fn [property-fn]
+  (fn [selector]
+    (some-> (property-fn selector)
+            (get-in [:attrs :src]))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (defn last-page [provider page]
   "Return the last page for provider, given page enlive structure"
   (let [last-page-num
@@ -169,7 +176,8 @@
          ~'q* (fn [selector#] (select*+ node# ~provider selector# :context ~nodemap))
          ~'q*? (fn [selector#] (select*? node# ~provider selector# :context ~nodemap))
          ~'text+ (text-fn ~'q+)
-         ~'text? (text-fn ~'q?)]
+         ~'text? (text-fn ~'q?)
+         ~'img (img-fn ~'q+)]
      ~@body))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

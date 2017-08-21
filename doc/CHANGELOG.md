@@ -2,10 +2,10 @@
 
 - New fields: **excise** and **trusted**
 - Kavist provider removed as stale shop
+- Data Coverage statistic component
 
 - Revisit approaches to parse data from different providers
 - Few more stores
-- Gather scrap statistics, provider fill level
 - Introduce document post-processing to improve provider fill level
 - Notification layer if something goes wrong
 - Fixed plenty of bugs (nasty rozetka)

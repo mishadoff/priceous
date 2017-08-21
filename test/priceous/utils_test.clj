@@ -112,6 +112,7 @@
   (is (nil? (force-pos -100))))
 
 (u/require-all-providers)
+
 (deftest test--find-all-providers
   (is (= #{"alcoland" "alcomag" "alcoparty" "alcostore"
            "alcovegas" "auchan" "barbados" "bestwine"
@@ -132,4 +133,12 @@
   (is (= "Вчера" (readable-time "2017-05-11T23:59:59Z" "2017-05-12T00:00:00Z")))
   (is (= "Вчера" (readable-time "2017-05-11T00:00:00Z" "2017-05-12T00:00:00Z")))
   (is (= "Давно" (readable-time "2016-05-11T00:00:00Z" "2017-05-12T00:00:00Z")))
+  )
+
+(deftest test--catenate-items
+  (is (= "1" (cat-items "1")))
+  (is (= "1 2" (cat-items "1" 2)))
+  (is (= "1 2" (cat-items "1" "2")))
+  (is (= "1 2 3 4 6" (cat-items "1" "2" nil "3" 4 nil " " 6)))
+  (is (= "Whisky Bourbon" (cat-items "Whisky" nil nil "Bourbon " nil nil)))
   )

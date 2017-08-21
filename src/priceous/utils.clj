@@ -92,6 +92,15 @@
     (clojure.string/trim)
     ((fn [s] (if (empty? s) nil s)))))
 
+(defn cat-items
+  "Concatenate set of items into space delimited string, nils skipped"
+  [& items]
+  (->> items
+       (remove nil?)
+       (interpose " ")
+       (apply str)
+       (cleanup)))
+
 (defn full-href [provider part-href]
   (let [base-url (get-in provider [:info :base-url])]
     (str

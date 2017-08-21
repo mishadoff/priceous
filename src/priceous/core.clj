@@ -3,6 +3,7 @@
             [priceous.utils :as u]
             [priceous.provider :as p]
             [priceous.ssl :as ssl]
+            [priceous.stats :as stats]
             [priceous.appender :as a]
             [priceous.formatter :as fmt]
             [priceous.config :as config]
@@ -52,6 +53,18 @@
     (let [start (System/currentTimeMillis)
           items (flow/process provider)
           pname (p/pname provider)]
+
+      ;; calculating data coverage
+      (log/info (format "Data Coverage for %s = %.2f"
+                        pname
+                        (stats/data-coverage-avg items)))
+      ;; TODO put coverage AFTER writing to solr into state AND persistent storage
+
+      ;; TODO before/after check
+      ;; - Product Code uniqueness
+      ;; - Volume range
+      ;; - Alcohol range
+
       (cond (empty? items)
             (do (log/warn (format "[%s] No items found" pname)) state)
 

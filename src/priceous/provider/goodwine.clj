@@ -50,8 +50,7 @@
             (assoc :trusted true)
             (assoc :name (text+ [:.titleProd :> [:* (html/but [:.articleProd])]]))
             (assoc :link link)
-            (assoc :image (-> (q+ [:.imageDetailProd [:img :#mag-thumb]]) ;; TODO introduce image alias
-                              (get-in [:attrs :src])))
+            (assoc :image (img [:.imageDetailProd [:img :#mag-thumb]]))
             (assoc :country (spec "география"))
             (assoc :wine_sugar (some-> (spec "Сахар, г/л") (u/smart-parse-double)))
             (assoc :wine_grape (some->> (spec "Сортовой состав")
@@ -61,9 +60,8 @@
                                         (clojure.string/join ", ")))
             (assoc :vintage (spec "Винтаж"))
             (assoc :producer (spec "Производитель"))
-            (assoc :type (-> (str (p/category-name provider) " " (spec "Тип"))
-                             (u/cleanup)))
-            (assoc :alcohol (-> (spec "Крепость, %") (u/smart-parse-double)))
+            (assoc :type (u/cat-items (p/category-name provider) (spec "Тип")))
+            (assoc :alcohol (u/smart-parse-double (spec "Крепость, %")))
             (assoc :description (spec "цвет, вкус, аромат"))
             (assoc :timestamp (u/now))
             (assoc :product-code (str (p/pname provider) "_" (text+ [:.titleProd :.articleProd :span])))
@@ -95,6 +93,7 @@
                                               (first)
                                               (u/smart-parse-double)
                                               (format "Цена при покупке любых 6+ бутылок, %.2f грн")))
+
             ((fn [p] (assoc p :sale (not (empty? (:sale-description p)))))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

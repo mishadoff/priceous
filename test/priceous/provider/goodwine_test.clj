@@ -1,28 +1,12 @@
 (ns priceous.provider.goodwine-test
   (:require [priceous.provider.goodwine :as gw]
+            [priceous.common-test :as ct]
             [clojure.test :refer :all]
             [net.cgrand.enlive-html :as enlive]
             [hiccup.core :as hiccup]))
 
 (deftest test--get-categories
-  (testing "Just validate get-categories follows the contract"
-    (let [cats (gw/get-categories gw/provider)]
-      ;; TODO extract to common_test
-      (is (pos? (count cats))) ;; at least one category exists
-      (is (vector? cats))      ;; we don't break the type
-
-      (doseq [{name :name template :template} cats] ;; for each category
-        (is (not (empty? name))) ;; category name is not empty
-        (is (.startsWith template "http://")) ;; template is url
-        (is (.contains template "%s")) ;; template has a placeholder
-        )
-
-      ;; no duplicate categeory names found
-      (is (= (count cats) (count (->> cats (map :name) (into #{})))))
-      ;; no duplicate urls found
-      (is (= (count cats) (count (->> cats (map :template) (into #{})))))
-
-      )))
+  (ct/testing-categories (gw/get-categories gw/provider)))
 
 (deftest test--node->document-edge-cases
 
@@ -36,7 +20,6 @@
                  :node nil :link nil}))))
   )
 
-;; TODO introduce test resources
 (deftest test--node->document-happy-path
   (testing "Some page with all properties present"
     (let [page-hiccup
@@ -54,6 +37,8 @@
              [:img {:class "stamp" :src "/New_Item"}]]
             [:div {:class "medalIcon"}
              [:img {:class "stamp" :src "/Sale_Item"}]]
+            [:div {:class "medalIcon"}
+             [:img {:class "stamp" :src "/-15_Item"}]]
             [:div {:class "selected"}
              [:div {:mag-thumb "inner"}
               [:img {:id  "mag-thumb"
@@ -93,8 +78,7 @@
 
            ]
 
-          context-node [:div {:class "price red"}
-                        "1234"
+          context-node [:div {:class "price red"} "1100"
                         [:sup "грн"]
                         [:div {:class "question"}
                          [:span "?"]
@@ -118,7 +102,7 @@
               :volume           0.7
               :price            1234.0
               :sale             true
-              :sale-description "Цена при покупке любых 6+ бутылок, 1234.00 грн"
+              :sale-description "Цена при покупке любых 6+ бутылок, 1100.00 грн"
               :excise           true
               :trusted          true
               }
