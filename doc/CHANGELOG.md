@@ -1,15 +1,15 @@
 # Priceous 0.3.0 [DATA QUALITY] (on hold)
 
+- New fields: **excise** and **trusted**
+- Kavist provider removed as stale shop
+
 - Revisit approaches to parse data from different providers
 - Few more stores
-- Trusted stores
-- New excise field
 - Gather scrap statistics, provider fill level
 - Introduce document post-processing to improve provider fill level
 - Notification layer if something goes wrong
 - Fixed plenty of bugs (nasty rozetka)
 - Improving test coverage 70%+
-- Removed kavist as untrusted
 
 # Priceous 0.2.0 [DESIGN]
 

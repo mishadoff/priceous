@@ -1,4 +1,4 @@
-(defproject priceous "0.2.0"
+(defproject priceous "0.3.0"
   :description "Price aggregator for alcohol products"
   :url "http://priceous.mishadoff.com"
   :license {:name "Eclipse Public License"

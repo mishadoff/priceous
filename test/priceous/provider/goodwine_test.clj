@@ -91,7 +91,15 @@
              [:div {:class "price"} " 1234 " [:sup "грн"]]
              ]]
 
-           ]]
+           ]
+
+          context-node [:div {:class "price red"}
+                        "1234"
+                        [:sup "грн"]
+                        [:div {:class "question"}
+                         [:span "?"]
+                         [:p "Цена при покупке любых 6+ бутылок"]]]
+          ]
       (is (= {:provider         "Goodwine"
               :name             "Виски Springbank 10yo (0,7л)"
               :link             "http://somelink"
@@ -109,12 +117,15 @@
               :item_new         true
               :volume           0.7
               :price            1234.0
-              :sale             false
-              :sale-description nil
+              :sale             true
+              :sale-description "Цена при покупке любых 6+ бутылок, 1234.00 грн"
+              :excise           true
+              :trusted          true
               }
 
              (-> (gw/node->document
                    (assoc-in gw/provider [:state :category] "Крепкие")
                    {:page (-> page-hiccup hiccup/html enlive/html-snippet)
+                    :node (-> context-node hiccup/html enlive/html-snippet)
                     :link "http://somelink"})
                  (dissoc :timestamp)))))))

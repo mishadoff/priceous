@@ -34,7 +34,7 @@
 (defn node->document
   "Transform enlive node to provider specific document using node context.
   For heavy strategy, in context available:
-       :page - enlibe node, whole page
+       :page - enlive node, whole page
        :node - enlive node, partial from the search
        :link - link by which whole page was retrieved.
   If scrapper finds a broken page, it returns whole doc as a nil."
@@ -46,9 +46,11 @@
       (let [spec (su/spec-with-only-key (q* [:.innerDiv]) [:.innerTitleProd])]
         (-> {}
             (assoc :provider (p/pname provider))
+            (assoc :excise true)
+            (assoc :trusted true)
             (assoc :name (text+ [:.titleProd :> [:* (html/but [:.articleProd])]]))
             (assoc :link link)
-            (assoc :image (-> (q+ [:.imageDetailProd [:img :#mag-thumb]]) ;; TODO introduce image
+            (assoc :image (-> (q+ [:.imageDetailProd [:img :#mag-thumb]]) ;; TODO introduce image alias
                               (get-in [:attrs :src])))
             (assoc :country (spec "география"))
             (assoc :wine_sugar (some-> (spec "Сахар, г/л") (u/smart-parse-double)))
@@ -87,16 +89,13 @@
                                     (u/smart-parse-double))))))
 
             ;; process sales
-            (assoc :sale-description (some->> (su/select? node provider
-                                                          [:.price.red] :context nodemap)
+            (assoc :sale-description (some->> (su/select? node provider [:.price.red] :context nodemap)
                                               (html/text)
                                               (#(clojure.string/split % #"\?"))
                                               (first)
                                               (u/smart-parse-double)
                                               (format "Цена при покупке любых 6+ бутылок, %.2f грн")))
             ((fn [p] (assoc p :sale (not (empty? (:sale-description p)))))))))))
-
-
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

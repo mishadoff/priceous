@@ -4,8 +4,9 @@
 
 - Link:  [http://goodwine.com.ua/](http://goodwine.com.ua/)
 - Excise: true
-- Items: ~5000
-- Scrapping time: ~20min
+- Trusted: true
+- Items: ~5200
+- Scrapping time: ~25min
 
 ## Document Structure
 
@@ -21,16 +22,18 @@
   "vintage"         : "1974",
   "producer"        : "BenRiach",
   "type"            : "Виски Односолодовый",
+  "product_code"    : "Goodwine_17519",
   "alcohol"         : 42.5,
   "description"     : "Блестящего золотисто-янтарного цвета. В богатом аромате роскошные тропические фрукты, сладкий карамелизированный сироп",
   "timestamp"       : "2017-03-12T12:03:26Z",
-  "product_code"    : "Goodwine_17519",
   "available"       : true,
   "item_new"        : true,
   "volume"          : 0.7,
   "price"           : 16900.0,
   "sale"            : true,
-  "sale_description": "скидка 20%"
+  "sale_description": "скидка 20%",
+  "excise"          : true,
+  "trusted"         : true
 }
 ```
 

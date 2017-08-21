@@ -1,7 +1,6 @@
 ;; Properties for Priceous
 {
- :app {:name "Priceous"
-       :version "0.2.0"}
+ :app {:name "Priceous" :version "0.3.0"}
 
  :server {:port 8080 }
 
@@ -14,11 +13,13 @@
              :value 12
              :time-unit "HOURS"}
 
- ;; FIXME: does not work
+ ;; FIXME: does not work as a property / always 1000
  :ratelimit 1000 ;; number of requests / per IP / per hour
 
  :scrapping {:providers
-             ["alcoland"
+             ["goodwine"
+
+              "alcoland"
               "alcomag"
               "alcoparty"
               "alcostore"
@@ -33,7 +34,6 @@
               "elitochka"
               "etelefon"
               "fozzy"
-              "goodwine"
               "megamarket"
               "metro"
               "novus"

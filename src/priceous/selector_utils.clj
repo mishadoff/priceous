@@ -179,11 +179,10 @@
   "Create map of specs by providing only key selector,
    value for this key will be full node content with key selector removed
   "
-  [nodes selector]
+  [nodes key-selector]
   (->> nodes
        (map (fn [n]
-              (->> [(html/select n selector)
-                    (html/at n selector nil)]
+              (->> [(html/select n key-selector) (html/at n key-selector nil)]
                    (mapv first)
                    (mapv html/text)
                    (mapv u/cleanup))))
