@@ -178,7 +178,7 @@
          ~'text+ (text-fn ~'q+)
          ~'text? (text-fn ~'q?)
          ~'img (img-fn ~'q+)]
-     ~@body))
+     (if node# ~@body nil)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -194,4 +194,17 @@
                    (mapv first)
                    (mapv html/text)
                    (mapv u/cleanup))))
+       (into {})))
+
+(defn spec-with-split
+  "Create map of specs from the nodes by splitting on provided separator"
+  [split nodes]
+  (->> nodes
+       (map html/text)
+       (map (fn [s]
+              (some->> (.split s ":" 2)
+                       (seq)
+                       (map u/cleanup)
+                       (into []))))
+       (filter (fn [v] (= (count v) 2)))
        (into {})))

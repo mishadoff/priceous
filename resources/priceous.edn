@@ -18,6 +18,7 @@
 
  :scrapping {:providers
              ["goodwine"
+              "winetime"
 
               "alcoland"
               "alcomag"
@@ -38,7 +39,7 @@
               "metro"
               "novus"
               "rozetka"
-              "winetime"]}
+              ]}
 
  :appenders [:solr]
 

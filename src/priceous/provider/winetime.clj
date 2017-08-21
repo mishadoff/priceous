@@ -8,36 +8,30 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defn- get-categories [provider]
+(defn get-categories [provider]
   (->> [["Крепкие" "http://winetime.com.ua/ru/alcohol/page/%s.htm?size=30"]
         ["Вино" "http://winetime.com.ua/ru/wine/page/%s.htm?size=30"]]
        (mapv (fn [[name url]] {:name name :template url}))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defn- node->document
+(defn node->document
   [provider {page :page node :node link :link :as nodemap}]
   (su/with-selectors provider nodemap
-    (let [spec (->> (concat (q*? [:.harakter_tovar :p])
-                            (q*? [:table.details_about :p]))
-                    (map html/text)
-                    (map (fn [s]
-                           (some->> (.split s ":" 2)
-                                    (seq)
-                                    (map u/cleanup)
-                                    (into []))))
-                    (filter (fn [v] (= (count v) 2)))
-                    (into {}))]
+    (let [spec (su/spec-with-split ":"
+                 (concat (q*? [:.harakter_tovar :p]) (q*? [:table.details_about :p])))]
       (-> {}
           (assoc :provider (p/pname provider))
+          (assoc :excise true)
+          (assoc :trusted true)
           (assoc :name (text+ [:.product-details-wraper :h1]))
           (assoc :link link)
           (assoc :image (some-> (q? [:.foto_main :a :img])
                                 (get-in [:attrs :src])
                                 (#(u/full-href provider %))))
-          (assoc :country (str (spec "Страна") " " (spec "Регион")))
+          (assoc :country (u/cat-items (spec "Страна") (spec "Регион")))
           (assoc :wine_grape (spec "Сорт винограда"))
-          (assoc :wine_sugar (some-> (spec "Сахар") (u/smart-parse-double)))
+          (assoc :wine_sugar (u/smart-parse-double (spec "Сахар")))
           (assoc :vintage (spec "Год"))
           (assoc :producer (spec "Производитель"))
 
@@ -46,14 +40,16 @@
              (cond
                ;; sparkling wine
                (and (= "Вино" (p/category-name provider)) (= "игристое" (spec "Тип")))
-               (assoc doc :type (str "Вино " (spec "Цвет") " " (spec "Тип") " " (spec "Сладость")))
+               (assoc doc :type (u/cat-items "Вино" (spec "Цвет") (spec "Тип") (spec "Сладость")))
+
                ;; regular wine
                (= "Вино" (p/category-name provider))
-               (assoc doc :type (str "Вино " (spec "Цвет") " " (spec "Сладость")))
+               (assoc doc :type (u/cat-items "Вино" (spec "Цвет") (spec "Сладость")))
+
                :else
-               (assoc doc :type (str (spec "Тип") " " (spec "Классификация"))))))
-          
-          (assoc :alcohol (-> (spec "Алкоголь") (u/smart-parse-double)))
+               (assoc doc :type (u/cat-items (spec "Тип") (spec "Классификация"))))))
+
+          (assoc :alcohol (u/smart-parse-double (spec "Алкоголь")))
           (assoc :description (->> (list (spec "Дегустации") (spec "Аромат") (spec "Вкус"))
                                    (remove nil?)
                                    (str/join "; ")))
@@ -63,20 +59,21 @@
                                     (text+ [:.product-details_info-block :h2.pull-left :span])))
           (assoc :available (-> (q? [:.buying_block_do])
                                 (boolean)))
-          (assoc :item_new (-> (q? [:.foto-main :.badge-new]) (boolean)))
+          (assoc :item_new (-> (q? [:.foto_main :.badge-new]) (boolean)))
           (assoc :volume (or
-                          (-> (text+ [:.product-details_info-block :.size]) (u/smart-parse-double))
-                          (-> (spec "Объём") (u/smart-parse-double))))
+                           (u/smart-parse-double (text+ [:.product-details_info-block :.size]))
+                           (u/smart-parse-double (spec "Объём"))))
 
-          ;; price only if 
+          ;; price only if
           ((fn [doc]
              (if (:available doc)
                (assoc doc :price (some-> (text+ [:.show_all_sum])
                                          (u/smart-parse-double)
                                          (/ 100.0)))
                doc)))
-          
+
           ;; TODO 8% sale
+
           ((fn [p]
              (let [oldprice (some-> (q*? [:.buying_block_compare :span])
                                     (first)
@@ -85,9 +82,7 @@
                (if oldprice (-> p
                                 (assoc :sale true)
                                 (assoc :sale-description (format "старая цена %.2f" oldprice)))
-                   (-> p
-                       (assoc :sale false))))))
-          
+                   (-> p (assoc :sale false))))))
           ))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -101,7 +96,7 @@
           :icon-width "119"
           :icon-height "34"
           }
-   
+
    ;; provider state, will be changed by flow processor
    :state {
            :page-current   1
@@ -118,7 +113,7 @@
            :init-val       0
            :advance-fn     (partial + 30)
            }
-   
+
    :configuration {
                    :categories-fn      get-categories
                    :threads            8
