@@ -9,93 +9,61 @@
   (ct/testing-categories (wt/get-categories wt/provider)))
 
 (deftest test--node->document-edge-cases
-
   (testing "Empty page"
     (is (nil? (wt/node->document wt/provider nil))))
   )
 
 (deftest test--node->document-happy-path
   (testing "Some page with all properties present"
-    (let [page-hiccup
-          [:div {:class "product-details-wraper"}
-           [:h1 "Виски Springbank 10yo (0,7л)"]
+    (is (= {:alcohol      40.0
+            :available    true
+            :country      "Шотландия Спейсайд"
+            :description  "Виски янтарного цвета с отблесками. Виски обладает лёгким, свежим ароматом с тонами цитрусов, груши, дуба, нотками орехов и солода. Виски обладает мягким, округлым, сладковатым вкусом с нотками ванили, груши, мёда и длительным, сухим послевкусием с нюансами шоколада."
+            :excise       true
+            :image        "http://winetime.com.ua/modules/pages/pictures/371x371/1383136619_2461.jpg"
+            :item_new     false
+            :link         "http://winetime.com.ua/viski-william-grant-and-sons-glenfiddich-12r-tub_200709.htm"
+            :name         "Glenfiddich 12Y.O. (в тубусе)"
+            :price        1197.0
+            :producer     "Glenfiddich"
+            :product-code "Winetime_46574"
+            :provider     "Winetime"
+            :sale         false
+            :trusted      true
+            :type         "виски односолодовый"
+            :vintage      nil
+            :volume       0.7
+            :wine_grape   nil
+            :wine_sugar   nil}
 
-           [:div {:class "foto_main"}
-            [:a {:class "badge-new"}]
-            [:a [:img {:src "/springbank.jpg"}]]]
+           (ct/provider-heavy-node-doc
+             wt/node->document
+             wt/provider
+             "http://winetime.com.ua/viski-william-grant-and-sons-glenfiddich-12r-tub_200709.htm")))
 
-           [:table {:class "details_about"}
-            [:tr
-             [:td
-              [:p "Тип: " [:strong [:a "виски"]]]
-              [:p "Классификация: " [:strong [:a "бурбон"]]]
-              [:p "Страна: " [:strong [:a "США"]]]]
-             [:td
-              [:p "Регион: " [:strong [:a "Кентукки"]]]
-              [:p "Производитель: " [:strong [:a "Maker's Mark Distillery"]]]
-              [:p "Объём: " [:strong [:a "0,7 л"]]]]
-             ]]
+    (is (= {:alcohol      13.5
+            :available    true
+            :country      "Аргентина Мендоза"
+            :description  "Аромат травянисто-фруктовый с нотками листа смородины, лайма; Вкус свежий, сбалансированный"
+            :excise       true
+            :image        "http://winetime.com.ua/modules/pages/pictures/371x371/1461332635_50416.jpg"
+            :item_new     false
+            :link         "http://winetime.com.ua/vino-santa-ana-sauvignon-blanc-bile-cuhe_201636.htm"
+            :name         "Santa Ana Sauvignon Blanc"
+            :price        197.0
+            :producer     "Santa Ana"
+            :product-code "Winetime_58448"
+            :provider     "Winetime"
+            :sale         false
+            :trusted      true
+            :type         "Вино белое полусухое"
+            :vintage      "2015"
+            :volume       0.75
+            :wine_grape   "100% совиньон блан"
+            :wine_sugar   6.0}
 
-           [:div {:class "harakter_tovar"}
-            [:h2 "Tech"]
-            [:p [:strong "Алкоголь"] ": 45,00%"]
-            [:p [:strong "Классификация"] ": бурбон"]
-            [:p [:strong "Объём"] ": 0,7 л"]
-
-
-            [:p [:strong "Дегустации"] ": Ваниль"]
-            [:p [:strong "Аромат"] ": Солод"]
-            [:p [:strong "Вкус"] ": Торф и лимонная цедра"]
-
-            ]
-
-           [:div {:class "product-details_info-block"}
-            [:h2 {:class "pull-left"}
-             [:span "12345"]]]
-
-           [:div {:class "buying_block_do"}
-            [:table
-             [:tr
-              [:td
-               [:span {:class "show_all_sum"}
-                "1647" [:sup "00"]] "грн"]]]]
-
-           [:div {:class "buying_block_compare"}
-            "Старая цена:"
-            [:span "1999.00грн"]
-            "Экономия: "
-            [:span "357.00грн"]]
-
-           ]
-
-          context-node nil
-          ]
-      (is (= {:provider         "Winetime"
-              :name             "Виски Springbank 10yo (0,7л)"
-              :link             "http://somelink"
-              :image            "http://winetime.com.ua/springbank.jpg"
-              :country          "США Кентукки"
-              :wine_sugar       nil
-              :wine_grape       nil
-              :vintage          nil
-              :producer         "Maker's Mark Distillery"
-              :type             "виски бурбон"
-              :alcohol          45.0
-              :description      "Ваниль; Солод; Торф и лимонная цедра"
-              :product-code     "Winetime_12345"
-              :available        true
-              :item_new         true
-              :volume           0.7
-              :price            1647.0
-              :sale             true
-              :sale-description "старая цена 1999.00"
-              :excise           true
-              :trusted          true
-              }
-
-             (-> (wt/node->document
-                   (assoc-in wt/provider [:state :category] "Крепкие")
-                   {:page (-> page-hiccup hiccup/html enlive/html-snippet)
-                    :node (-> context-node hiccup/html enlive/html-snippet)
-                    :link "http://somelink"})
-                 (dissoc :timestamp)))))))
+           (ct/provider-heavy-node-doc
+             wt/node->document
+             (assoc-in wt/provider [:state :category] "Вино")
+             "http://winetime.com.ua/vino-santa-ana-sauvignon-blanc-bile-cuhe_201636.htm")))
+    ))

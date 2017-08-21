@@ -1,5 +1,6 @@
 (ns priceous.common-test
-  (:require [clojure.test :refer :all]))
+  (:require [clojure.test :refer :all]
+            [priceous.utils :as u]))
 
 ;; common package for testing different providers
 
@@ -20,3 +21,7 @@
     (is (= (count cats) (count (->> cats (map :template) (into #{})))))
 
     ))
+
+(defn provider-heavy-node-doc [node->doc-fn provider url]
+  (-> (node->doc-fn provider {:page (u/fetch url) :link url})
+      (dissoc :timestamp)))

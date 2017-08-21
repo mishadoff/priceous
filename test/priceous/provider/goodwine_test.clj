@@ -3,7 +3,8 @@
             [priceous.common-test :as ct]
             [clojure.test :refer :all]
             [net.cgrand.enlive-html :as enlive]
-            [hiccup.core :as hiccup]))
+            [hiccup.core :as hiccup]
+            [priceous.utils :as u]))
 
 (deftest test--get-categories
   (ct/testing-categories (gw/get-categories gw/provider)))
@@ -21,95 +22,57 @@
   )
 
 (deftest test--node->document-happy-path
-  (testing "Some page with all properties present"
-    (let [page-hiccup
-          [:div {:class "mainInfoProd"}
+  (testing "Some real world pages"
+    (is (= {:alcohol          40.0
+            :available        true
+            :country          "Великобритания - Шотландия"
+            :description      "Золотого цвета с отчетливо свежим, фруктовым ароматом с нотками груш и элегантным балансом. Во вкусе богатый, сладкий с фруктовыми нотами, постепенно развивается в оттенки ирисок, сливок, солода с мягкими тонами дуба. Финиш продолжительный, гладкий и мягкий."
+            :excise           true
+            :image            "http://goodwine.com.ua/media/catalog/product/cache/1/image/119x450/9df78eab33525d08d6e5fb8d27136e95/0/1/01347.jpg"
+            :item_new         nil
+            :link             "http://goodwine.com.ua/glenfiddich-12-yo-tube-01347.html"
+            :name             "Виски Glenfiddich 12 yo, tube 0,7 л"
+            :price            1190.0
+            :producer         "Glenfiddich"
+            :product-code     "Goodwine_01347"
+            :provider         "Goodwine"
+            :sale             false
+            :sale-description nil
+            :trusted          true
+            :type             "Крепкие Односолодовый"
+            :vintage          nil
+            :volume           0.7
+            :wine_grape       nil
+            :wine_sugar       nil}
+           (ct/provider-heavy-node-doc
+             gw/node->document
+             (assoc-in gw/provider [:state :category] "Крепкие")
+             "http://goodwine.com.ua/glenfiddich-12-yo-tube-01347.html")))
 
-           ;; title * product code
-           [:div {:class "titleProd"}
-            [:h1 "Виски Springbank 10yo (0,7л)"
-             [:p {:class "articleProd"}
-              "Арт." [:span "12345"]]]]
+    (is (= {:alcohol          13.0
+            :available        true
+            :country          "Новая Зеландия - Мальборо"
+            :description      "Оптимальная спелость Совиньон Блана проявляется в выразительном, пышном аромате маракуйи, крыжовника, листьев черной смородины в обрамлении тонких цитрусовых тонов розового грейпфрута и жимолости. Во вкусе вино пронзительно свежее, обладает сбалансированной кислотностью и изящной минеральностью. Послевкусие приятное, освежающее. Отлично сочетается со свежими морепродуктами, овощами гриль и белым мясом."
+            :excise           true
+            :image            "http://goodwine.com.ua/media/catalog/product/cache/1/image/119x450/9df78eab33525d08d6e5fb8d27136e95/0/5/05776.jpg"
+            :item_new         nil
+            :link             "http://goodwine.com.ua/sauvignon-blanc-marlborough-sun-05776.html"
+            :name             "Вино Sauvignon Blanc Marlborough Sun 0,75 л"
+            :price            270.0
+            :producer         "Saint Clair"
+            :product-code     "Goodwine_05776"
+            :provider         "Goodwine"
+            :sale             true
+            :sale-description "Цена при покупке любых 6+ бутылок, 249.00 грн"
+            :trusted          true
+            :type             "Вино Белое Сухое"
+            :vintage          nil
+            :volume           0.75
+            :wine_grape       "Совиньйон Блан"
+            :wine_sugar       3.5}
+           (ct/provider-heavy-node-doc
+             gw/node->document
+             (assoc-in gw/provider [:state :category] "Вино")
+             "http://goodwine.com.ua/sauvignon-blanc-marlborough-sun-05776.html")))
 
-           ;; image
-           [:div {:class "imageDetailProd clearfix"}
-            [:div {:class "medalIcon"}
-             [:img {:class "stamp" :src "/New_Item"}]]
-            [:div {:class "medalIcon"}
-             [:img {:class "stamp" :src "/Sale_Item"}]]
-            [:div {:class "medalIcon"}
-             [:img {:class "stamp" :src "/-15_Item"}]]
-            [:div {:class "selected"}
-             [:div {:mag-thumb "inner"}
-              [:img {:id  "mag-thumb"
-                     :src "imglink"}]]]]
-
-           ;; specs
-           [:div {:class "innerDiv"}
-            [:h2 {:class "innerTitleProd"} "география"]
-            "Шотландия"]
-           [:div {:class "innerDiv"}
-            [:h2 {:class "innerTitleProd"} "Сахар, г/л"]
-            "12,7 г/л"]
-           [:div {:class "innerDiv"}
-            [:h2 {:class "innerTitleProd"} "Сортовой состав"]
-            "Пино нуар"]
-           [:div {:class "innerDiv"}
-            [:h2 {:class "innerTitleProd"} "Винтаж"]
-            "1984"]
-           [:div {:class "innerDiv"}
-            [:h2 {:class "innerTitleProd"} "Производитель"]
-            "Springbank Inc."]
-           [:div {:class "innerDiv"}
-            [:h2 {:class "innerTitleProd"} "Тип"]
-            "Виски"]
-           [:div {:class "innerDiv"}
-            [:h2 {:class "innerTitleProd"} "Крепость, %"]
-            "43,7%"]
-           [:div {:class "innerDiv"}
-            [:h2 {:class "innerTitleProd"} "цвет, вкус, аромат"]
-            "Слегка торфяной с нотками цитрусовых"]
-
-           [:div {:class "additionallyServe"}
-            [:form
-             [:div {:class "bottle"} [:p "Бутылка 0,7 л"]]
-             [:div {:class "price"} " 1234 " [:sup "грн"]]
-             ]]
-
-           ]
-
-          context-node [:div {:class "price red"} "1100"
-                        [:sup "грн"]
-                        [:div {:class "question"}
-                         [:span "?"]
-                         [:p "Цена при покупке любых 6+ бутылок"]]]
-          ]
-      (is (= {:provider         "Goodwine"
-              :name             "Виски Springbank 10yo (0,7л)"
-              :link             "http://somelink"
-              :image            "imglink"
-              :country          "Шотландия"
-              :wine_sugar       12.7
-              :wine_grape       "Пино нуар"
-              :vintage          "1984"
-              :producer         "Springbank Inc."
-              :type             "Крепкие Виски"
-              :alcohol          43.7
-              :description      "Слегка торфяной с нотками цитрусовых"
-              :product-code     "Goodwine_12345"
-              :available        true
-              :item_new         true
-              :volume           0.7
-              :price            1234.0
-              :sale             true
-              :sale-description "Цена при покупке любых 6+ бутылок, 1100.00 грн"
-              :excise           true
-              :trusted          true
-              }
-
-             (-> (gw/node->document
-                   (assoc-in gw/provider [:state :category] "Крепкие")
-                   {:page (-> page-hiccup hiccup/html enlive/html-snippet)
-                    :node (-> context-node hiccup/html enlive/html-snippet)
-                    :link "http://somelink"})
-                 (dissoc :timestamp)))))))
+    ))

@@ -14,7 +14,7 @@
     (log/set-config!
       {:level :info
        :output-fn log/default-output-fn
-
+       :timestamp-opts {:pattern "yyyy-MM-dd HH:mm:ss.SSS"}
        :appenders
        {
 
@@ -29,10 +29,10 @@
                  (if-let [color (colors level)]
                    (println (log/color-str color (output-fn data)))
                    (println (output-fn data)))))}
-        
+
         :rotor-appender
         (rotor/rotor-appender {:path "./priceous.log"})
-        
+
         }})))
 
 (defn- props-from-resource [file]

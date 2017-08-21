@@ -1,8 +1,9 @@
+priceous.iml
 /target
 /classes
 /checkouts
 pom.xml
-pom.xml.asc
+pom.xml.as
 *.jar
 *.class
 /.lein-*

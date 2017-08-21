@@ -87,10 +87,13 @@
                                     (u/smart-parse-double))))))
 
             ;; process sales
-            (assoc :sale-description (some->> (su/select? node provider [:.price.red] :context nodemap)
-                                              (html/text)
-                                              (#(clojure.string/split % #"\?"))
+            (assoc :sale-description (some->> (q*? [:.bottle.pull-left :span])
+                                              (map html/text)
+                                              (filter #(.contains % "За 1 бут."))
                                               (first)
+                                              ((fn [txt] (.split txt "—")))
+                                              (seq)
+                                              (second)
                                               (u/smart-parse-double)
                                               (format "Цена при покупке любых 6+ бутылок, %.2f грн")))
 
