@@ -10,12 +10,12 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defn get-categories [provider]
-  (->> [["Вино" "http://rozetka.com.ua/vino/c4594285/"]
-        ["Другие Крепкие" "http://rozetka.com.ua/krepkie-napitki/c4594292/"]
-        ["Ликеры" "http://rozetka.com.ua/liquor-vermouth-syrup/c4625409/"]
-        ["Пиво" "http://rozetka.com.ua/pivo/c4626589/"]
-        ["Слабоалкогольные напитки" "Http://rozetka.com.ua/slaboalkogoljnye-napitki/c4628313/"]]
-       (map (fn [[name template]] {:name name :template (str template "filter/page=%s/")}))))
+  (->> [["Вино" "https://rozetka.com.ua/vino/c4594285/"]
+        ["Другие Крепкие" "https://rozetka.com.ua/krepkie-napitki/c4594292/"]
+        ["Ликеры" "https://rozetka.com.ua/liquor-vermouth-syrup/c4625409/"]
+        ["Пиво" "https://rozetka.com.ua/pivo/c4626589/"]
+        ["Слабоалкогольные напитки" "https://rozetka.com.ua/slaboalkogoljnye-napitki/c4628313/"]]
+       (mapv (fn [[name template]] {:name name :template (str template "filter/page=%s/")}))))
 
 (defn- parse-price-rozetka-json [s]
   (-> (re-seq #"var pricerawjson = \"(.*)\";" s)
@@ -24,7 +24,7 @@
       (java.net.URLDecoder/decode)
       (json/parse-string true)))
 
-(defn- node->document
+(defn node->document
   [provider {page :page node :node link :link :as nodemap}]
   (su/with-selectors provider nodemap
     (let [spec (->> [(q* [:.detail-chars-l-i-title])       ;;keys

@@ -87,7 +87,7 @@
   ;; TODO validate count strategy as well
   {:pre [provider selector]}
 
-  (let [context-str (or (:link context) (:tag (:node context)))]
+  (let [context-str (or (:link (:page context)) (:tag (:node context)))]
     (cond
 
       ;; No nodes found, log error if it was required adn return empty
