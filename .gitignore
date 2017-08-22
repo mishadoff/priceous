@@ -11,3 +11,4 @@ pom.xml.as
 .hgignore
 .hg/
 priceous.log*
+external_config.edn

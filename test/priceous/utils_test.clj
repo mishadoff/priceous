@@ -142,3 +142,11 @@
   (is (= "1 2 3 4 6" (cat-items "1" "2" nil "3" 4 nil " " 6)))
   (is (= "Whisky Bourbon" (cat-items "Whisky" nil nil "Bourbon " nil nil)))
   )
+
+(deftest test--deep-merge
+  (is (= nil (deep-merge nil nil)))
+  (is (= {:a 2 :b {:c 23 :d "Hey" :e "Hoy"} :f 1 :g 2}
+         (deep-merge {:a 1 :b {:c 10 :d "Hey"} :f 1}
+                     {:a 2 :b {:c 23 :e "Hoy"} :g 2})))
+
+  )

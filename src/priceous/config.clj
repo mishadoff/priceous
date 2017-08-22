@@ -1,7 +1,9 @@
 (ns priceous.config
   (:require [taoensso.timbre :as log]
             [taoensso.timbre.appenders.3rd-party.rotor :as rotor]
-            [clojure.java.io :as io]))
+            [clojure.java.io :as io]
+            [priceous.utils :as u]
+            ))
 
 (def properties (atom nil))
 
@@ -47,10 +49,10 @@
          (do (log/error e "Problem reading props from file") {} ))))
 
 ;; to avoid inonsistent properties we allow to read them only once
-(defn read-properties! [external-file]
-  (cond @properties @properties
-        :else (do
-                (log/debug "Fill properties -> atom...")
-                (let [external-map (if external-file (props-from-file external-file) {})
-                      internal-map (props-from-resource "priceous.edn") ]
-                  (reset! properties (merge internal-map external-map))))))
+(defn read-properties!
+  ([] (read-properties! "external_config.edn"))
+  ([external-file]
+   (cond @properties @properties
+         :else (reset! properties
+                       (u/deep-merge (props-from-resource "priceous.edn")
+                                     (props-from-file external-file) )))))

@@ -13,6 +13,12 @@
              :value 12
              :time-unit "HOURS"}
 
+ :alert {
+         :emails ["mishadoff@gmail.com"]
+         :from "alcopriceous@gmail.com"
+         :password "<PASSWORD>"
+ }
+
  ;; FIXME: does not work as a property / always 1000
  :ratelimit 1000 ;; number of requests / per IP / per hour
 

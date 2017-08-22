@@ -7,6 +7,7 @@
             [priceous.appender :as a]
             [priceous.formatter :as fmt]
             [priceous.config :as config]
+            [priceous.alert :as alert]
             [priceous.flow :as flow]
             [clojure.java.io :as io]
             [taoensso.timbre :as log])
@@ -34,6 +35,11 @@
                          (remove nil?))
           final-state (reduce scrap-provider {:total 0} providers)]
       (log/info (fmt/succesfully-processed-all (:total final-state) (u/elapsed-so-far start)))
+
+      (alert/notify "Alert from priceous"
+                    (str "Scrapping finished:\n"
+                         (with-out-str (clojure.pprint/pprint final-state))))
+
       final-state)
     (catch Exception e
       (log/error "Scrapping failed" e))))
@@ -91,7 +97,7 @@
   "
   [& args]
   (config/config-timbre!)
-  (config/read-properties! nil)
+  (config/read-properties!)
   (ssl/trust-all-certificates)
   (cond
     (= "all" (first args)) (scrap (u/find-all-providers))

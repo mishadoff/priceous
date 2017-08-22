@@ -321,6 +321,7 @@ morgan,морган
 mortlach,мортлах,мортлак
 moet,moët,моет,моэт,моєт
 montenegro,монтенегро
+mouton,мутон
 montezuma,монтезума,монтесума
 midori,мидори,мідорі
 mist,міст,мист
