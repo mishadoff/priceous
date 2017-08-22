@@ -1,0 +1,21 @@
+{:alcohol          40.0
+ :available        true
+ :country          "Великобритания - Шотландия"
+ :description      "Золотого цвета с отчетливо свежим, фруктовым ароматом с нотками груш и элегантным балансом. Во вкусе богатый, сладкий с фруктовыми нотами, постепенно развивается в оттенки ирисок, сливок, солода с мягкими тонами дуба. Финиш продолжительный, гладкий и мягкий."
+ :excise           true
+ :image            "http://goodwine.com.ua/media/catalog/product/cache/1/image/119x450/9df78eab33525d08d6e5fb8d27136e95/0/1/01347.jpg"
+ :item_new         nil
+ :link             nil
+ :name             "Виски Glenfiddich 12 yo, tube 0,7 л"
+ :price            1190.0
+ :producer         "Glenfiddich"
+ :product-code     "Goodwine_01347"
+ :provider         "Goodwine"
+ :sale             false
+ :sale-description nil
+ :trusted          true
+ :type             "Крепкие Односолодовый"
+ :vintage          nil
+ :volume           0.7
+ :wine_grape       nil
+ :wine_sugar       nil}

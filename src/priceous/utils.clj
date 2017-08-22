@@ -6,7 +6,7 @@
             [clojure.string :as s]
             [net.cgrand.enlive-html :as html]
             [clojure.tools.namespace :as cns]
-            ))
+            [clojure.java.io :as io]))
 
 (declare
  die
@@ -190,3 +190,10 @@
 
 (defn force-pos [n]
   (if (and n (pos? n)) n nil))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defn read-edn [path]
+  (try (read-string (slurp (io/file path)))
+       (catch Exception e
+         (do (log/error e "Problem reading props from file") {} ))))

@@ -1,6 +1,7 @@
 (ns priceous.provider.rozetka-test
   (:require [priceous.provider.rozetka :as rz]
             [priceous.common-test :as ct]
+            [priceous.utils :as u]
             [clojure.test :refer :all]
             [net.cgrand.enlive-html :as enlive]
             [hiccup.core :as hiccup]))
@@ -15,27 +16,11 @@
 
 (deftest test--node->document-happy-path
   (testing "Some page with all properties present"
-    (is (= {:alcohol          40.0
-            :available        true
-            :country          "Шотландия Спейсайд"
-            :description      "Фруктовый вкус с нотками ванили, груши, мёда и длительным, сухим послевкусием с нюансами шоколада"
-            :image            "https://i2.rozetka.ua/goods/1416961/glenfiddich_5010327000176_images_1416961876.jpg"
-            :link             "https://rozetka.com.ua/glenfiddich_5010327000176/p5851263/"
-            :name             "Виски Glenfiddich 12 лет выдержки 0.7 л 40% "
-            :price            1087.0
-            :producer         "Крепкие напитки Glenfiddich"
-            :product-code     "Rozetka_5851263"
-            :provider         "Rozetka"
-            :sale             nil
-            :sale-description nil
-            :type             "Виски односолодовый"
-            :vintage          nil
-            :volume           0.7
-            :wine_grape       nil}
+    (doseq [[test-in test-out] (ct/load-cases "test/resources/rozetka")]
+      (is (= (u/read-edn test-out) (ct/provider-doc rz/node->document rz/provider test-in))))
+      ))
 
-           (ct/provider-heavy-node-doc
-             rz/node->document
-             rz/provider
-             "https://rozetka.com.ua/glenfiddich_5010327000176/p5851263/")))
-
-    ))
+(comment
+  (ct/save "https://rozetka.com.ua/glenfiddich_5010327000176/p5851263/"
+           "test/resources/rozetka/CASE_001_glenfiddich_in.edn")
+  )

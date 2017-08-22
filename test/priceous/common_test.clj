@@ -1,6 +1,7 @@
 (ns priceous.common-test
   (:require [clojure.test :refer :all]
-            [priceous.utils :as u]))
+            [priceous.utils :as u])
+  (:import (java.io File)))
 
 ;; common package for testing different providers
 
@@ -23,6 +24,16 @@
 
     )))
 
-(defn provider-heavy-node-doc [node->doc-fn provider url]
-  (-> (node->doc-fn provider {:page (u/fetch url) :link url})
+(defn provider-doc [node->doc-fn provider test-in]
+  (-> (node->doc-fn provider {:page (u/read-edn test-in) :link nil})
       (dissoc :timestamp)))
+
+(defn load-cases [path]
+  (->> (file-seq (File. path))
+       (map (fn [f] (.getAbsolutePath f)))
+       (filter (fn [fname] (.endsWith fname "_in.edn")))
+       (sort)
+       (map (fn [in] [in (.replace in "_in.edn" "_out.edn")]))))
+
+(defn save [url name]
+  (spit name (seq (u/fetch url))))
