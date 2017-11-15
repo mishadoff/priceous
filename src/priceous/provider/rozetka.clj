@@ -157,7 +157,7 @@
                    :strategy           :heavy
                    :node->document     node->document
                    :node-selector      [:.g-i-tile-i-box-desc]
-                   :link-selector      [:.g-i-tile-i-title :a]
+                   :link-selector      [:.g-i-tile-i-title [:a (html/but (html/attr= :rel "file"))]]
                    :link-selector-type :full-href
                    :last-page-selector [[:ul (html/attr= :name "paginator")] :.paginator-catalog-l-link]
                    }

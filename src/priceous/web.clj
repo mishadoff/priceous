@@ -79,7 +79,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defn init
-  ([] (init nil))
+  ([] (init ["external_config.edn"]))
   ([args]
    (ssl/trust-all-certificates)
    (config/config-timbre!)

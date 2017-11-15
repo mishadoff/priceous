@@ -25,7 +25,7 @@
         sorting (resolve-sort params)
         available (resolve-available params)
         perpage (config/prop [:view :per-page] 10)]
-    (try 
+    (try
       (flux/with-connection
         (http/create
          (get-in @config/properties [:solr :host])
@@ -57,16 +57,16 @@
                                     (:count))}) pivot)))
 
 (defn stats [ctx]
-  (try 
+  (try
     (flux/with-connection
       (http/create (config/prop [:solr :host])
                    (keyword (config/prop [:solr :collection])))
       (log/info (format "[%s] Requested StatsRequest" (:ip ctx)))
       (let [response
-            (flux/request 
+            (flux/request
              (query/create-query-request
               {:q "*"
-               :start 0 
+               :start 0
                :rows 0
                :json.facet.providers
                "{type:terms,
@@ -107,7 +107,7 @@
       (http/create
        (get-in @config/properties [:solr :host])
        (keyword (get-in @config/properties [:solr :collection])))
-      
+
       (log/info "Connections to SOLR established")
 
       ;; log deltas
@@ -116,19 +116,20 @@
                                            :fq (format "provider:%s" (p/pname provider))}))
                            (get-in [:response :numFound]))
             delta (- (count items) num-before)]
+
         (log/info (format "[%s] Items delta %d" (p/pname provider) delta))
         (when (< delta -50) ;; TODO configurable alert for deltas
           (log/warn "High delta change detected, probably something wrong")))
-      
+
       ;; delete all documents for this provider because currently we interested
       ;; in recent items
       (flux/delete-by-query (str "provider:" (get-in provider [:info :name])))
-      
+
       ;; transform and add to solr
       (->> items
            (map transform-dashes-to-underscores)
            (flux/add))
-      
+
       (flux/commit)
       (log/info (format "Pushed to solr %s items" (count items))))
     (catch Exception e
@@ -179,11 +180,11 @@
       ;; special hidden syntax allow to pass raw query
       ;; should start with #
       ;; filters not applied
-      
+
       (clojure.string/starts-with? q "!") {:q (subs q 1) :fq []}
       :else
       (-> {:q (.toLowerCase q) :fq []}
-          
+
           ;; add avaialable filter
           ((fn [req] (if (= a "all")
                        req

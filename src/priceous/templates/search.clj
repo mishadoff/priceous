@@ -10,7 +10,7 @@
             [priceous.utils :as u]
             [taoensso.timbre :as log]))
 
-(declare 
+(declare
  view
  search-container
  render-item
@@ -44,7 +44,7 @@
       (pagination content)]
      [:div {:clsss "sorting-parent"}
       (sorting content)]]
-    
+
     [:div {:class "search-container"}
      (let [{:keys [status data]} (get-in content [:solr :response])]
        (cond
@@ -56,7 +56,7 @@
     [:div {:class "search-controls"}
      [:div {:class "pagination-parent"}
       (pagination content)]]
-    
+
 
     ]])
 
@@ -80,7 +80,7 @@
                   [:div
                    [:span {:class "grn"} grn]
                    [:span {:class "kop"} kop]])
-          
+
           ;; if price not available
           :else [:div {:class "price-na"} "Цены нет"]))]
 
@@ -88,14 +88,21 @@
      [:div {:class "item-provider"}
       (let [p (u/resolve-provider-by-name (.toLowerCase (:provider item)))]
         [:a {:href (get-in p [:info :base-url])}
-         [:img {:class "nested_fixed_img"
+         (-> [:img {:class "nested_fixed_img"
                 :src (get-in p [:info :icon])
                 :title (:provider item)
-                :alt (:provider item)}]])]
+                :alt (:provider item)}]
+             ;; apply logo style
+             ((fn [tag]
+                (let [bgcolor (get-in p [:info :icon-background])]
+                  (if bgcolor (assoc-in tag [1 :style] (str "background-color:" bgcolor)) tag)
+                  )))
+             )
+         ])]
 
      ]
 
-    
+
     [:div {:class "item-center"}
      [:div {:class "item-name"}
       [:a {:href (:link item)
@@ -119,11 +126,11 @@
      (if (:wine_grape item)
        [:div {:class "itemprop"}
         (format "Сорт: %s" (:wine_grape item))])
-     
+
      (if (:wine_sugar item)
        [:div {:class "itemprop"}
         (format "Сахар: %s г/л" (:wine_sugar item))])
-     
+
      (if (:sale item)
        [:div {:class "sale"}
         (format "Акция: %s" (:sale_description item))])
@@ -139,43 +146,43 @@
   (cond
     (= :error (get-in content [:solr :response :status]))
     [:div {:class "status-bar-error"} "Ошибка: Неправильный запрос"]
-    
+
     ;; Query not entered, first time here
     (empty? (get-in content [:params :query]))
     [:div {:class "status-bar-small"}
      "Введите запрос, например "
-     
+
      (let [[name href] (rand-nth qe/queries)]
        [:a {:href href :class "link"} name])]
-    
+
     ;; Query entered, but nothing found
     (and (not (get-in content [:params :query]))
          (zero? (get-in content [:solr :response :data :response :numFound])))
     [:div {:class "status-bar-regular"}
      "Ничего не найдено."]
-    
+
     :else
-    [:div 
+    [:div
      [:div {:class "status-bar-small"}
       (format "Найдено %s товаров за %s секунд. "
               (get-in content [:solr :response :data :response :numFound])
               (some-> (get-in content [:solr :response :data :responseHeader :QTime])
                       (/ 1000.0)))]
-     
+
 
       ;; TODO build links based for this use query DO not use page
       ;; TODO ALL from query params
-     
+
       ]
 
      ))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-  
+
 (defn- search-input [content]
   (form-to
    [:get (str "/search")]
-   [:div 
+   [:div
     [:div {:class "query-container"}
      (text-field
       {:size 50 :rows 1 :class "query-text-field"}
@@ -219,7 +226,7 @@
                  [:span {:class "pagination_current_page"} page-index]
                  (= page-index :..) [:span {:class "pagination-dots"} ".."]
                  :else
-                 [:a {:href (format "/search?query=%s&sort=%s&page=%d" 
+                 [:a {:href (format "/search?query=%s&sort=%s&page=%d"
                                     (java.net.URLEncoder/encode (get-in content [:params :query]))
                                     (or (get-in content [:params :sort]) "cheap") page-index)
                       :class "link"} page-index]))]))))

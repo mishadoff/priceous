@@ -38,7 +38,7 @@
   Returns nodemap eith link key assoced"
   [provider {node :node :as node-map}]
   (assoc node-map :link
-         (-> (select+ node provider (p/link-selector provider))
+         (-> (select+ node provider (p/link-selector provider) :context node-map)
              (get-in [:attrs :href])
              (#(cond->> % (p/link-selector-relative? provider) (u/full-href provider)))
              ((fn [link]
@@ -87,7 +87,7 @@
   ;; TODO validate count strategy as well
   {:pre [provider selector]}
 
-  (let [context-str (or (:link (:page context)) (:tag (:node context)))]
+  (let [context-str (or (:link context) (:tag (:node context)))]
     (cond
 
       ;; No nodes found, log error if it was required adn return empty

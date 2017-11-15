@@ -33,10 +33,19 @@
             [:span {:class "item-provider"}
              (let [p (u/resolve-provider-by-name (:name p))]
                [:a {:href (get-in p [:info :base-url])}
-                [:img {:class "nested_fixed_img"
-                       :src (get-in p [:info :icon])
-                       :title (:name p)
-                            :alt (:name p)}]])]
+                (-> [:img {:class "nested_fixed_img"
+                           :src   (get-in p [:info :icon])
+                           :title (:name p)
+                           :alt   (:name p)}]
+
+                    ;; apply logo style
+                    ((fn [tag]
+                       (let [bgcolor (get-in p [:info :icon-background])]
+                         (if bgcolor (assoc-in tag [1 :style] (str "background-color:" bgcolor)) tag)
+                         )))
+
+
+                    )])]
 
             ]
            [:td (:total p)]

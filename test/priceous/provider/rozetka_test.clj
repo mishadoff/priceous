@@ -23,4 +23,7 @@
 (comment
   (ct/save "https://rozetka.com.ua/glenfiddich_5010327000176/p5851263/"
            "test/resources/rozetka/CASE_001_glenfiddich_in.edn")
+
+  (ct/save "https://rozetka.com.ua/choya_4017871800055/p18863180/"
+           "test/resources/rozetka/CASE_002_choya_in.edn")
   )

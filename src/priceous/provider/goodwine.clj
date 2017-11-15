@@ -106,9 +106,10 @@
    :info {
           :name          "Goodwine"
           :base-url      "http://goodwine.com.ua/"
-          :icon          "http://goodwine.ua/sites/all/themes/goodwine/img/logo_black.png"
-          :icon-width    "70"
-          :icon-height   "34"}
+          :icon          "http://goodwine.com.ua/skin/frontend/default/goodwine/assets/img/new_logo.svg"
+          :icon-background "black"
+          :icon-width    "90"
+          :icon-height   "50"}
 
 
    ;; provider state, will be changed by flow processor

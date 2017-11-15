@@ -10,7 +10,8 @@
             [priceous.alert :as alert]
             [priceous.flow :as flow]
             [clojure.java.io :as io]
-            [taoensso.timbre :as log])
+            [taoensso.timbre :as log]
+            [clojure.string :as str])
   (:gen-class))
 
 ;; scan folder priceous.provider.* and include all namespaces
@@ -37,7 +38,7 @@
       (log/info (fmt/succesfully-processed-all (:total final-state) (u/elapsed-so-far start)))
 
       (alert/notify "Alert from priceous"
-                    (str "Scrapping finished:\n"
+                    (str "Scrapping finished:\n\n\n"
                          (with-out-str (clojure.pprint/pprint final-state))))
 
       final-state)
@@ -57,22 +58,22 @@
   [state provider]
   (try
     (let [start (System/currentTimeMillis)
+          start-readable (u/now)
           items (flow/process provider)
-          pname (p/pname provider)]
-
-      ;; calculating data coverage
-      (log/info (format "Data Coverage for %s = %.2f"
-                        pname
-                        (stats/data-coverage-avg items)))
-      ;; TODO put coverage AFTER writing to solr into state AND persistent storage
+          pname (p/pname provider)
+          ;; stats
+          data-coverage (stats/data-coverage-avg items)
+          pcode-unique-count (count (distinct (map :product-code items)))
+          ]
 
       ;; TODO before/after check
-      ;; - Product Code uniqueness
       ;; - Volume range
       ;; - Alcohol range
 
       (cond (empty? items)
-            (do (log/warn (format "[%s] No items found" pname)) state)
+            (do (log/warn (format "[%s] No items found" pname))
+                (-> state
+                    (assoc-in [(str/lower-case pname)] {:provider pname :warn "No items found"})))
 
             :else
             (do (log/info (format "[%s] Found %s items in %.2f seconds"
@@ -80,12 +81,24 @@
                 ;; write data to every appender
                 (log/info (format "Available appenders %s" (config/prop [:appenders])))
                 (doseq [apn (config/prop [:appenders])]
-                  (a/append apn provider items))
-                (update-in state [:total] + (count items)))))
+                  (a/append apn provider items)) ;; TODO return delta
+                (-> state
+                    (update-in [:total] + (count items))
+                    (assoc-in [(str/lower-case pname)]
+                              {:provider pname
+                               :count (count items)
+                               :pcode-unique-count pcode-unique-count
+                               :data-coverage data-coverage
+                               :time-start start-readable
+                               :time-end (u/now)
+                               :time-taken (u/elapsed-so-far start)})
+                    ))))
     (catch Exception e
       (log/error (format "[%s] ProviderError" (p/pname provider)))
       (log/error e)
-      state)))
+      (-> state
+          (assoc-in [(str/lower-case (p/pname provider))]
+                    {:provider (p/pname provider) :error (.getMessage e)})))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
