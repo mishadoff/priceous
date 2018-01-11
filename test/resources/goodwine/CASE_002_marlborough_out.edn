@@ -14,7 +14,7 @@
  :sale             true
  :sale-description "Цена при покупке любых 6+ бутылок, 249.00 грн"
  :trusted          true
- :type             "Вино Белое Сладкое"
+ :type             "Вино Белое Сухое"
  :vintage          nil
  :volume           0.75
  :wine_grape       "Совиньйон Блан"
