@@ -26,14 +26,22 @@
 
 (defn provider-doc [node->doc-fn provider test-in]
   (-> (node->doc-fn provider {:page (u/read-edn test-in) :link nil})
-      (dissoc :timestamp)))
+      (dissoc :timestamp)
+      ))
 
 (defn load-cases [path]
   (->> (file-seq (File. path))
        (map (fn [f] (.getAbsolutePath f)))
        (filter (fn [fname] (.endsWith fname "_in.edn")))
        (sort)
-       (map (fn [in] [in (.replace in "_in.edn" "_out.edn")]))))
+       (map (fn [in] [in (.replace in "_in.edn" "_out.edn") (.replace in "_in.edn" "_meta.edn")]))))
 
 (defn save [url name]
   (spit name (seq (u/fetch url))))
+
+(defn apply-meta [provider meta-path]
+  (let [meta (u/read-edn-silent meta-path)]
+    (cond
+      (not (nil? (:category meta)))
+      (assoc-in provider [:state :category] (:category meta))
+      :else provider)))

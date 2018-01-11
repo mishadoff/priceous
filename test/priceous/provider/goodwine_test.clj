@@ -23,10 +23,10 @@
 
 (deftest test--node->document-happy-path
   (testing "Some page with all properties present"
-    (doseq [[test-in test-out] (ct/load-cases "test/resources/goodwine")]
+    (doseq [[test-in test-out test-meta?] (ct/load-cases "test/resources/goodwine")]
       (is (= (u/read-edn test-out)
              (ct/provider-doc gw/node->document
-                              (assoc-in gw/provider [:state :category] "Крепкие")
+                              (ct/apply-meta gw/provider test-meta?)
                               test-in))))
     ))
 

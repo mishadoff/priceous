@@ -1,5 +1,5 @@
 {:alcohol      13.5
- :available    true
+ :available    false
  :country      "Аргентина Мендоза"
  :description  "Аромат травянисто-фруктовый с нотками листа смородины, лайма; Вкус свежий, сбалансированный"
  :excise       true
@@ -7,14 +7,15 @@
  :item_new     false
  :link         nil
  :name         "Santa Ana Sauvignon Blanc"
- :price        197.0
+ :price        nil
  :producer     "Santa Ana"
  :product-code "Winetime_58448"
  :provider     "Winetime"
  :sale         false
  :trusted      true
- :type         "тихое"
+ :type         "Вино белое полусухое"
  :vintage      "2015"
  :volume       0.75
  :wine_grape   "100% совиньон блан"
- :wine_sugar   6.0}
+ :wine_sugar   6.0
+ }

@@ -7,3 +7,7 @@
 - Trusted: true
 - Items: ~4400
 - Scrapping time: ~22min
+
+## Issues
+
+- CAPTCHA (use web driver?)

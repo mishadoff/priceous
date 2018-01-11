@@ -56,7 +56,7 @@
           (assoc :timestamp (u/now))
           (assoc :product-code (str (get-in provider [:info :name])
                                     "_"
-                                    (text+ [:.product-details_info-block :h2.pull-left :span])))
+                                    (text+ [:.articul :span])))
           (assoc :available (-> (q? [:.buying_block_do])
                                 (boolean)))
           (assoc :item_new (-> (q? [:.foto_main :.badge-new]) (boolean)))
@@ -70,7 +70,7 @@
                (assoc doc :price (some-> (text+ [:.show_all_sum])
                                          (u/smart-parse-double)
                                          (/ 100.0)))
-               doc)))
+               (assoc doc :price nil))))
 
           ;; TODO 8% sale
 

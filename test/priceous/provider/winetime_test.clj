@@ -16,9 +16,9 @@
 
 (deftest test--node->document-happy-path
   (testing "Some page with all properties present"
-    (doseq [[test-in test-out] (ct/load-cases "test/resources/winetime")]
+    (doseq [[test-in test-out test-meta?] (ct/load-cases "test/resources/winetime")]
       (is (= (u/read-edn test-out)
-             (ct/provider-doc wt/node->document wt/provider test-in))))
+             (ct/provider-doc wt/node->document (ct/apply-meta wt/provider test-meta?) test-in))))
     ))
 
 (comment

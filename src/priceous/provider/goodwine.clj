@@ -106,8 +106,8 @@
    :info {
           :name          "Goodwine"
           :base-url      "http://goodwine.com.ua/"
-          :icon          "http://goodwine.com.ua/skin/frontend/default/goodwine/assets/img/new_logo.svg"
-          :icon-background "black"
+          :icon          "http://goodwine.ua/sites/all/themes/gw/img/logo_black.png"
+          ;;:icon-background "black"
           :icon-width    "90"
           :icon-height   "50"}
 

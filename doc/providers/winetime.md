@@ -6,4 +6,4 @@
 - Excise: true
 - Trusted: true
 - Items: ~4400
-- Scrapping time: ~16 min
+- Scrapping time: ~12 min

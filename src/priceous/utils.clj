@@ -200,6 +200,11 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(defn read-edn-silent [path]
+  (try (read-string (slurp (io/file path))) (catch Exception e {} )))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (defn deep-merge
   "Recursively merges maps. If keys are not maps, the last value wins."
   [& vals]

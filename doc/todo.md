@@ -1,3 +1,4 @@
+* Anomaly detection
 * Synonyms for Goodwine
 * Synonyms for Rozetka
 * Retry Startegy
@@ -7,6 +8,7 @@
 * HOST Solr
 * Unified SOLR Document
 * Structured information in SOLR
-* Link to whiskybase/masterofmalt
-* Integration with cocktailDB?
+* Link to whiskybase/masterofmalt [EXTRAS]
+* Integration with cocktailDB? [EXTRAS]
+* Discounts at account level [EXTRAS]
   

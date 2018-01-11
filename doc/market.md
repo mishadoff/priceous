@@ -1,10 +1,11 @@
 # List of Ukrainian Online Shops for Alcoholic Beverages
 
 - [GoodWine](http://goodwine.com.ua/)
+- [Rozetka](http://rozetka.com)
+- [Winetime](http://winetime.com.ua/)
 
 ## Not verified
 
-- **DONE** [Rozetka](http://rozetka.com)
 - **DONE** [Fozzy](http://fozzy.zakaz.ua)
 - **PROGRESS** [Novus](http://novus.zakaz.ua) 
 - **PROGRESS** [Metro](http://metro.zakaz.ua)
