@@ -70,7 +70,6 @@
   provider and retrieved docs   {:provider provider :docs []}"
   [provider]
   (p/validate-configuration provider)
-  (log/info (str "Current page: " (p/current-page provider)))
   (let [fetch-page-fn (or (get-in provider [:configuration :fetch-page-fn])
                           #(u/fetch (p/current-page %)))
         page (fetch-page-fn provider)]
@@ -83,9 +82,14 @@
      (#(cond->> % (p/heavy? provider) (fetch-heavy-nodes provider)))
      (map (partial (p/node->document provider) provider))
 
-     ;; here docs
+     ;; here docs, postprocessing to remove bad ones
 
-     ((fn [docs] {:provider provider :docs (into [] (remove empty? docs))}))
+     ((fn [docs] {:provider provider
+                  :docs (->> docs
+                             (remove empty?)
+                             (filter #(get % :name))
+                             (into []))}))
+
      (update-stats page))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

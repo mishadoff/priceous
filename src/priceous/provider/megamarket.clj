@@ -19,7 +19,8 @@
         ["Пиво" "https://megamarket.ua/catalogue/category/1090"]
         ["Ром" "https://megamarket.ua/catalogue/category/1100"]
         ["Шампанское" "https://megamarket.ua/catalogue/category/1110"]]
-       (mapv (fn [[name template]] {:name name :template (str template "?page=%s")}))))
+       (mapv (fn [[name template]] {:name name :template (str template "?page=%s")}))
+       ))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -56,7 +57,7 @@
              (-> doc
                  (assoc :price price)
                  (assoc :sale-description sale-description)))))
-        
+
         )))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -95,5 +96,5 @@
                                                     (first)
                                                     (second)))
                    }
-   
+
    })
