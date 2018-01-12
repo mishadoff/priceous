@@ -54,6 +54,8 @@
                  ;; Mail library for alerts
                  [com.draines/postal "2.0.2"]
 
+                 ;; Selenium
+
                  ]
   :plugins [[lein-ring "0.9.7"]]
   :ring {:handler priceous.web/app

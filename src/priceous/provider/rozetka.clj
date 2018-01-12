@@ -152,6 +152,9 @@
            }
 
    :configuration {
+                   :do-not-use-number-for-first-page true
+                   :template-variable "page=%s/"
+
                    :categories-fn      get-categories
                    :threads            8
                    :strategy           :heavy

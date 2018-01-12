@@ -70,6 +70,7 @@
   provider and retrieved docs   {:provider provider :docs []}"
   [provider]
   (p/validate-configuration provider)
+  (log/info (str "Current page: " (p/current-page provider)))
   (let [fetch-page-fn (or (get-in provider [:configuration :fetch-page-fn])
                           #(u/fetch (p/current-page %)))
         page (fetch-page-fn provider)]

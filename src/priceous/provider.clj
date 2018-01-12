@@ -38,9 +38,16 @@
 (defn strategy [provider]
   (get-in provider [:configuration :strategy]))
 
-(defn current-page [provider]
-  (format (get-in provider [:state :page-template])
-          (get-in provider [:state :current-val])))
+(defn current-page [provider] ;; FIXME hack for rozetka
+  (cond
+    (and (= 1 (get-in provider [:state :current-val]))
+         (get-in provider [:configuration :do-not-use-number-for-first-page]))
+    (.replaceAll
+      (get-in provider [:state :page-template])
+      (get-in provider [:configuration :template-variable]) "")
+
+    :else (format (get-in provider [:state :page-template])
+                  (get-in provider [:state :current-val]))))
 
 (defn category-name [provider]
   (get-in provider [:state :category] "default"))
