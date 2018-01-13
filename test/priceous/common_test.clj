@@ -1,6 +1,7 @@
 (ns priceous.common-test
   (:require [clojure.test :refer :all]
-            [priceous.utils :as u])
+            [priceous.utils :as u]
+            [taoensso.timbre :as log])
   (:import (java.io File)))
 
 ;; common package for testing different providers
@@ -29,12 +30,18 @@
       (dissoc :timestamp)
       ))
 
+(defn provider-doc-by-node [node->doc-fn provider nmap]
+  (-> (node->doc-fn provider nmap) (dissoc :timestamp) ))
+
 (defn load-cases [path]
-  (->> (file-seq (File. path))
-       (map (fn [f] (.getAbsolutePath f)))
-       (filter (fn [fname] (.endsWith fname "_in.edn")))
-       (sort)
-       (map (fn [in] [in (.replace in "_in.edn" "_out.edn") (.replace in "_in.edn" "_meta.edn")]))))
+  (let [cases (->> (file-seq (File. path))
+                   (map (fn [f] (.getAbsolutePath f)))
+                   (filter (fn [fname] (.endsWith fname "_in.edn")))
+                   (sort)
+                   (map (fn [in] [in (.replace in "_in.edn" "_out.edn") (.replace in "_in.edn" "_meta.edn")])))]
+    (log/debug (format "Cases [%d] loaded: %s" (count cases) (seq (map first cases))))
+    cases
+    ))
 
 (defn save [url name]
   (spit name (seq (u/fetch url))))

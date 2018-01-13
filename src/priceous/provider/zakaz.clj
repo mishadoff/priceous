@@ -12,6 +12,8 @@
 (defn node->document [provider nodemap]
   (su/with-selectors provider nodemap
     (-> {}
+        (assoc :excise true)
+        (assoc :trusted true)
         (assoc :provider (p/pname provider))
         (assoc :name (text+ [:.one-product-name]))
         (assoc :link (-> (q+ [:.one-product-link])

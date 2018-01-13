@@ -196,7 +196,7 @@
 (defn read-edn [path]
   (try (read-string (slurp (io/file path)))
        (catch Exception e
-         (do (log/error e "Problem reading props from file") {} ))))
+         (do (log/error e (format "Problem reading props from file [%s]" path)) {} ))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

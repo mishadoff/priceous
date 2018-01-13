@@ -7,7 +7,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defn- get-categories [provider]
+(defn get-categories [provider]
   (->> [["Бальзам" "https://megamarket.ua/catalogue/category/1010"]
         ["Виски" "https://megamarket.ua/catalogue/category/1020"]
         ["Вермут" "https://megamarket.ua/catalogue/category/1030"]
@@ -24,7 +24,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defn- node->document
+(defn node->document
   "Transform enlive node to provider specific document using node context.
   For heavy strategy, in context available whole :page, partial :node
   and :link by which whole page was retrieved.
@@ -33,6 +33,8 @@
   [provider nodemap]
   (su/with-selectors provider nodemap
     (-> {}
+        (assoc :excise true)
+        (assoc :trusted true)
         (assoc :provider (p/pname provider))
         (assoc :name (text+ [:.product :> :a]))
         (assoc :link (-> (q+ [:.product :> :a])

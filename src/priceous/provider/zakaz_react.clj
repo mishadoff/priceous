@@ -46,6 +46,8 @@
   "For API based provides node is an item obtained by API call"
   [provider item]
   (-> {}
+      (assoc :excise true)
+      (assoc :trusted true)
       (assoc :provider (get-in provider [:info :name]))
       (assoc :timestamp (u/now))
       (assoc :link (-> (str (get-in item [:ean]) "/" (get-in item [:slug]))
@@ -76,7 +78,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defn query [provider]
-  (try 
+  (try
     (let [result (http/post
                   (str (get-in provider [:info :base-url]) "/api/query.json")
                   {:body (json/generate-string (query-struct provider))
