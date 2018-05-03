@@ -14,5 +14,4 @@
        :to (config/prop [:alert :emails])
        :subject title
        :body text})
-    (log/info "Message sent!")
-    ))
+    (log/info "Message sent!")))

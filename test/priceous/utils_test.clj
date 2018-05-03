@@ -60,9 +60,9 @@
 
   ;; other edge cases
   (is (= 0.0 (smart-parse-double "0000")))
-  (is (nil? (smart-parse-double "..")))
+  (is (nil? (smart-parse-double ".."))))
 
-  )
+
 
 (deftest cleanup-test
   (is (= "CLEAN" (cleanup "CLEAN")))
@@ -74,8 +74,8 @@
 (deftest get-client-ip-test
   (is (= "10.2.1.1" (get-client-ip {:headers {"x-forwarded-for" "10.2.1.1"}})))
   (is (= "10.2.1.1" (get-client-ip {:headers {"x-forwarded-for" "10.2.1.1,10.2.1.2"}})))
-  (is (= "10.1.2.3" (get-client-ip {:remote-addr "10.1.2.3"})))
-  )
+  (is (= "10.1.2.3" (get-client-ip {:remote-addr "10.1.2.3"}))))
+
 
 (defspec elapsed-so-far--time-is-greater-than-passed
   5 ;; run only 5 tests so far
@@ -95,8 +95,8 @@
   (is (= [100 "01"] (split-price 100.01)))
   (is (= [200 "37"] (split-price 200.37)))
   (is (= [0 "00"] (split-price 0.00)))
-  (is (= [0 "19"] (split-price 0.19)))
-  )
+  (is (= [0 "19"] (split-price 0.19))))
+
 
 (deftest format-decimal-up-to-2-test
   (is (= "100" (format-decimal-up-to-2 100.0)))
@@ -132,21 +132,20 @@
   (is (= "Сегодня" (readable-time "2017-05-11T00:00:00Z" "2017-05-11T23:59:59Z")))
   (is (= "Вчера" (readable-time "2017-05-11T23:59:59Z" "2017-05-12T00:00:00Z")))
   (is (= "Вчера" (readable-time "2017-05-11T00:00:00Z" "2017-05-12T00:00:00Z")))
-  (is (= "Давно" (readable-time "2016-05-11T00:00:00Z" "2017-05-12T00:00:00Z")))
-  )
+  (is (= "Давно" (readable-time "2016-05-11T00:00:00Z" "2017-05-12T00:00:00Z"))))
+
 
 (deftest test--catenate-items
   (is (= "1" (cat-items "1")))
   (is (= "1 2" (cat-items "1" 2)))
   (is (= "1 2" (cat-items "1" "2")))
   (is (= "1 2 3 4 6" (cat-items "1" "2" nil "3" 4 nil " " 6)))
-  (is (= "Whisky Bourbon" (cat-items "Whisky" nil nil "Bourbon " nil nil)))
-  )
+  (is (= "Whisky Bourbon" (cat-items "Whisky" nil nil "Bourbon " nil nil))))
+
 
 (deftest test--deep-merge
   (is (= nil (deep-merge nil nil)))
   (is (= {:a 2 :b {:c 23 :d "Hey" :e "Hoy"} :f 1 :g 2}
          (deep-merge {:a 1 :b {:c 10 :d "Hey"} :f 1}
-                     {:a 2 :b {:c 23 :e "Hoy"} :g 2})))
+                     {:a 2 :b {:c 23 :e "Hoy"} :g 2}))))
 
-  )

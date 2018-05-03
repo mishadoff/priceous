@@ -4,7 +4,7 @@
   {:provider         1    ;; basic score, present in all documents
    :name             10   ;; name is very important, required
    :link             5    ;; link important for reference
-   :image            3    ;; nice to have
+   :image            4    ;; nice to have
    :country          3    ;; nice to have
    :wine_sugar       2    ;; category dependent
    :wine_grape       2    ;; category dependent
@@ -22,14 +22,14 @@
    :sale-description 2    ;; needed, but could be missing
    :excise           4    ;; nice to have, few practical use cases
    :trusted          4    ;; nice to have, few practical use cases
-   :timestamp        5    ;; needed for reference
-   })
+   :timestamp        5})    ;; needed for reference
+
 
 (def weights-total (reduce + (vals weights)))
 
 (defn data-coverage [doc]
   (if doc
-    (->> (keys weights)
+    (some->> (keys weights)
          (map (fn [k] (if (nil? (doc k)) 0 (weights k))))
          (reduce +)
          (#(/ % weights-total))

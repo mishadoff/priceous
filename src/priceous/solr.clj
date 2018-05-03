@@ -38,8 +38,8 @@
                      :start (* perpage (dec page))
                      :rows perpage
                      :sort sorting
-                     :fq (str/join " AND " filters)}
-                    )))]
+                     :fq (str/join " AND " filters)})))]
+
           (log/info (format "[%s] Completed SolrQuery [%s] found %s items" (:ip ctx) q
                             (get-in response [:response :numFound])))
           {:status :success :data response}))
@@ -76,8 +76,8 @@
                    ts:\"max(timestamp)\",
                    available:{
                      type:terms,
-                     field:available}}}"
-               }))]
+                     field:available}}}"}))]
+
         {:status :success
          :response {:total (get-in response [:response :numFound])
                     :providers (->> (get-in response [:facets :providers :buckets])
@@ -92,8 +92,8 @@
                                                             0)})))}}))
     (catch Exception e
       (log/error e)
-      {:status :error :response {}}))
-  )
+      {:status :error :response {}})))
+
 
 (defn transform-dashes-to-underscores [m]
   (into {} (map (fn [[k v]]
@@ -219,10 +219,10 @@
                        (let [qc (u/cleanup query)]
                          (if (empty? qc)
                            "*" ;; request all
-                           (ClientUtils/escapeQueryChars qc)))))
+                           (ClientUtils/escapeQueryChars qc)))))))))
 
 
-          ))))
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -238,3 +238,5 @@
                                          field
                                          (or from "*")
                                          (or to "*")))}))))
+
+;;;;;;;;;;

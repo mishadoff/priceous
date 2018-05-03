@@ -58,9 +58,9 @@
   (GET "/contacts" [] (contacts/view {}))
 
   (route/resources "/")
-  (route/not-found "<h1>Invalid page</h1>") ;; TODO error page
+  (route/not-found "<h1>Invalid page</h1>")) ;; TODO error page
 
-  )
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

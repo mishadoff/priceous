@@ -71,9 +71,9 @@
          (let [p (get-in item [:old_price])]
            (if p
              (assoc doc :sale-description (format "старая цена %.2f" (/ p 100.0)))
-             doc))))
+             doc))))))
 
-      ))
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -82,7 +82,7 @@
     (let [result (http/post
                   (str (get-in provider [:info :base-url]) "/api/query.json")
                   {:body (json/generate-string (query-struct provider))
-                             :content-type :json
+                         :content-type :json
                    :accept :json})]
       (if (not= 200 (:status result))
         (do (log/error (format "Problem sending request, status %s" (:status result)))
@@ -105,10 +105,10 @@
                                           :data
                                           :items
                                           first
-                                          :num_pages))
-                   )
-               ))
-            )))
+                                          :num_pages))))))))
+
+
+
     (catch Exception e
       (log/error e)
       {:status :error :response {}})))

@@ -1,4 +1,4 @@
-# Priceous 0.3.0 [DATA QUALITY] (on hold)
+# Priceous 0.3.0 [DATA QUALITY & STABILITY] (on hold)
 
 - New fields: **excise** and **trusted**
 - Kavist provider removed as stale shop
@@ -7,6 +7,7 @@
 - Revisit approaches to parse data from different providers
 - Few more stores
 - Introduce document post-processing to improve provider fill level
+- Schemas validation for documents during write
 - Notification layer if something goes wrong
 - Fixed plenty of bugs (nasty rozetka)
 - Improving test coverage 70%+

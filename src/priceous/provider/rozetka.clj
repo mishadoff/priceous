@@ -121,11 +121,11 @@
                (-> p
                    (assoc :price actual-price)
                    (assoc :sale sale)
-                   (assoc :sale-description sale-description)))))
+                   (assoc :sale-description sale-description)))))))))
 
           ;; TODO :item_new
 
-          ))))
+
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -137,8 +137,8 @@
           :base-url "http://rozetka.com.ua/"
           :icon "http://i1.rozetka.ua/logos/0/99.png"
           :icon-width "134"
-          :icon-height "34"
-          }
+          :icon-height "34"}
+
 
    :state {
            :page-current   1
@@ -148,8 +148,8 @@
            :done           false
            :current-val    1
            :init-val       1
-           :advance-fn     inc
-           }
+           :advance-fn     inc}
+
 
    :configuration {
                    :do-not-use-number-for-first-page true
@@ -162,6 +162,5 @@
                    :node-selector      [:.g-i-tile-i-box-desc]
                    :link-selector      [:.g-i-tile-i-title [:a (html/but (html/attr= :rel "file"))]]
                    :link-selector-type :full-href
-                   :last-page-selector [[:ul (html/attr= :name "paginator")] :.paginator-catalog-l-link]
-                   }
-   })
+                   :last-page-selector [[:ul (html/attr= :name "paginator")] :.paginator-catalog-l-link]}})
+

@@ -2,8 +2,8 @@
   (:require [taoensso.timbre :as log]
             [taoensso.timbre.appenders.3rd-party.rotor :as rotor]
             [clojure.java.io :as io]
-            [priceous.utils :as u]
-            ))
+            [priceous.utils :as u]))
+
 
 (def properties (atom nil))
 
@@ -33,20 +33,20 @@
                    (println (output-fn data)))))}
 
         :rotor-appender
-        (rotor/rotor-appender {:path "./priceous.log"})
+        (rotor/rotor-appender {:path "./priceous.log"})}})))
 
-        }})))
+
 
 (defn- props-from-resource [file]
   (try (read-string (slurp (io/resource file)))
        (catch Exception e
-         (do (log/error e "Problem reading props from resource") {} ))))
+         (do (log/error e "Problem reading props from resource") {}))))
 
 (defn- props-from-file [file]
   (log/debug "Reading props from file" file)
   (try (read-string (slurp (io/file file)))
        (catch Exception e
-         (do (log/error e "Problem reading props from file") {} ))))
+         (do (log/error e "Problem reading props from file") {}))))
 
 ;; to avoid inonsistent properties we allow to read them only once
 (defn read-properties!
@@ -55,4 +55,4 @@
    (cond @properties @properties
          :else (reset! properties
                        (u/deep-merge (props-from-resource "priceous.edn")
-                                     (props-from-file external-file) )))))
+                                     (props-from-file external-file))))))

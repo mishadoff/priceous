@@ -45,9 +45,9 @@
         ((fn [doc]
            (if (> (:price doc) 0)
              (assoc doc :available true)
-             (-> doc (assoc :price nil) (assoc :available false)))))
+             (-> doc (assoc :price nil) (assoc :available false))))))))
         
-        )))
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -59,8 +59,8 @@
           :base-url      "http://www.e-telefon.com.ua/"
           :icon          "/images/etelefon.png"
           :icon-width    "500"
-          :icon-height   "110"
-          }
+          :icon-height   "110"}
+
    
    ;; provider state, will be changed by flow processor
    :state {
@@ -72,8 +72,8 @@
            :done           false
            :current-val    0
            :init-val       0
-           :advance-fn     (partial + 30)
-           }
+           :advance-fn     (partial + 30)}
+
 
    :configuration {
                    :categories-fn       get-categories
@@ -81,7 +81,7 @@
                    :strategy            :light
                    :node->document      node->document
                    :node-selector       [:table [:table (html/has [:.goodtitle]) (html/attr= :cellspacing "0")]]
-                   :last-page-selector  [:center :a]
-               }
+                   :last-page-selector  [:center :a]}})
+
    
-   })
+

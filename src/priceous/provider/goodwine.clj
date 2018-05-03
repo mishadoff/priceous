@@ -132,6 +132,5 @@
                    :node-selector      [:.catalogListBlock :> :ul :> [:li (html/but [:.hide])]]
                    :link-selector      [:.textBlock [:a :.title]]
                    :link-selector-type :full-href
-                   :last-page-selector [:.paginator [:a (html/attr-has :href)]]
-                   }
-   })
+                   :last-page-selector [:.paginator [:a (html/attr-has :href)]]}})
+

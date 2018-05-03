@@ -56,9 +56,9 @@
             ((fn [doc]
                (assoc doc :available (and (:price doc) (> (:price doc) 0)
                                           (not (some->> (text? [:#tab1])
-                                                        (re-seq #"НЕТ В НАЛИЧИИ!|Нет в наличии!")))))))
+                                                        (re-seq #"НЕТ В НАЛИЧИИ!|Нет в наличии!"))))))))))))
             
-            )))))
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -67,8 +67,8 @@
    :info {
           :name          "Dutyfreestore"
           :base-url      "http://duty-free-store.com.ua/"
-          :icon          "/images/dutyfreestore.png"
-          }
+          :icon          "/images/dutyfreestore.png"}
+
    
    ;; provider state, will be changed by flow processor
    :state {
@@ -80,8 +80,8 @@
            :done           false
            :current-val    1
            :init-val       1
-           :advance-fn     inc
-           }
+           :advance-fn     inc}
+
    
    :configuration {
                    :categories-fn      get-categories
@@ -92,6 +92,6 @@
                    :link-selector      [:.image :a]
                    :link-selector-type :relative
                    :link-fixer         (fn [link] (clojure.string/replace link " " "+"))
-                   :last-page-selector [:.invalid-class] ;; TODO we don't use paging
-                   }
-   })
+                   :last-page-selector [:.invalid-class]}}) ;; TODO we don't use paging
+
+

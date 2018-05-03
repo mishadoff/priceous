@@ -20,14 +20,14 @@
         ["Коньяк" 20]
         ["Ликер" 21]
         ["Текила" 24]
-        ["Шампанское" 19]
-        ]
+        ["Шампанское" 19]]
+
        (mapv (fn [[cat number]]
                {:name cat
                 :template (str "https://elitochka.com.ua/?"
                                "route=product/category/getcatalogproducts"
-                               (format "&path=%d" number) "&page=%s")}))
-       ))
+                               (format "&path=%d" number) "&page=%s")}))))
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -69,12 +69,12 @@
                    sale (boolean oldprice)
                    sale-desc (if (and price oldprice (< price oldprice))
                                (format "старая цена %.2f" oldprice))]
-             (-> doc
-                 (assoc :sale sale)
-                 (assoc :sale-description sale-desc)
-                 (assoc :price price)))))
+              (-> doc
+                  (assoc :sale sale)
+                  (assoc :sale-description sale-desc)
+                  (assoc :price price)))))))))
 
-          ))))
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -93,8 +93,8 @@
           :base-url      "https://elitochka.com.ua/"
           :icon          "/images/elitochka.png"
           :icon-width    "94"
-          :icon-height   "34"
-          }
+          :icon-height   "34"}
+
 
    ;; provider state, will be changed by flow processor
    :state {
@@ -106,8 +106,8 @@
            :done           false
            :current-val    1
            :init-val       1
-           :advance-fn     inc
-           }
+           :advance-fn     inc}
+
 
    :configuration {
                    :categories-fn       get-categories
@@ -118,7 +118,7 @@
                    :node-selector       [:.product-list :> :div]
                    :link-selector       [:.image :a]
                    :link-selector-type  :relative
-                   :last-page-selector  [:.pagination :.links #{:a :b}]
-               }
+                   :last-page-selector  [:.pagination :.links #{:a :b}]}})
 
-   })
+
+

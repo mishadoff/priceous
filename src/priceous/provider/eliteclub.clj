@@ -22,8 +22,8 @@
     ["Пиво" "http://kiev.eliteclub.com.ua/index.php?id_category=13&controller=category&id_lang=7"]
     ["Ром" "http://kiev.eliteclub.com.ua/index.php?id_category=14&controller=category&id_lang=7"]
     ["Текила" "http://kiev.eliteclub.com.ua/index.php?id_category=15&controller=category&id_lang=7"]
-    ["Шампанское" "http://kiev.eliteclub.com.ua/index.php?id_category=16&controller=category&id_lang=7"]
-    ]
+    ["Шампанское" "http://kiev.eliteclub.com.ua/index.php?id_category=16&controller=category&id_lang=7"]]
+
    (mapv (fn [[name url]] {:name name :template (str url "/page-%s")}))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -31,7 +31,7 @@
 (defn- node->document
   [provider nodemap]
   (su/with-selectors provider nodemap
-    (let [;; FIXME NO SPEC because we moved to light strategy
+    (let [];; FIXME NO SPEC because we moved to light strategy
             ;; spec (->> (q*? [:#idTab2 :li])
             ;;           (map (fn [node]
             ;;                  [(some-> (html/select node [:span])
@@ -43,7 +43,7 @@
             ;;                           (html/text)
             ;;                           (u/cleanup))]))
             ;;           (into {}))
-            ]
+
         (-> {}
             (assoc :provider (p/pname provider))
             (assoc :name (text+ [:.bottom_block :h3]))
@@ -63,9 +63,9 @@
             #_(assoc :volume  (some-> (spec "Об'єм") (u/smart-parse-double)))
             (assoc :price (some-> (text? [:.price])
                                   (u/smart-parse-double)))
-            (assoc :available (boolean (q? [:.cart_button :a])))
+            (assoc :available (boolean (q? [:.cart_button :a])))))))
             
-            ))))
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -74,8 +74,8 @@
    :info {
           :name          "Eliteclub"
           :base-url      "http://kiev.eliteclub.com.ua/"
-          :icon          "/images/eliteclub.png"
-          }
+          :icon          "/images/eliteclub.png"}
+
    
    ;; provider state, will be changed by flow processor
    :state {
@@ -87,8 +87,8 @@
            :done           false
            :current-val    1
            :init-val       1
-           :advance-fn     inc
-           }
+           :advance-fn     inc}
+
    
    :configuration {
                    :categories-fn      get-categories
@@ -96,7 +96,7 @@
                    :strategy           :light
                    :node->document     node->document
                    :node-selector      [:#grid-view :.ajax_block_product]
-                   :last-page-selector [:#pagination :li]
-                   }
+                   :last-page-selector [:#pagination :li]}})
+
    ;; TODO this provider throws error if parallel fetches encountered, move to light strategy?
-   })
+

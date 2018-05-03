@@ -9,7 +9,7 @@
 
 (defn- get-categories [provider]
   (->>
-   [["Все товары" "http://best-wine.com.ua/catalog/cid1/"]
+   [["Все товары" "http://best-wine.com.ua/catalog/cid1/"]]
 
     ;; ["Вино" "http://best-wine.com.ua/catalog/cid1/14/"]
     ;; ["Коньяк" "http://best-wine.com.ua/catalog/cid1/15/"]
@@ -28,7 +28,7 @@
     ;; ["Виски Бурбон" "http://best-wine.com.ua/catalog/cid1/58/"]
     ;; ["Шампанское" "http://best-wine.com.ua/catalog/cid1/81/"]
     ;; ["Бренди" "http://best-wine.com.ua/catalog/cid1/82/"]
-    ]
+
    (mapv (fn [[name url]] {:name name :template (str url "page%s")}))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -54,8 +54,8 @@
                                             (re-seq #"В наличии"))))
         (assoc :price (-> (text+ [:.price])
                           (u/smart-parse-double)
-                          (u/force-pos)))    
-        )))
+                          (u/force-pos))))))
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -66,8 +66,8 @@
           :base-url      "http://best-wine.com.ua/"
           :icon          "/images/bestwine.png"
           :icon-width    "263"
-          :icon-height   "84"
-          }
+          :icon-height   "84"}
+
    
    ;; provider state, will be changed by flow processor
    :state {
@@ -80,9 +80,9 @@
            
            :current-val    1
            :init-val       1
-           :advance-fn     inc
+           :advance-fn     inc}
 
-           }
+
    
    :configuration {
                    :categories-fn      get-categories
@@ -90,7 +90,7 @@
                    :strategy           :light
                    :node->document     node->document
                    :node-selector      [:.productListEl]
-                   :last-page-selector [:.paginator :a]
-                   }
-   })
+                   :last-page-selector [:.paginator :a]}})
+
+
 

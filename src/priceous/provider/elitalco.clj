@@ -52,6 +52,7 @@
           (assoc :timestamp (u/now))
           (assoc :volume (some-> (spec "Объем") (u/smart-parse-double)))
 
+
           ;; TODO no description
           #_(assoc :description (text? [:.category1_desc]))
 
@@ -66,7 +67,7 @@
                    (assoc :sale-description (if oldprice (format "старая цена %.2f" oldprice)))
                    (assoc :price price)
                    (assoc :available (boolean price))))))
-          
+
           ))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

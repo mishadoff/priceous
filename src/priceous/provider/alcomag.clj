@@ -25,8 +25,8 @@
         ["Граппа" "http://alcomag.com.ua/krepkie-napitki/grappa/"]
         ["Вермут" "http://alcomag.com.ua/likery-vermuty/vermut/"]
         ["Ликер" "http://alcomag.com.ua/likery-vermuty/liker/"]
-        ["Подарочные наборы" "http://alcomag.com.ua/podarochnie_nabori/"]
-        ]
+        ["Подарочные наборы" "http://alcomag.com.ua/podarochnie_nabori/"]]
+
        (mapv (fn [[name url]] {:name name :template (str url "?PAGEN_1=%s")}))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -35,7 +35,7 @@
   [provider {page :page node :node link :link :as nodemap}]
   (su/with-selectors provider nodemap
     (when node
-      (let [;; spec (->> (q*? [:table.table :tr])
+      (let [];; spec (->> (q*? [:table.table :tr])
             ;;           (map html/text)
             ;;           (map (fn [s]
             ;;                  (some->> (.split s ":" 2)
@@ -44,7 +44,7 @@
             ;;                           (into []))))
             ;;           (filter (fn [v] (= (count v) 2)))
             ;;           (into {}))
-            ]
+
         (-> {}
             (assoc :provider (p/pname provider))
             (assoc :name (text+ [:.product-item__title]))
@@ -87,10 +87,10 @@
                      sale-desc (if sale (format "старая цена %.2f" oldprice) nil)]
                  (-> doc
                      (assoc :sale sale)
-                     (assoc :sale-description sale-desc)))))
+                     (assoc :sale-description sale-desc))))))))))
             
             
-            )))))
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -99,8 +99,8 @@
    :info {
           :name "Alcomag"
           :base-url "http://alcomag.com.ua/"
-          :icon "http://alcomag.com.ua/bitrix/templates/snt_alcomag/images/logo.png"
-          }
+          :icon "http://alcomag.com.ua/bitrix/templates/snt_alcomag/images/logo.png"}
+
    
    ;; provider state, will be changed by flow processor
    :state {
@@ -112,8 +112,8 @@
            :done           false
            :current-val    1
            :init-val       1
-           :advance-fn     inc
-           }
+           :advance-fn     inc}
+
    
    :configuration {
                    :categories-fn      get-categories
@@ -127,7 +127,7 @@
                    ;; TODO alcomag very aggressive about crawling, do wait periods
                    :fetch-page-fn      (fn [provider]
                                          (Thread/sleep 1000)
-                                         (u/fetch (p/current-page provider)))
-                   }
-   })
+                                         (u/fetch (p/current-page provider)))}})
+
+
 

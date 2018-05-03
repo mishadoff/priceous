@@ -34,14 +34,13 @@
                             :sale             false
                             :sale-description nil
                             :excise           true
-                            :trusted          true
-                            }))))
+                            :trusted          true}))))
+
 
    (testing "Avg for all documents"
      (is (= 0.0 (data-coverage-avg [])))
      (is (= 0.0 (data-coverage-avg nil)))
      (is (= 0.1149425287356322 (data-coverage-avg [{:name "A"}])))
      (is (= 0.1149425287356322 (data-coverage-avg [{:name "A"} {:name "B"} {:name "C"}])))
-     (is (= 0.09195402298850575 (data-coverage-avg [{:name "A"} {:price 1.0} {:volume 0.7}]))))
+     (is (= 0.09195402298850575 (data-coverage-avg [{:name "A"} {:price 1.0} {:volume 0.7}])))))
 
-     )

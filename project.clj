@@ -52,11 +52,11 @@
                  [trptcolin/versioneer "0.2.0"]
 
                  ;; Mail library for alerts
-                 [com.draines/postal "2.0.2"]
+                 [com.draines/postal "2.0.2"]]
 
                  ;; Selenium
 
-                 ]
+
   :plugins [[lein-ring "0.9.7"]]
   :ring {:handler priceous.web/app
          :init    priceous.web/init}
@@ -70,5 +70,5 @@
   :jvm-opts []
 
   :aot  [priceous.web]
-  :main priceous.web
-  )
+  :main priceous.web)
+

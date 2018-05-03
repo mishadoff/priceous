@@ -19,8 +19,8 @@
         ["Пиво" "https://megamarket.ua/catalogue/category/1090"]
         ["Ром" "https://megamarket.ua/catalogue/category/1100"]
         ["Шампанское" "https://megamarket.ua/catalogue/category/1110"]]
-       (mapv (fn [[name template]] {:name name :template (str template "?page=%s")}))
-       ))
+       (mapv (fn [[name template]] {:name name :template (str template "?page=%s")}))))
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -58,9 +58,9 @@
                  sale-description (if sale-price (format "старая цена %.2f" sale-price))]
              (-> doc
                  (assoc :price price)
-                 (assoc :sale-description sale-description)))))
+                 (assoc :sale-description sale-description))))))))
 
-        )))
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -70,8 +70,8 @@
           :base-url "https://megamarket.ua"
           :icon "https://megamarket.ua/style/img/logo.png"
           :icon-width "91"
-          :icon-height "34"
-          }
+          :icon-height "34"}
+
 
    :state {
            :page-current   1
@@ -82,8 +82,8 @@
            :done           false
            :init-val       1
            :current-val    1
-           :advance-fn     inc
-           }
+           :advance-fn     inc}
+
 
    :configuration {
                    :categories-fn       get-categories
@@ -96,7 +96,7 @@
                                            (some->> (get-in node [:attrs :href])
                                                     (re-seq #"page=(\d+)")
                                                     (first)
-                                                    (second)))
-                   }
+                                                    (second)))}})
 
-   })
+
+

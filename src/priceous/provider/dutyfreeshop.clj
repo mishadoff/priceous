@@ -24,10 +24,10 @@
     ["Коньяк" "http://dutyfreeshop.com.ua/produktsiya/ordinarnye-konyaki"]
     ["Коньяк" "http://dutyfreeshop.com.ua/produktsiya/marochnye-konyaki"]
     ["Коньяк" "http://dutyfreeshop.com.ua/produktsiya/kollektsionnye-konyaki"]
-    ["Коньяк" "http://dutyfreeshop.com.ua/produktsiya/elitnye-konyaki"]
+    ["Коньяк" "http://dutyfreeshop.com.ua/produktsiya/elitnye-konyaki"]]
 
     ;; TODO no wine from this site (just moldova not interesting)
-    ]
+
    (mapv (fn [[name url]] {:name name :template (str url "/?start=%s")}))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -72,10 +72,10 @@
                      (assoc :available available)
                      (assoc :price (u/force-pos price))
                      (assoc :sale (boolean oldprice))
-                     (assoc :sale_description (if oldprice (format "старая цена %.2f" oldprice) nil))))))
+                     (assoc :sale_description (if oldprice (format "старая цена %.2f" oldprice) nil)))))))))))
 
             
-            )))))
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -84,8 +84,8 @@
    :info {
           :name          "Dutyfreeshop"
           :base-url      "http://dutyfreeshop.com.ua/"
-          :icon          "/images/dutyfreeshop.png"
-          }
+          :icon          "/images/dutyfreeshop.png"}
+
    
    ;; provider state, will be changed by flow processor
    :state {
@@ -97,8 +97,8 @@
            :done           false
            :current-val    0
            :init-val       0
-           :advance-fn     (partial + 12)
-           }
+           :advance-fn     (partial + 12)}
+
    
    :configuration {
                    :categories-fn      get-categories
@@ -108,6 +108,6 @@
                    :node-selector      [:.block_product]
                    :link-selector      [:.name :a]
                    :link-selector-type :relative
-                   :last-page-selector [:.pagination :li :span]
-                   }
-   })
+                   :last-page-selector [:.pagination :li :span]}})
+
+

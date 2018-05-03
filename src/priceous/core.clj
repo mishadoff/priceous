@@ -63,8 +63,8 @@
           pname (p/pname provider)
           ;; stats
           data-coverage (stats/data-coverage-avg items)
-          pcode-unique-count (count (distinct (map :product-code items)))
-          ]
+          pcode-unique-count (count (distinct (map :product-code items)))]
+
 
       ;; TODO before/after check
       ;; - Volume range
@@ -91,8 +91,8 @@
                                :data-coverage data-coverage
                                :time-start start-readable
                                :time-end (u/now)
-                               :time-taken (u/elapsed-so-far start)})
-                    ))))
+                               :time-taken (u/elapsed-so-far start)})))))
+
     (catch Exception e
       (log/error (format "[%s] ProviderError" (p/pname provider)))
       (log/error e)
