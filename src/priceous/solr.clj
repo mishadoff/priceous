@@ -35,6 +35,8 @@
               (flux/request
                (query/create-query-request
                 (-> {:q processed-query
+                     :q.op "AND"
+                     :df "text"
                      :start (* perpage (dec page))
                      :rows perpage
                      :sort sorting
@@ -66,8 +68,10 @@
             (flux/request
              (query/create-query-request
               {:q "*"
+               :q.op "AND"
                :start 0
                :rows 0
+               :df "text"
                :json.facet.providers
                "{type:terms,
                  field:provider,
@@ -113,6 +117,8 @@
       ;; log deltas
       (let [num-before (-> (flux/request (query/create-query-request
                                           {:q "*" :rows 0
+                                           :df "text"
+                                           :q.op "AND"
                                            :fq (format "provider:%s" (p/pname provider))}))
                            (get-in [:response :numFound]))
             delta (- (count items) num-before)]
@@ -181,9 +187,9 @@
       ;; should start with #
       ;; filters not applied
 
-      (clojure.string/starts-with? q "!") {:q (subs q 1) :fq []}
+      (clojure.string/starts-with? q "!") {:q (subs q 1) :fq [] :df "text" :q.op "AND"}
       :else
-      (-> {:q (.toLowerCase q) :fq []}
+      (-> {:q (.toLowerCase q) :fq [] :df "text" :q.op "AND"}
 
           ;; add avaialable filter
           ((fn [req] (if (= a "all")
@@ -198,6 +204,8 @@
                (cond (not match) req
                      :else
                      {:q  (str/replace (:q req) sale-regex "")
+                      :df "text"
+                      :q.op "AND"
                       :fq (conj (:fq req) "sale:true")}))))
 
           ;; add news filter
@@ -207,6 +215,8 @@
                (cond (not match) req
                      :else
                      {:q  (str/replace (:q req) new-regex "")
+                      :df "text"
+                      :q.op "AND"
                       :fq (conj (:fq req) "item_new:true")}))))
 
           (range-processor "крепость" "alcohol")
@@ -234,6 +244,8 @@
           :else
           (let [[m from to] (first match)] ;; TODO we do not process multiple matches for the same filter type (reduce goes here)
             {:q  (str/replace (:q req) range-regex "")
+             :df "text"
+             :q.op "AND"
              :fq (conj (:fq req) (format "%s:[%s TO %s]"
                                          field
                                          (or from "*")

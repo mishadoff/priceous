@@ -1,6 +1,11 @@
 # List of Ukrainian Online Shops for Alcoholic Beverages
 
+## Working
+
 - [GoodWine](http://goodwine.com.ua/)
+
+## Not verified
+
 - [Rozetka](http://rozetka.com) [ISSUES]
 - [Winetime](http://winetime.com.ua/)
 - [Megamarket](http://megamarket.ua/)
@@ -10,7 +15,6 @@
 - [Auchan](http://auchan.zakaz.ua)
 
 
-## Not verified
 
 - **TODO** [Winestyle](http://winestyle.com.ua/)
 - **TODO** [Polyana](https://www.polyana.ua/catalog/11543/)

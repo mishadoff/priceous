@@ -125,8 +125,5 @@
 
   </types>
 
-  <defaultSearchField>text</defaultSearchField>
-  <solrQueryParser defaultOperator="AND"/>
-
 </schema>
 
