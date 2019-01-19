@@ -40,6 +40,9 @@
   (->> (tc/from-long unix-time)
        (tf/unparse (tf/formatters :date-time-no-ms))))
 
+(defn to-date-from-string [s]
+  (tf/parse (tf/formatters :date-time-no-ms) s))
+
 (defn smart-parse-double [st]
   (some-> st
           ;; replace commas to periods

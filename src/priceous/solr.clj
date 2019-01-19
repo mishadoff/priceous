@@ -81,14 +81,13 @@
                    available:{
                      type:terms,
                      field:available}}}"}))]
-
         {:status :success
          :response {:total (get-in response [:response :numFound])
                     :providers (->> (get-in response [:facets :providers :buckets])
                                     (mapv (fn [bkt]
                                             {:name (:val bkt)
                                              :total (:count bkt)
-                                             :ts (-> (:ts bkt) long u/to-date)
+                                             :ts (-> (:ts bkt) (.getTime) u/to-date)
                                              :available (or (some->> (get-in bkt [:available :buckets])
                                                                      (filter :val)
                                                                      (first)

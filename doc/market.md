@@ -1,4 +1,4 @@
-# List of Ukrainian Online Shops for Alcoholic Beverages
+# List of Ukrainian Online Shops for Alcohol Beverages
 
 ## Working
 
@@ -13,8 +13,6 @@
 - [Novus](http://novus.zakaz.ua) 
 - [Metro](http://metro.zakaz.ua)
 - [Auchan](http://auchan.zakaz.ua)
-
-
 
 - **TODO** [Winestyle](http://winestyle.com.ua/)
 - **TODO** [Polyana](https://www.polyana.ua/catalog/11543/)
