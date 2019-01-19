@@ -7,7 +7,7 @@
  :solr {:host "http://localhost:8983/solr"
         :collection "whisky"}
 
- :csv {:filepath "/Users/mkoz/temp/alcosearch.csv"}
+ :csv {:filepath "/Users/misha/temp/alcosearch.csv"}
 
  :scheduler {:delay 0
              :value 12
@@ -24,8 +24,8 @@
 
  :scrapping {:providers
              ["goodwine"
+              
               "winetime"
-
               "alcoland"
               "alcomag"
               "alcoparty"

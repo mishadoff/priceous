@@ -9,24 +9,24 @@
 
 (defn get-categories [provider]
   (->>
-    [["Виски" "http://goodwine.com.ua/viski.html"]
-     ["Вино" "http://goodwine.com.ua/vino.html"]
-     ["Игристое Вино" "http://goodwine.com.ua/igristye.html"]
-     ["Пиво" "http://goodwine.com.ua/pivo.html"]
-     ["Cидр" "http://goodwine.com.ua/sidry.html"]
-     ["Ром" "http://goodwine.com.ua/drugie-krepkie/rom/vse-romy.html"]
-     ["Коньяк" "http://goodwine.com.ua/drugie-krepkie/prochie-krepkie/cognac.html"]
-     ["Арманьяк" "http://goodwine.com.ua/drugie-krepkie/prochie-krepkie/armagnac.html"]
-     ["Бренди" "http://goodwine.com.ua/drugie-krepkie/prochie-krepkie/brandy.html"]
-     ["Ликер" "http://goodwine.com.ua/drugie-krepkie/prochie-krepkie/liquer.html"]
-     ["Биттер" "http://goodwine.com.ua/drugie-krepkie/prochie-krepkie/bitter.html"]
-     ["Кальвадос" "http://goodwine.com.ua/drugie-krepkie/prochie-krepkie/calvados.html"]
-     ["Джин" "http://goodwine.com.ua/drugie-krepkie/prochie-krepkie/gin.html"]
-     ["Водка" "http://goodwine.com.ua/drugie-krepkie/prochie-krepkie/vodka.html"]
-     ["Граппа" "http://goodwine.com.ua/drugie-krepkie/prochie-krepkie/grappa.html"]
-     ["Текила" "http://goodwine.com.ua/drugie-krepkie/prochie-krepkie/tequilla.html"]
-     ["Писко" "http://goodwine.com.ua/drugie-krepkie/prochie-krepkie/pisko.html"]
-     ["Мескаль" "http://goodwine.com.ua/drugie-krepkie/prochie-krepkie/meskal.html"]]
+    [["Виски" "https://goodwine.com.ua/viski.html"]
+     ["Вино" "https://goodwine.com.ua/vino.html"]
+     ["Игристое Вино" "https://goodwine.com.ua/igristye.html"]
+     ["Пиво" "https://goodwine.com.ua/pivo.html"]
+     ["Cидр" "https://goodwine.com.ua/sidry.html"]
+     ["Ром" "https://goodwine.com.ua/drugie-krepkie/rom/vse-romy.html"]
+     ["Коньяк" "https://goodwine.com.ua/drugie-krepkie/prochie-krepkie/cognac.html"]
+     ["Арманьяк" "https://goodwine.com.ua/drugie-krepkie/prochie-krepkie/armagnac.html"]
+     ["Бренди" "https://goodwine.com.ua/drugie-krepkie/prochie-krepkie/brandy.html"]
+     ["Ликер" "https://goodwine.com.ua/drugie-krepkie/prochie-krepkie/liquer.html"]
+     ["Биттер" "https://goodwine.com.ua/drugie-krepkie/prochie-krepkie/bitter.html"]
+     ["Кальвадос" "https://goodwine.com.ua/drugie-krepkie/prochie-krepkie/calvados.html"]
+     ["Джин" "https://goodwine.com.ua/drugie-krepkie/prochie-krepkie/gin.html"]
+     ["Водка" "https://goodwine.com.ua/drugie-krepkie/prochie-krepkie/vodka.html"]
+     ["Граппа" "https://goodwine.com.ua/drugie-krepkie/prochie-krepkie/grappa.html"]
+     ["Текила" "https://goodwine.com.ua/drugie-krepkie/prochie-krepkie/tequilla.html"]
+     ["Писко" "https://goodwine.com.ua/drugie-krepkie/prochie-krepkie/pisko.html"]
+     ["Мескаль" "https://goodwine.com.ua/drugie-krepkie/prochie-krepkie/meskal.html"]]
     (mapv (fn [[name url]] {:name name :template (str url "?dir=asc&p=%s")}))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -105,8 +105,8 @@
   {
    :info {
           :name          "Goodwine"
-          :base-url      "http://goodwine.com.ua/"
-          :icon          "http://goodwine.ua/sites/all/themes/gw/img/logo_black.png"
+          :base-url      "https://goodwine.com.ua/"
+          :icon          "https://goodwine.ua/sites/all/themes/gw/img/logo_black.png"
           ;;:icon-background "black"
           :icon-width    "90"
           :icon-height   "50"}
@@ -116,7 +116,7 @@
    :state {
            :page-current   1
            :page-processed 0
-           :page-template  "http://goodwine.com.ua/viski.html?p=%s"
+           :page-template  "https://goodwine.com.ua/viski.html?p=%s"
            :category       :no-category ;; we change categories in runtime
            :page-limit     Integer/MAX_VALUE
            :done           false

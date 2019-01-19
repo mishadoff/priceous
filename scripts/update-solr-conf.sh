@@ -2,8 +2,10 @@
 
 echo "Updating SOLR conf"
 
+SOLR_VERSION="7.6.0"
+
 echo "Delete old configuration"
-rm -rf ~/soft/solr-7.3.1/server/solr/whisky/
+rm -rf ~/soft/solr-$SOLR_VERSION/server/solr/whisky/
 
 echo "Copy new configuration"
-cp -r ~/coding/priceous/resources/solr/whisky ~/soft/solr-7.3.1/server/solr/
+cp -r ~/coding/clojure/priceous/resources/solr/whisky ~/soft/solr-$SOLR_VERSION/server/solr/

@@ -35,8 +35,6 @@
         :rotor-appender
         (rotor/rotor-appender {:path "./priceous.log"})}})))
 
-
-
 (defn- props-from-resource [file]
   (try (read-string (slurp (io/resource file)))
        (catch Exception e
@@ -48,7 +46,7 @@
        (catch Exception e
          (do (log/error e "Problem reading props from file") {}))))
 
-;; to avoid inonsistent properties we allow to read them only once
+;; to avoid inconsistent properties we allow to read them only once
 (defn read-properties!
   ([] (read-properties! "external_config.edn"))
   ([external-file]
