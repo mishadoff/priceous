@@ -30,21 +30,19 @@
         (http/create
          (get-in @config/properties [:solr :host])
          (keyword (get-in @config/properties [:solr :collection])))
-        (let [{processed-query :q filters :fq} (process-query params)
-              response
-              (flux/request
-               (query/create-query-request
-                (-> {:q processed-query
-                     :q.op "AND"
-                     :df "text"
-                     :start (* perpage (dec page))
-                     :rows perpage
-                     :sort sorting
-                     :fq (str/join " AND " filters)})))]
-
-          (log/info (format "[%s] Completed SolrQuery [%s] found %s items" (:ip ctx) q
-                            (get-in response [:response :numFound])))
-          {:status :success :data response}))
+        (let [random? (= "random" (:sort params))
+              {:keys [q fq]} (process-query params)
+              request {:q     q
+                       :q.op  "AND"
+                       :df    "text"
+                       :start (if random? 0 (* perpage (dec page)))
+                       :rows  (if random? 1 perpage)
+                       :sort  sorting
+                       :fq    (str/join " AND " fq)}
+              response (flux/request (query/create-query-request request))
+              total (if random? 1 (get-in response [:response :numFound]))]
+          (log/info (format "[%s] Completed SolrQuery [%s] found %s items" (:ip ctx) q total))
+          {:status :success :data response :total total}))
       (catch Exception e
         (log/error e)
         {:status :error :response {}}))))
@@ -159,11 +157,14 @@
   "Parse the sort info from params, and build solr query sort params
   If cannot parse, use default price+asc"
   [params]
-  (get {"cheap" "price asc"
-        "expensive" "price desc"
-        "relevant" "score desc"}
-       (:sort params)
-       "price asc"))
+  (let [{:keys [sort]} params]
+    (cond (= sort "random") (format "random_%d desc" (rand-int Integer/MAX_VALUE))
+          :else
+          (get {"cheap"     "price asc"
+                "expensive" "price desc"
+                "relevant"  "score desc"}
+               (:sort params)
+               "price asc"))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -177,18 +178,19 @@
 
 ;; TODO find how instaparse can help us for this
 (defn process-query
-  "Returns vector of query and filters [q fs]"
+  "Process query for specific values, ranges, etc.
+   Return structure for further processing."
   [params]
   (let [q (:query params)
         a (resolve-available params)]
     (cond
       ;; special hidden syntax allow to pass raw query
-      ;; should start with #
+      ;; should start with !
       ;; filters not applied
+      (clojure.string/starts-with? q "!") {:q (subs q 1) :fq []}
 
-      (clojure.string/starts-with? q "!") {:q (subs q 1) :fq [] :df "text" :q.op "AND"}
       :else
-      (-> {:q (.toLowerCase q) :fq [] :df "text" :q.op "AND"}
+      (-> {:q (.toLowerCase q) :fq []}
 
           ;; add avaialable filter
           ((fn [req] (if (= a "all")

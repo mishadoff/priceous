@@ -137,8 +137,18 @@ a.headerlink:hover, a.headerlink:active {
     padding-bottom: 5px;
 }
 
+.status-bar-container {
+    display: inline-flex;
+    justify-content: space-between;
+    width: 80%;
+}
+
 .status-bar-small {
     padding-left: 45px;
+    font-size: 12px;
+}
+
+.status-bar-random {
     font-size: 12px;
 }
 

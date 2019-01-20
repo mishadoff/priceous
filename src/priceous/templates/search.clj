@@ -143,39 +143,37 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defn status-bar [content]
-  (cond
-    (= :error (get-in content [:solr :response :status]))
-    [:div {:class "status-bar-error"} "Ошибка: Неправильный запрос"]
+  (let [q (get-in content [:params :query])
+        total (get-in content [:solr :response :total])]
+    [:div {:class "status-bar-container"}
+     (cond
+       (= :error (get-in content [:solr :response :status]))
+       [:div {:class "status-bar-error"} "Ошибка: Неправильный запрос"]
 
-    ;; Query not entered, first time here
-    (empty? (get-in content [:params :query]))
-    [:div {:class "status-bar-small"}
-     "Введите запрос, например "
+       ;; Query not entered, first time here
+       (empty? q)
+       [:div {:class "status-bar-small"}
+        "Введите запрос, например "
 
-     (let [[name href] (rand-nth qe/queries)]
-       [:a {:href href :class "link"} name])]
+        (let [[name href] (rand-nth qe/queries)]
+          [:a {:href href :class "link"} name])]
 
-    ;; Query entered, but nothing found
-    (and (not (get-in content [:params :query]))
-         (zero? (get-in content [:solr :response :data :response :numFound])))
-    [:div {:class "status-bar-regular"}
-     "Ничего не найдено."]
+       ;; Query entered, but nothing found
+       (and (not q) (zero? total))
+       [:div {:class "status-bar-regular"}
+        "Ничего не найдено."]
 
-    :else
-    [:div
-     [:div {:class "status-bar-small"}
-      (format "Найдено %s товаров за %s секунд. "
-              (get-in content [:solr :response :data :response :numFound])
-              (some-> (get-in content [:solr :response :data :responseHeader :QTime])
-                      (/ 1000.0)))]
-
-
-      ;; TODO build links based for this use query DO not use page
-      ;; TODO ALL from query params
-
-      ]
-
-     ))
+       :else
+       [:div {:class "status-bar-small"}
+        (format "Найдено %s товаров за %s секунд. "
+                total
+                (some-> (get-in content [:solr :response :data :responseHeader :QTime])
+                        (/ 1000.0)))]
+       )
+     [:div {:class "status-bar-random"}
+      [:a {:href  (format "/search?query=%s&sort=random"
+                          (java.net.URLEncoder/encode (if (str/blank? q) "!*" q)))
+           :class "link"} "Случайный"]]]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -195,7 +193,7 @@
 
 (defn- pagination [content]
   (when (not (empty? (get-in content [:params :query])))
-    (let [numfound (get-in content [:solr :response :data :response :numFound])
+    (let [numfound (get-in content [:solr :response :total])
           perpage (config/prop [:view :per-page] 10)
           current-page ;; TODO extract
           (or (try (Integer/parseInt (get-in content [:params :page]))

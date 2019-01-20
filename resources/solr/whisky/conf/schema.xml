@@ -1,129 +1,132 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <schema name="example" version="1.5">
-  <fields>
-    <field name="id" type="string" indexed="true" stored="true" required="false"/>
-    <field name="_version_" type="long" indexed="true" stored="true"/>
+    <fields>
+        <field name="id" type="string" indexed="true" stored="true" required="false"/>
+        <field name="_version_" type="long" indexed="true" stored="true"/>
 
-    <!-- Provider related fields -->
-    <field name="provider" type="text_general" indexed="true" stored="true" required="true"/>
-    <field name="name" type="text_general" indexed="true" stored="true" required="true"/>
-    <field name="link" type="string" indexed="false" stored="true" required="false"/>
-    <field name="image" type="string" indexed="false" stored="true" required="false"/>
-    <field name="country" type="text_general" indexed="true" stored="true" required="false"/>
-    <field name="wine_sugar" type="float" indexed="true" stored="true" required="false"/>
-    <field name="wine_grape" type="text_general" indexed="true" stored="true" required="false"/>
-    <field name="vintage" type="text_general" indexed="true" stored="true" required="false"/>
-    <field name="producer" type="text_general" indexed="true" stored="true" required="false"/>
-    <field name="type" type="text_general" indexed="true" stored="true" required="false"/>
-    <field name="product_code" type="string" indexed="true" stored="true" required="false"/>
-    <field name="alcohol" type="float" indexed="true" stored="true" required="false"/>
-    <field name="description" type="text_general_ru" indexed="true" stored="true" required="false"/>
-    <field name="timestamp" type="date" indexed="true" stored="true" required="true"/>
-    <field name="available" type="boolean" indexed="true" stored="true" required="false"/>
-    <field name="item_new" type="boolean" indexed="true" stored="true" required="false"/>
-    <field name="volume" type="float" indexed="true" stored="true" required="false"/>
-    <field name="price" type="float" indexed="true" stored="true" required="false"/>
-    <field name="sale" type="boolean" indexed="true" stored="true" required="false"/>
-    <field name="sale_description" type="text_general" indexed="true" stored="true" required="false"/>
-    <field name="excise" type="boolean" indexed="true" stored="true" required="false"/>
-    <field name="trusted" type="boolean" indexed="true" stored="true" required="false"/>
+        <!-- Provider related fields -->
+        <field name="provider" type="text_general" indexed="true" stored="true" required="true"/>
+        <field name="name" type="text_general" indexed="true" stored="true" required="true"/>
+        <field name="link" type="string" indexed="false" stored="true" required="false"/>
+        <field name="image" type="string" indexed="false" stored="true" required="false"/>
+        <field name="country" type="text_general" indexed="true" stored="true" required="false"/>
+        <field name="wine_sugar" type="float" indexed="true" stored="true" required="false"/>
+        <field name="wine_grape" type="text_general" indexed="true" stored="true" required="false"/>
+        <field name="vintage" type="text_general" indexed="true" stored="true" required="false"/>
+        <field name="producer" type="text_general" indexed="true" stored="true" required="false"/>
+        <field name="type" type="text_general" indexed="true" stored="true" required="false"/>
+        <field name="product_code" type="string" indexed="true" stored="true" required="false"/>
+        <field name="alcohol" type="float" indexed="true" stored="true" required="false"/>
+        <field name="description" type="text_general_ru" indexed="true" stored="true" required="false"/>
+        <field name="timestamp" type="date" indexed="true" stored="true" required="true"/>
+        <field name="available" type="boolean" indexed="true" stored="true" required="false"/>
+        <field name="item_new" type="boolean" indexed="true" stored="true" required="false"/>
+        <field name="volume" type="float" indexed="true" stored="true" required="false"/>
+        <field name="price" type="float" indexed="true" stored="true" required="false"/>
+        <field name="sale" type="boolean" indexed="true" stored="true" required="false"/>
+        <field name="sale_description" type="text_general" indexed="true" stored="true" required="false"/>
+        <field name="excise" type="boolean" indexed="true" stored="true" required="false"/>
+        <field name="trusted" type="boolean" indexed="true" stored="true" required="false"/>
 
-    <!-- Duplicated fields -->
+        <!-- Duplicated fields -->
 
-    <!-- All in one field -->
-    <field name="text_all" type="text_general" indexed="true" stored="false" required="false" multiValued="true"/>
-    <copyField source="*" dest="text_all"/>
+        <!-- All in one field -->
+        <field name="text_all" type="text_general" indexed="true" stored="false" required="false" multiValued="true"/>
+        <copyField source="*" dest="text_all"/>
 
-    <!-- all user searchable fields -->
-    <field name="text" type="text_general" indexed="true" stored="false" required="false" multiValued="true"/>
-    <copyField source="provider" dest="text"/>
-    <copyField source="name" dest="text"/>
-    <copyField source="country" dest="text"/>
-    <copyField source="wine_grape" dest="text"/>
-    <copyField source="vintage" dest="text"/>
-    <copyField source="producer" dest="text"/>
-    <copyField source="type" dest="text"/>
-    <copyField source="alcohol" dest="text"/>
-    <copyField source="volume" dest="text"/>
-    <copyField source="sale_description" dest="text"/>
+        <!-- all user searchable fields -->
+        <field name="text" type="text_general" indexed="true" stored="false" required="false" multiValued="true"/>
+        <copyField source="provider" dest="text"/>
+        <copyField source="name" dest="text"/>
+        <copyField source="country" dest="text"/>
+        <copyField source="wine_grape" dest="text"/>
+        <copyField source="vintage" dest="text"/>
+        <copyField source="producer" dest="text"/>
+        <copyField source="type" dest="text"/>
+        <copyField source="alcohol" dest="text"/>
+        <copyField source="volume" dest="text"/>
+        <copyField source="sale_description" dest="text"/>
 
-    <uniqueKey>id</uniqueKey>
-  </fields>
+        <uniqueKey>id</uniqueKey>
 
-  <types>
-    <fieldType name="string" class="solr.StrField" sortMissingLast="true" />
-    <fieldType name="boolean" class="solr.BoolField" sortMissingLast="true"/>
+        <dynamicField name="random_*" type="random" />
+    </fields>
 
-    <fieldType name="int" class="solr.TrieIntField" precisionStep="0" positionIncrementGap="0"/>
-    <fieldType name="float" class="solr.TrieFloatField" precisionStep="0" positionIncrementGap="0"/>
-    <fieldType name="long" class="solr.TrieLongField" precisionStep="0" positionIncrementGap="0"/>
-    <fieldType name="double" class="solr.TrieDoubleField" precisionStep="0" positionIncrementGap="0"/>
-    <fieldType name="date" class="solr.TrieDateField" precisionStep="0" positionIncrementGap="0"/>
-    <fieldtype name="binary" class="solr.BinaryField"/>
+    <types>
+        <fieldType name="string" class="solr.StrField" sortMissingLast="true"/>
+        <fieldType name="boolean" class="solr.BoolField" sortMissingLast="true"/>
 
-    <fieldType name="text_general" class="solr.TextField" positionIncrementGap="100">
-      <analyzer type="index">
-        <tokenizer class="solr.StandardTokenizerFactory"/>
-        <filter class="solr.LowerCaseFilterFactory"/>
-	<filter class="solr.WordDelimiterFilterFactory"
-		generateWordParts="1"
-                generateNumberParts="0"
-                catenateWords="1"
-                catenateNumbers="1"
-                catenateAll="0"
-                preserveOriginal="1"
-		splitOnNumerics="1"
-		splitOnCaseChange="1"/>
-      </analyzer>
-      <analyzer type="query">
-        <tokenizer class="solr.StandardTokenizerFactory"/>
-        <filter class="solr.LowerCaseFilterFactory"/>
-	<filter class="solr.WordDelimiterFilterFactory"
-		generateWordParts="1"
-                generateNumberParts="0"
-                catenateWords="0"
-                catenateNumbers="1"
-                catenateAll="0"
-                preserveOriginal="1"/>
-	<filter class="solr.StopFilterFactory" ignoreCase="true" words="stopwords.txt"/>
-        <filter class="solr.SynonymFilterFactory" synonyms="synonyms.txt" ignoreCase="true" expand="true"/>
-      </analyzer>
-    </fieldType>
+        <fieldType name="int" class="solr.TrieIntField" precisionStep="0" positionIncrementGap="0"/>
+        <fieldType name="float" class="solr.TrieFloatField" precisionStep="0" positionIncrementGap="0"/>
+        <fieldType name="long" class="solr.TrieLongField" precisionStep="0" positionIncrementGap="0"/>
+        <fieldType name="double" class="solr.TrieDoubleField" precisionStep="0" positionIncrementGap="0"/>
+        <fieldType name="date" class="solr.TrieDateField" precisionStep="0" positionIncrementGap="0"/>
+        <fieldtype name="binary" class="solr.BinaryField"/>
+        <fieldType name="random" class="solr.RandomSortField" />
 
-    <!-- Field using for russian Stemmed Words -->
-    <fieldType name="text_general_ru" class="solr.TextField" positionIncrementGap="100">
-      <analyzer type="index">
-        <tokenizer class="solr.StandardTokenizerFactory"/>
-        <filter class="solr.LowerCaseFilterFactory"/>
-	<filter class="solr.WordDelimiterFilterFactory"
-		generateWordParts="1"
-                generateNumberParts="0"
-                catenateWords="1"
-                catenateNumbers="1"
-                catenateAll="0"
-                preserveOriginal="1"
-		splitOnNumerics="1"
-		splitOnCaseChange="1"/>
-	<filter class="solr.SnowballPorterFilterFactory" language="Russian" />
-      </analyzer>
-      <analyzer type="query">
-        <tokenizer class="solr.StandardTokenizerFactory"/>
-        <filter class="solr.LowerCaseFilterFactory"/>
-	<filter class="solr.WordDelimiterFilterFactory"
-		generateWordParts="1"
-                generateNumberParts="0"
-                catenateWords="0"
-                catenateNumbers="1"
-                catenateAll="0"
-                preserveOriginal="1"/>
-	<filter class="solr.StopFilterFactory" ignoreCase="true" words="stopwords.txt"/>
-	<filter class="solr.SnowballPorterFilterFactory" language="Russian" />
-        <filter class="solr.SynonymFilterFactory" synonyms="synonyms.txt" ignoreCase="true" expand="true"/>
-      </analyzer>
+        <fieldType name="text_general" class="solr.TextField" positionIncrementGap="100">
+            <analyzer type="index">
+                <tokenizer class="solr.StandardTokenizerFactory"/>
+                <filter class="solr.LowerCaseFilterFactory"/>
+                <filter class="solr.WordDelimiterFilterFactory"
+                        generateWordParts="1"
+                        generateNumberParts="0"
+                        catenateWords="1"
+                        catenateNumbers="1"
+                        catenateAll="0"
+                        preserveOriginal="1"
+                        splitOnNumerics="1"
+                        splitOnCaseChange="1"/>
+            </analyzer>
+            <analyzer type="query">
+                <tokenizer class="solr.StandardTokenizerFactory"/>
+                <filter class="solr.LowerCaseFilterFactory"/>
+                <filter class="solr.WordDelimiterFilterFactory"
+                        generateWordParts="1"
+                        generateNumberParts="0"
+                        catenateWords="0"
+                        catenateNumbers="1"
+                        catenateAll="0"
+                        preserveOriginal="1"/>
+                <filter class="solr.StopFilterFactory" ignoreCase="true" words="stopwords.txt"/>
+                <filter class="solr.SynonymFilterFactory" synonyms="synonyms.txt" ignoreCase="true" expand="true"/>
+            </analyzer>
+        </fieldType>
 
-    </fieldType>
+        <!-- Field using for russian Stemmed Words -->
+        <fieldType name="text_general_ru" class="solr.TextField" positionIncrementGap="100">
+            <analyzer type="index">
+                <tokenizer class="solr.StandardTokenizerFactory"/>
+                <filter class="solr.LowerCaseFilterFactory"/>
+                <filter class="solr.WordDelimiterFilterFactory"
+                        generateWordParts="1"
+                        generateNumberParts="0"
+                        catenateWords="1"
+                        catenateNumbers="1"
+                        catenateAll="0"
+                        preserveOriginal="1"
+                        splitOnNumerics="1"
+                        splitOnCaseChange="1"/>
+                <filter class="solr.SnowballPorterFilterFactory" language="Russian"/>
+            </analyzer>
+            <analyzer type="query">
+                <tokenizer class="solr.StandardTokenizerFactory"/>
+                <filter class="solr.LowerCaseFilterFactory"/>
+                <filter class="solr.WordDelimiterFilterFactory"
+                        generateWordParts="1"
+                        generateNumberParts="0"
+                        catenateWords="0"
+                        catenateNumbers="1"
+                        catenateAll="0"
+                        preserveOriginal="1"/>
+                <filter class="solr.StopFilterFactory" ignoreCase="true" words="stopwords.txt"/>
+                <filter class="solr.SnowballPorterFilterFactory" language="Russian"/>
+                <filter class="solr.SynonymFilterFactory" synonyms="synonyms.txt" ignoreCase="true" expand="true"/>
+            </analyzer>
 
-  </types>
+        </fieldType>
+
+    </types>
 
 </schema>
 
