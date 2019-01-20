@@ -88,7 +88,24 @@
 
    [:h3 "Специальные запросы"]
    [:p
+    "Начиная запрос с символа " [:b "!"] " можно использовать специальные возможности. "
+    [:br]
+    "Например следующий запрос выводит все товары ("
+    (qe/query-example "!*" "/search?query=%21*")
+    ")"
+    [:br]
     "Поддерживается случайный поиск среди всех товаров ("
-    (qe/query-example "!random") ")"]
-
+    (qe/query-example "случайный" "/search?query=%21*&sort=random") ") "
+    "или случайный по категориям ("
+    (qe/query-example "случайный бурбон" "/search?query=бурбон&sort=random") ", "
+    (qe/query-example "случайное пиво" "/search?query=пиво&sort=random")
+    ")"
+    [:br]
+    "Основная функция специальных запросов - искать по конкретным полям ("
+    (qe/query-example "ваниль и торф во вкусе"
+                      "/search?query=%21description%3Aторф+AND+description%3Aваниль") ", "
+    (qe/query-example "только акцизные" "/search?query=%21excise:true") ", "
+    (qe/query-example "нет в наличии" "/search?query=%21available:false")
+    ")"
+    ]
    ])
