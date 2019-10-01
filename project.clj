@@ -1,5 +1,5 @@
 (defproject priceous "0.3.0"
-  :description "Price aggregator for alcohol products"
+  :description "Price aggregator for alcohol"
   :url "http://priceous.mishadoff.com"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
@@ -55,7 +55,7 @@
                  [com.draines/postal "2.0.2"]]
 
                  ;; Selenium
-
+  :aliases {"goodwine" ["run" "-m" "priceous.core" "goodwine"]}
 
   :plugins [[lein-ring "0.9.7"]]
   :ring {:handler priceous.web/app

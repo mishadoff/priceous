@@ -3,6 +3,7 @@
 - New fields: **excise** and **trusted**
 - Kavist provider removed as stale shop
 - Data Coverage statistic component
+- Special query language starting with `!`
 
 - Revisit approaches to parse data from different providers
 - Few more stores

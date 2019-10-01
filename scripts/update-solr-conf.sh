@@ -2,7 +2,7 @@
 
 echo "Updating SOLR conf"
 
-SOLR_VERSION="7.6.0"
+SOLR_VERSION="8.2.0"
 
 echo "Delete old configuration"
 rm -rf ~/soft/solr-$SOLR_VERSION/server/solr/whisky/
