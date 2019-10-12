@@ -1,4 +1,4 @@
-(ns priceous.stats)
+(ns priceous.spider.stats)
 
 (def weights
   {:provider         1    ;; basic score, present in all documents

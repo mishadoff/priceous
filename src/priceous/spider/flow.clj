@@ -1,9 +1,9 @@
-(ns priceous.flow
+(ns priceous.spider.flow
   (:require [taoensso.timbre :as log]
-            [priceous.utils :as u]
-            [priceous.selector-utils :as su]
-            [priceous.provider :as p]
-            [priceous.formatter :as fmt]
+            [priceous.utils.utils :as u]
+            [priceous.spider.selector-utils :as su]
+            [priceous.spider.provider :as p]
+            [priceous.spider.formatter :as fmt]
             [net.cgrand.enlive-html :as html])
   (:import [java.util.concurrent ExecutorService Executors Callable]))
 

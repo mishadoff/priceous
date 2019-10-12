@@ -1,13 +1,13 @@
 (ns user
-  (:require [priceous.system :as system]))
+  (:require [priceous.system.lifecycle :as system]))
 
 (def start system/start)
 (def stop system/stop)
 
-(defn go []
+(defn init []
   (start)
   :ready)
 
 (defn reset []
   (stop)
-  (go))
+  (init))

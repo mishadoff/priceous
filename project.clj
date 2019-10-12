@@ -32,6 +32,9 @@
                  ;; Components management
                  [integrant "0.7.0"]
 
+                 ;; Prismatic schema
+                 [prismatic/schema "1.1.12"]
+
                  ;; solr client
                  [com.codesignals/flux "0.6.0"
                   :exclusions [org.apache.solr/solr-core]]

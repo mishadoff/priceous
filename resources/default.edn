@@ -1,13 +1,16 @@
-;; Properties for Priceous
 {
- :app {:name "Priceous" :version "0.3.0"}
+ :app {:name "Priceous"
+       :version "0.3.0"}
 
- :server {:port 8080 }
+ :server {
+          :port 3000
+
+          ;; number of requests / per IP / per hour
+          :rate-limit 1000
+          }
 
  :solr {:host "http://localhost:8983/solr"
         :collection "whisky"}
-
- :csv {:filepath "/Users/misha/temp/alcosearch.csv"}
 
  :scheduler {:delay 0
              :value 12
@@ -18,9 +21,6 @@
          :from "alcopriceous@gmail.com"
          :password "<PASSWORD>"
  }
-
- ;; FIXME: does not work as a property / always 1000
- :ratelimit 1000 ;; number of requests / per IP / per hour
 
  :scrapping {:providers
              ["goodwine"
@@ -46,9 +46,6 @@
               "novus"
               "rozetka"
               ]}
-
- :appenders [:solr]
-
  :view {
         :per-page 10
         }

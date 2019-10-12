@@ -1,15 +1,13 @@
 (ns priceous.spider.core
-  (:require [priceous.solr :as solr]
-            [priceous.utils :as u]
-            [priceous.provider :as p]
-            [priceous.ssl :as ssl]
-            [priceous.stats :as stats]
-            [priceous.appender :as a]
-            [priceous.formatter :as fmt]
-            [priceous.config :as config]
+  (:require [priceous.spider.solr :as solr]
+            [priceous.spider.provider :as p]
+            [priceous.spider.stats :as stats]
+            [priceous.spider.appender :as a]
+            [priceous.spider.formatter :as fmt]
             [priceous.spider.alert :as alert]
-            [priceous.flow :as flow]
-            [clojure.java.io :as io]
+            [priceous.spider.flow :as flow]
+            [priceous.system.config :as config]
+            [priceous.utils.utils :as u]
             [taoensso.timbre :as log]
             [clojure.string :as str])
   (:gen-class))
@@ -79,9 +77,10 @@
             (do (log/info (format "[%s] Found %s items in %.2f seconds"
                                   pname (count items) (u/elapsed-so-far start)))
                 ;; write data to every appender
-                (log/info (format "Available appenders %s" (config/prop [:appenders])))
-                (doseq [apn (config/prop [:appenders])]
-                  (a/append apn provider items)) ;; TODO return delta
+                (log/info (format "Available appenders %s" (config/get :appenders)))
+
+                (solr/write provider items) ;; TODO return delta
+
                 (-> state
                     (update-in [:total] + (count items))
                     (assoc-in [(str/lower-case pname)]
@@ -109,9 +108,9 @@
    lein run -m priceous.core all
   "
   [& args]
-  (config/config-timbre!)
-  (config/read-properties!)
-  (ssl/trust-all-certificates)
+  ;(config/config-timbre!)
+  ;(config/read-properties!)
+  ;(ssl/trust-all-certificates)
   (cond
     (= "all" (first args)) (scrap (u/find-all-providers))
     :else (scrap args)))

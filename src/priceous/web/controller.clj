@@ -1,6 +1,6 @@
 (ns priceous.web.controller
-  (:require [priceous.utils :as u]
-            [priceous.solr :as solr]
+  (:require [priceous.utils.utils :as u]
+            [priceous.spider.solr :as solr]
             [priceous.web.templates.search :as search]
             [priceous.web.templates.stats :as stats]
             [priceous.web.templates.help :as help]

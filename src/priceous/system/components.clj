@@ -1,5 +1,7 @@
-(ns priceous.components
+(ns priceous.system.components
   (:require [integrant.core :as ig]
+            [priceous.system.init :as init]
+            [priceous.system.config :as config]
             [priceous.web.routes :as web]
             [ring.adapter.jetty :as jetty]
             [taoensso.timbre :as log]))
@@ -7,7 +9,8 @@
 ;;; Components declaration
 
 (def declaration
-  {:system/config {}
+  {:system/init   {}
+   :system/config {:init (ig/ref :system/init)}
 
    :server/jetty  {:config (ig/ref :system/config)
                    :webapp (ig/ref :server/webapp)}
@@ -15,15 +18,19 @@
    :server/webapp {:config (ig/ref :system/config)}
    })
 
+;;;
+
+(defmethod ig/init-key :system/init [_ _]
+  (log/info "Preinit system")
+  (init/config-timbre!)
+  (init/trust-all-certificates!)
+  :ok)
+
 ;; System config
 
 (defmethod ig/init-key :system/config [_ opts]
   (log/info "Init configuration")
-  {:server {:port 8080}
-   :name "App"
-   :ratelimit 1000}
-  ;; TODO schema validation
-  )
+  (config/read-config!))
 
 (defmethod ig/halt-key! :system/config [_ _])
 

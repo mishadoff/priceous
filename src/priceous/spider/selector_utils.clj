@@ -1,6 +1,6 @@
-(ns priceous.selector-utils
-  (:require [priceous.utils :as u]
-            [priceous.provider :as p]
+(ns priceous.spider.selector-utils
+  (:require [priceous.utils.utils :as u]
+            [priceous.spider.provider :as p]
             [taoensso.timbre :as log]
             [net.cgrand.enlive-html :as html]))
 

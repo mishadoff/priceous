@@ -1,9 +1,9 @@
 (ns priceous.provider.goodwine
   (:require [net.cgrand.enlive-html :as html]
             [taoensso.timbre :as log]
-            [priceous.utils :as u]
-            [priceous.provider :as p]
-            [priceous.selector-utils :as su]))
+            [priceous.utils.utils :as u]
+            [priceous.spider.provider :as p]
+            [priceous.spider.selector-utils :as su]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

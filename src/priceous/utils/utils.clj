@@ -1,4 +1,4 @@
-(ns priceous.utils
+(ns priceous.utils.utils
   (:require [clj-time.coerce :as tc]
             [clj-time.format :as tf]
             [clj-time.core :as t]
@@ -134,8 +134,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defn require-all-providers []
+  (require 'priceous.provider.goodwine)
   ;; Require all namespaces in priceous.provider.* folder
-  (let [symbols (->> (cns/find-namespaces-on-classpath)
+  #_(let [symbols (->> (cns/find-namespaces-on-classpath)
                      (filter (fn [sym] (clojure.string/starts-with? (str sym) "priceous.provider."))))]
     (doseq [provider-ns symbols]
       (require provider-ns))))

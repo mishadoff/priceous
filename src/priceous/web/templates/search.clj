@@ -5,8 +5,8 @@
             [hiccup.form :refer :all]
             [priceous.web.templates.base :as base]
             [priceous.web.templates.query-examples :as qe]
-            [priceous.config :as config]
-            [priceous.utils :as u]))
+            [priceous.system.config :as config]
+            [priceous.utils.utils :as u]))
 
 (declare
  view
@@ -192,7 +192,7 @@
 (defn- pagination [content]
   (when (not (empty? (get-in content [:params :query])))
     (let [numfound (get-in content [:solr :response :total])
-          perpage (config/prop [:view :per-page] 10)
+          perpage (config/get :view :per-page)
           current-page ;; TODO extract
           (or (try (Integer/parseInt (get-in content [:params :page]))
                    (catch NumberFormatException e nil)) 1)

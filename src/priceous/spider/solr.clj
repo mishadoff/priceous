@@ -4,9 +4,9 @@
             [flux.core :as flux]
             [flux.http :as http]
             [flux.query :as query]
-            [priceous.config :as config]
-            [priceous.provider :as p]
-            [priceous.utils :as u]
+            [priceous.system.config :as config]
+            [priceous.spider.provider :as p]
+            [priceous.utils.utils :as u]
             [taoensso.timbre :as log])
   (:import [org.apache.solr.client.solrj.util ClientUtils]))
 
@@ -24,12 +24,12 @@
         page (resolve-page params)
         sorting (resolve-sort params)
         available (resolve-available params)
-        perpage (config/prop [:view :per-page] 10)]
+        perpage (config/get :view :per-page)]
     (try
       (flux/with-connection
         (http/create
-         (get-in @config/properties [:solr :host])
-         (keyword (get-in @config/properties [:solr :collection])))
+          (config/get :solr :host)
+          (keyword (config/get :solr :collection)))
         (let [random? (= "random" (:sort params))
               {:keys [q fq]} (process-query params)
               request {:q     q
@@ -59,33 +59,35 @@
 (defn stats [ctx]
   (try
     (flux/with-connection
-      (http/create (config/prop [:solr :host])
-                   (keyword (config/prop [:solr :collection])))
+      ;; TODO solr component
+      (http/create
+        (config/get :solr :host)
+        (keyword (config/get :solr :collection)))
       (log/info (format "[%s] Requested StatsRequest" (:ip ctx)))
       (let [response
             (flux/request
-             (query/create-query-request
-              {:q "*"
-               :q.op "AND"
-               :start 0
-               :rows 0
-               :df "text"
-               :json.facet.providers
-               "{type:terms,
-                 field:provider,
-                 limit:100,
-                 facet:{
-                   ts:\"max(timestamp)\",
-                   available:{
-                     type:terms,
-                     field:available}}}"}))]
-        {:status :success
-         :response {:total (get-in response [:response :numFound])
+              (query/create-query-request
+                {:q     "*"
+                 :q.op  "AND"
+                 :start 0
+                 :rows  0
+                 :df    "text"
+                 :json.facet.providers
+                        "{type:terms,
+                          field:provider,
+                          limit:100,
+                          facet:{
+                            ts:\"max(timestamp)\",
+                            available:{
+                              type:terms,
+                              field:available}}}"}))]
+        {:status   :success
+         :response {:total     (get-in response [:response :numFound])
                     :providers (->> (get-in response [:facets :providers :buckets])
                                     (mapv (fn [bkt]
-                                            {:name (:val bkt)
-                                             :total (:count bkt)
-                                             :ts (-> (:ts bkt) (.getTime) u/to-date)
+                                            {:name      (:val bkt)
+                                             :total     (:count bkt)
+                                             :ts        (-> (:ts bkt) (.getTime) u/to-date)
                                              :available (or (some->> (get-in bkt [:available :buckets])
                                                                      (filter :val)
                                                                      (first)
@@ -106,8 +108,8 @@
   (try
     (flux/with-connection
       (http/create
-       (get-in @config/properties [:solr :host])
-       (keyword (get-in @config/properties [:solr :collection])))
+        (config/get :solr :host)
+        (keyword (config/get :solr :collection)))
 
       (log/info "Connections to SOLR established")
 

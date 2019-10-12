@@ -1,4 +1,4 @@
-(ns priceous.provider
+(ns priceous.spider.provider
   (:require [taoensso.timbre :as log]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

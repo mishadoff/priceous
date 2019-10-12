@@ -1,4 +1,4 @@
-(ns priceous.scheduler
+(ns priceous.spider.scheduler
   (:import [java.util.concurrent Executors TimeUnit]))
 
 ;; ONLY ONE SCHEDULED PROCESS AT A TIME SUPPORTED

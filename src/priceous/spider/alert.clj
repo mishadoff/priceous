@@ -1,17 +1,19 @@
 (ns priceous.spider.alert
-  (:require [priceous.config :as config]
+  (:require [priceous.system.config :as config]
             [postal.core :as mail]
             [taoensso.timbre :as log]))
 
+;; TODO alerting component
+
 (defn notify [title text]
-  (let [emails (config/prop [:alert :emails])]
+  (let []
     (mail/send-message
       {:host "smtp.gmail.com"
-       :user (config/prop [:alert :from])
-       :pass (config/prop [:alert :password])
+       :user (config/get :alert :from)
+       :pass (config/get :alert :password)
        :ssl true}
-      {:from (config/prop [:alert :from])
-       :to (config/prop [:alert :emails])
+      {:from (config/get :alert :from)
+       :to (config/get :alert :emails)
        :subject title
        :body text})
     (log/info "Message sent!")))

@@ -26,4 +26,4 @@
   (-> (create-routes config)
       (ring.defaults/wrap-defaults ring.defaults/site-defaults)
       (ring.ratelimit/wrap-ratelimit
-        {:limits [(ring.ratelimit/ip-limit (-> config :ratelimit))]})))
+        {:limits [(ring.ratelimit/ip-limit (-> config :server :rate-limit))]})))
