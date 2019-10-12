@@ -1,5 +1,5 @@
 (ns priceous.web.controller
-  (:require [priceous.utils.utils :as u]
+  (:require [priceous.utils.http :as utils.http]
             [priceous.spider.solr :as solr]
             [priceous.web.templates.search :as search]
             [priceous.web.templates.stats :as stats]
@@ -17,7 +17,7 @@
 
            ;; if query is present execute solr query
            :else (assoc response :response
-                                 (solr/query params {:ip (u/get-client-ip request)})))))
+                                 (solr/query params {:ip (utils.http/get-client-ip request)})))))
       ((fn [solr-response] {:solr solr-response :params params}))
       (search/view)))
 
@@ -26,7 +26,7 @@
 
 (defn stats [request]
   (stats/view
-    (solr/stats {:ip (u/get-client-ip request)})))
+    (solr/stats {:ip (utils.http/get-client-ip request)})))
 
 ;;;
 

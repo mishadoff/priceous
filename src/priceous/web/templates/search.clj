@@ -1,12 +1,12 @@
 (ns priceous.web.templates.search
-  (:require [clj-time.format :as tf]
-            [clojure.string :as str]
+  (:require [clojure.string :as str]
             [hiccup.core :refer :all]
             [hiccup.form :refer :all]
             [priceous.web.templates.base :as base]
             [priceous.web.templates.query-examples :as qe]
             [priceous.system.config :as config]
-            [priceous.utils.utils :as u]))
+            [priceous.utils.namespace :as nsutil]
+            [priceous.utils.numbers :as numbers]))
 
 (declare
  view
@@ -17,7 +17,7 @@
  pagination
  sorting)
 
-(u/require-all-providers)
+(nsutil/require-all-providers)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -74,7 +74,7 @@
      [:div {:class "item-price"}
       (let [price (:price item)]
         (cond
-          price (let [[grn kop] (u/split-price price)]
+          price (let [[grn kop] (numbers/split-price price)]
                   [:div
                    [:span {:class "grn"} grn]
                    [:span {:class "kop"} kop]])
@@ -84,7 +84,7 @@
 
      ;; provider
      [:div {:class "item-provider"}
-      (let [p (u/resolve-provider-by-name (.toLowerCase (:provider item)))]
+      (let [p (nsutil/resolve-provider-by-name (.toLowerCase (:provider item)))]
         [:a {:href (get-in p [:info :base-url])}
          (-> [:img {:class "nested_fixed_img"
                 :src (get-in p [:info :icon])
@@ -110,7 +110,7 @@
      ;; alcohol
      (if (:alcohol item)
        [:div {:class "itemprop"}
-        (format "Крепость: %s%%" (u/format-decimal-up-to-2 (:alcohol item)))])
+        (format "Крепость: %s%%" (numbers/format-decimal-up-to-2 (:alcohol item)))])
 
      (if (:type item)
        [:div {:class "itemprop"}

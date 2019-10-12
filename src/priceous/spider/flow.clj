@@ -1,6 +1,7 @@
 (ns priceous.spider.flow
   (:require [taoensso.timbre :as log]
-            [priceous.utils.utils :as u]
+            [priceous.utils.error :as error]
+            [priceous.utils.http :as http]
             [priceous.spider.selector-utils :as su]
             [priceous.spider.provider :as p]
             [priceous.spider.formatter :as fmt]
@@ -47,7 +48,7 @@
         process-page-fn (cond
                           (p/api? provider) process-query-api
                           (or (p/heavy? provider) (p/light? provider)) process-page
-                          :else (u/die "Invalid strategy"))]
+                          :else (error/die "Invalid strategy"))]
 
     (while (not (p/done? @p))
       (let [result (process-page-fn @p)]
@@ -71,7 +72,7 @@
   [provider]
   (p/validate-configuration provider)
   (let [fetch-page-fn (or (get-in provider [:configuration :fetch-page-fn])
-                          #(u/fetch (p/current-page %)))
+                          #(http/fetch (p/current-page %)))
         page (fetch-page-fn provider)]
     (->>
      page
@@ -103,7 +104,7 @@
        (map (partial su/find-link provider))
        (map (fn [{link :link :as nodemap}]
               (assoc nodemap :future
-                     (future* (cast Callable (fn [] (u/fetch link)))))))
+                     (future* (cast Callable (fn [] (http/fetch link)))))))
        (doall) ;; <--- this is very need, so lazy, much parallelism
        (map (fn [{future :future :as nodemap}]
               (assoc nodemap :page (.get future))))))
@@ -147,7 +148,7 @@
             (= :success (:status res))
             {:provider provider
              :docs (into [] (:docs res))}
-            :else (u/die "Invalid query call"))))
+            :else (error/die "Invalid query call"))))
        (update-stats nil))) ;; no page needed for api call
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

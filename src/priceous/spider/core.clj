@@ -2,18 +2,18 @@
   (:require [priceous.spider.solr :as solr]
             [priceous.spider.provider :as p]
             [priceous.spider.stats :as stats]
-            [priceous.spider.appender :as a]
             [priceous.spider.formatter :as fmt]
             [priceous.spider.alert :as alert]
             [priceous.spider.flow :as flow]
             [priceous.system.config :as config]
-            [priceous.utils.utils :as u]
+            [priceous.utils.namespace :as nsutil]
+            [priceous.utils.time :as time]
             [taoensso.timbre :as log]
             [clojure.string :as str])
   (:gen-class))
 
 ;; scan folder priceous.provider.* and include all namespaces
-(u/require-all-providers)
+(nsutil/require-all-providers)
 
 (declare
  scrap
@@ -30,10 +30,12 @@
     (log/info "Start monitoring prices for providers " (seq provider-names))
     (let [start (System/currentTimeMillis)
           providers (->> provider-names
-                         (map u/resolve-provider-by-name)
+                         (map nsutil/resolve-provider-by-name)
                          (remove nil?))
           final-state (reduce scrap-provider {:total 0} providers)]
-      (log/info (fmt/succesfully-processed-all (:total final-state) (u/elapsed-so-far start)))
+      (log/info (fmt/succesfully-processed-all
+                  (:total final-state)
+                  (time/elapsed-so-far start)))
 
       (alert/notify "Alert from priceous"
                     (str "Scrapping finished:\n\n\n"
@@ -56,7 +58,7 @@
   [state provider]
   (try
     (let [start (System/currentTimeMillis)
-          start-readable (u/now)
+          start-readable (time/now)
           items (flow/process provider)
           pname (p/pname provider)
           ;; stats
@@ -75,7 +77,7 @@
 
             :else
             (do (log/info (format "[%s] Found %s items in %.2f seconds"
-                                  pname (count items) (u/elapsed-so-far start)))
+                                  pname (count items) (time/elapsed-so-far start)))
                 ;; write data to every appender
                 (log/info (format "Available appenders %s" (config/get :appenders)))
 
@@ -89,8 +91,8 @@
                                :pcode-unique-count pcode-unique-count
                                :data-coverage data-coverage
                                :time-start start-readable
-                               :time-end (u/now)
-                               :time-taken (u/elapsed-so-far start)})))))
+                               :time-end (time/now)
+                               :time-taken (time/elapsed-so-far start)})))))
 
     (catch Exception e
       (log/error (format "[%s] ProviderError" (p/pname provider)))
@@ -112,5 +114,5 @@
   ;(config/read-properties!)
   ;(ssl/trust-all-certificates)
   (cond
-    (= "all" (first args)) (scrap (u/find-all-providers))
+    (= "all" (first args)) (scrap (nsutil/find-all-providers))
     :else (scrap args)))

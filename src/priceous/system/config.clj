@@ -1,7 +1,7 @@
 (ns priceous.system.config
   (:refer-clojure :exclude [get])
   (:require [taoensso.timbre :as log]
-            [priceous.utils.utils :as u]
+            [priceous.utils.collections :as collections]
             [priceous.system.model :as model]
             [priceous.system.state :as state]
             [clojure.java.io :as io]
@@ -31,7 +31,7 @@
 (defn read-config!
   "Read properties from several locations and merging theem into one map. Last wins."
   []
-  (->> (u/deep-merge
+  (->> (collections/deep-merge
          (from-resource "default.edn")
          (from-external-file "config.edn"))
        (s/validate model/Config)))

@@ -2,7 +2,8 @@
   (:require [hiccup.core :refer :all]
             [hiccup.form :refer :all]
             [priceous.web.templates.base :as base]
-            [priceous.utils :as u]
+            [priceous.utils.namespace :as nsutil]
+            [priceous.utils.time :as time]
             [taoensso.timbre :as log]))
 
 (declare view stats-container)
@@ -31,7 +32,7 @@
           [:tr
            [:td
             [:span {:class "item-provider"}
-             (let [p (u/resolve-provider-by-name (:name p))]
+             (let [p (nsutil/resolve-provider-by-name (:name p))]
                [:a {:href (get-in p [:info :base-url])}
                 (-> [:img {:class "nested_fixed_img"
                            :src   (get-in p [:info :icon])
@@ -51,7 +52,7 @@
            [:td (:total p)]
            [:td (:available p)]
            [:td
-            (let [readable-time (u/readable-time (:ts p) (u/now))
+            (let [readable-time (time/readable (:ts p) (time/now))
                   fmt-time (-> (:ts p)
                                (clojure.string/replace "T" " ")
                                (clojure.string/replace "Z" " "))]

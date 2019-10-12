@@ -1,9 +1,8 @@
 (ns priceous.provider.alcoland
-  (:require [net.cgrand.enlive-html :as html]
-            [taoensso.timbre :as log]
-            [priceous.utils :as u]
-            [priceous.provider :as p]
-            [priceous.selector-utils :as su]))
+  (:require [priceous.spider.provider :as p]
+            [priceous.spider.selector-utils :as su]
+            [priceous.utils.time :as time]
+            [priceous.utils.numbers :as numbers]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -38,13 +37,13 @@
         (assoc :link (some-> (q+ [:.name :a]) (get-in [:attrs :href])))
         (assoc :image (some-> (q? [:.image :a :img]) (get-in [:attrs :src])))
         (assoc :type (p/category-name provider))
-        (assoc :timestamp (u/now))
+        (assoc :timestamp (time/now))
 
         ;; price/sales block
         ((fn [doc]
-           (let [priceold (some-> (text? [:.price-old]) (u/smart-parse-double))
-                 pricenew (some-> (text? [:.price-new]) (u/smart-parse-double))
-                 price (some-> (text? [:.price]) (u/smart-parse-double))
+           (let [priceold (some-> (text? [:.price-old]) (numbers/smart-parse-double))
+                 pricenew (some-> (text? [:.price-new]) (numbers/smart-parse-double))
+                 price (some-> (text? [:.price]) (numbers/smart-parse-double))
                  sale (boolean priceold)
                  sale-description (if sale (format "старая цена %.2f" priceold))
                  realprice (or pricenew price)]

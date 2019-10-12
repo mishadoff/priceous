@@ -1,8 +1,11 @@
 (ns priceous.spider.selector-utils
-  (:require [priceous.utils.utils :as u]
+  (:require [priceous.utils.numbers :as numbers]
+            [priceous.utils.collections :as collections]
             [priceous.spider.provider :as p]
             [taoensso.timbre :as log]
-            [net.cgrand.enlive-html :as html]))
+            [net.cgrand.enlive-html :as html]
+            [priceous.utils.error :as error]
+            [priceous.utils.http :as http]))
 
 
 (declare
@@ -40,7 +43,7 @@
   (assoc node-map :link
          (-> (select+ node provider (p/link-selector provider) :context node-map)
              (get-in [:attrs :href])
-             (#(cond->> % (p/link-selector-relative? provider) (u/full-href provider)))
+             (#(cond->> % (p/link-selector-relative? provider) (http/full-href provider)))
              ((fn [link]
                 (let [link-fix-fn (get-in provider [:configuration :link-fixer])]
                   (if link-fix-fn (link-fix-fn link) link))))
@@ -104,7 +107,7 @@
       (cond
         (= count-strategy :single) (first nodes)
         (= count-strategy :multiple) nodes
-        :else (u/die (format "Invalid count strategy [%s]" count-strategy)))
+        :else (error/die (format "Invalid count strategy [%s]" count-strategy)))
 
       ;; Found multiple nodes
       (> (count nodes) 1)
@@ -117,8 +120,8 @@
           (first nodes))
 
         (= count-strategy :multiple) nodes
-        :else (u/die (format "Invalid count strategy [%s]" count-strategy)))
-      :else (u/die "Should not happen"))))
+        :else (error/die (format "Invalid count strategy [%s]" count-strategy)))
+      :else (error/die "Should not happen"))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -126,7 +129,7 @@
   (fn [selector]
     (some-> (property-fn selector)
             (html/text)
-            (u/cleanup))))
+            (collections/cleanup))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -145,10 +148,10 @@
                     (let [select-post-fn (get-in provider [:configuration :last-page-process-fn])]
                       (if select-post-fn (map select-post-fn nodes) nodes))))
                  (map html/text)
-                 (map u/cleanup)
+                 (map collections/cleanup)
                  (remove nil?)
                  (map #(re-matches #"\d+" %))
-                 (map u/smart-parse-double)
+                 (map numbers/smart-parse-double)
                  (remove nil?)
                  (sort)
                  (last)
@@ -193,7 +196,7 @@
               (->> [(html/select n key-selector) (html/at n key-selector nil)]
                    (mapv first)
                    (mapv html/text)
-                   (mapv u/cleanup))))
+                   (mapv collections/cleanup))))
        (into {})))
 
 (defn spec-with-split
@@ -204,7 +207,7 @@
        (map (fn [s]
               (some->> (.split s ":" 2)
                        (seq)
-                       (map u/cleanup)
+                       (map collections/cleanup)
                        (into []))))
        (filter (fn [v] (= (count v) 2)))
        (into {})))

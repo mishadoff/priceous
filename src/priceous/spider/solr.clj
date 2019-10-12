@@ -6,9 +6,12 @@
             [flux.query :as query]
             [priceous.system.config :as config]
             [priceous.spider.provider :as p]
-            [priceous.utils.utils :as u]
+            [priceous.utils.collections :as collections]
+            [priceous.utils.time :as time]
             [taoensso.timbre :as log])
   (:import [org.apache.solr.client.solrj.util ClientUtils]))
+
+;; TODO move solr out of spider
 
 (declare
  resolve-page
@@ -87,7 +90,7 @@
                                     (mapv (fn [bkt]
                                             {:name      (:val bkt)
                                              :total     (:count bkt)
-                                             :ts        (-> (:ts bkt) (.getTime) u/to-date)
+                                             :ts        (-> (:ts bkt) (.getTime) time/to-date)
                                              :available (or (some->> (get-in bkt [:available :buckets])
                                                                      (filter :val)
                                                                      (first)
@@ -229,7 +232,7 @@
 
           ;; cleanup and escape query
           (update :q (fn [query]
-                       (let [qc (u/cleanup query)]
+                       (let [qc (collections/cleanup query)]
                          (if (empty? qc)
                            "*" ;; request all
                            (ClientUtils/escapeQueryChars qc)))))))))

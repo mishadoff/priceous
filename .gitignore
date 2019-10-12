@@ -14,3 +14,4 @@ pom.xml.as
 .hg/
 priceous.log*
 config.edn
+temp/

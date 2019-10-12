@@ -1,9 +1,10 @@
 (ns priceous.provider.goodwine
   (:require [net.cgrand.enlive-html :as html]
-            [taoensso.timbre :as log]
-            [priceous.utils.utils :as u]
             [priceous.spider.provider :as p]
-            [priceous.spider.selector-utils :as su]))
+            [priceous.spider.selector-utils :as su]
+            [priceous.utils.time :as time]
+            [priceous.utils.numbers :as numbers]
+            [priceous.utils.collections :as collections]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -52,18 +53,18 @@
             (assoc :link link)
             (assoc :image (img [:.imageDetailProd [:img :#mag-thumb]]))
             (assoc :country (spec "география"))
-            (assoc :wine_sugar (some-> (spec "Сахар, г/л") (u/smart-parse-double)))
+            (assoc :wine_sugar (some-> (spec "Сахар, г/л") (numbers/smart-parse-double)))
             (assoc :wine_grape (some->> (spec "Сортовой состав")
                                         (#(clojure.string/split % #";"))
-                                        (map u/cleanup)
+                                        (map collections/cleanup)
                                         (remove empty?)
                                         (clojure.string/join ", ")))
             (assoc :vintage (spec "Винтаж"))
             (assoc :producer (spec "Производитель"))
-            (assoc :type (u/cat-items (p/category-name provider) (spec "Тип")))
-            (assoc :alcohol (u/smart-parse-double (spec "Крепость, %")))
+            (assoc :type (collections/cat-items (p/category-name provider) (spec "Тип")))
+            (assoc :alcohol (numbers/smart-parse-double (spec "Крепость, %")))
             (assoc :description (spec "цвет, вкус, аромат"))
-            (assoc :timestamp (u/now))
+            (assoc :timestamp (time/now))
             (assoc :product-code (str (p/pname provider) "_" (text+ [:.titleProd :.articleProd :span])))
             (assoc :available (empty? (q? [:.notAvailableBlock])))
 
@@ -77,14 +78,14 @@
                                 (-> (q* [:.additionallyServe :.bottle :p])
                                     (first)
                                     (html/text)
-                                    (u/smart-parse-double))))))
+                                    (numbers/smart-parse-double))))))
 
             ((fn [p] (assoc p :price
                               (if (:available p)
                                 (-> (q* [:.additionallyServe :.price])
                                     (first)
                                     (html/text)
-                                    (u/smart-parse-double))))))
+                                    (numbers/smart-parse-double))))))
 
             ;; process sales
             (assoc :sale-description (some->> (q*? [:.bottle.pull-left :span])
@@ -94,7 +95,7 @@
                                               ((fn [txt] (.split txt "—")))
                                               (seq)
                                               (second)
-                                              (u/smart-parse-double)
+                                              (numbers/smart-parse-double)
                                               (format "Цена при покупке любых 6+ бутылок, %.2f грн")))
 
             ((fn [p] (assoc p :sale (not (empty? (:sale-description p)))))))))))

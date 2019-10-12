@@ -1,10 +1,11 @@
 (ns priceous.provider.alcomag
-  (:require [clojure.string :as str]
-            [net.cgrand.enlive-html :as html]
-            [priceous.provider :as p]
-            [priceous.selector-utils :as su]
-            [priceous.utils :as u]
-            [taoensso.timbre :as log]))
+  (:require [net.cgrand.enlive-html :as html]
+            [priceous.spider.provider :as p]
+            [priceous.spider.selector-utils :as su]
+            [priceous.utils.http :as http]
+            [priceous.utils.time :as time]
+            [priceous.utils.collections :as collections]
+            [priceous.utils.numbers :as numbers]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -50,12 +51,12 @@
             (assoc :name (text+ [:.product-item__title]))
             (assoc :link (some-> (q+ [:.product-item__title :a])
                                  (get-in [:attrs :href])
-                                 (#(u/full-href provider %))))
+                                 (#(http/full-href provider %))))
             (assoc :image (some-> (q? [:.bx_catalog_item_images])
                                   (get-in [:attrs :style])
                                   ((fn [style]
                                      (second (re-find #"url\('(.*)'\)" style))))
-                                  (#(u/full-href provider %))))
+                                  (#(http/full-href provider %))))
             
             #_(assoc :producer (spec "Производитель"))
             #_(assoc :country (spec "Страна"))
@@ -67,7 +68,7 @@
                                   (spec "Тип"))
                                (u/cleanup)))
             (assoc :type (p/category-name provider))
-            (assoc :timestamp (u/now))
+            (assoc :timestamp (time/now))
             #_(assoc :product-code (str (get-in provider [:info :name])
                                       "_"
                                       (text+ [:.articul :b])))
@@ -78,11 +79,11 @@
                                   (html/at [:span] nil)
                                   (first)
                                   (html/text)
-                                  (u/cleanup)
-                                  (u/smart-parse-double)))
+                                  (collections/cleanup)
+                                  (numbers/smart-parse-double)))
             ((fn [doc]
                (let [oldprice (some-> (text? [:.bx_price [:span (html/but (html/has-class "snt-catalog-currency"))]])
-                                      (u/smart-parse-double))
+                                      (numbers/smart-parse-double))
                      sale (boolean oldprice)
                      sale-desc (if sale (format "старая цена %.2f" oldprice) nil)]
                  (-> doc
@@ -127,7 +128,7 @@
                    ;; TODO alcomag very aggressive about crawling, do wait periods
                    :fetch-page-fn      (fn [provider]
                                          (Thread/sleep 1000)
-                                         (u/fetch (p/current-page provider)))}})
+                                         (http/fetch (p/current-page provider)))}})
 
 
 

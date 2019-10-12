@@ -22,30 +22,7 @@
          :password "<PASSWORD>"
  }
 
- :scrapping {:providers
-             ["goodwine"
-              
-              "winetime"
-              "alcoland"
-              "alcomag"
-              "alcoparty"
-              "alcostore"
-              "alcovegas"
-              "auchan"
-              "barbados"
-              "bestwine"
-              "dutyfreeshop"
-              "dutyfreestore"
-              "elitalco"
-              "eliteclub"
-              "elitochka"
-              "etelefon"
-              "fozzy"
-              "megamarket"
-              "metro"
-              "novus"
-              "rozetka"
-              ]}
+ :scrapping {:providers ["goodwine"]}
  :view {
         :per-page 10
         }
