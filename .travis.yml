@@ -4,3 +4,4 @@ after_script:
   - bash -ex resources/coveralls.sh
 jdk:
   - oraclejdk8
+dist: trusty
