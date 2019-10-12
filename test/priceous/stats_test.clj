@@ -1,5 +1,5 @@
 (ns priceous.stats-test
-  (:require [priceous.stats :refer :all]
+  (:require [priceous.spider.stats :refer :all]
             [clojure.test :refer :all]))
 
 (deftest test--data-coverage

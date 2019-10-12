@@ -1,5 +1,5 @@
 (ns priceous.scheduler-test
-  (:require [priceous.scheduler :refer :all]
+  (:require [priceous.spider.scheduler :refer :all]
             [clojure.test :refer :all])
   (:import [java.util.concurrent TimeUnit]))
 

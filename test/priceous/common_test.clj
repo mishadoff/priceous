@@ -1,7 +1,8 @@
 (ns priceous.common-test
   (:require [clojure.test :refer :all]
-            [priceous.utils :as u]
-            [taoensso.timbre :as log])
+            [priceous.utils.edn :as edn]
+            [taoensso.timbre :as log]
+            [priceous.utils.http :as http])
   (:import (java.io File)))
 
 ;; common package for testing different providers
@@ -26,7 +27,7 @@
     )))
 
 (defn provider-doc [node->doc-fn provider test-in]
-  (-> (node->doc-fn provider {:page (u/read-edn test-in) :link nil})
+  (-> (node->doc-fn provider {:page (edn/read-edn test-in) :link nil})
       (dissoc :timestamp)
       ))
 
@@ -44,10 +45,10 @@
     ))
 
 (defn save [url name]
-  (spit name (seq (u/fetch url))))
+  (spit name (seq (http/fetch url))))
 
 (defn apply-meta [provider meta-path]
-  (let [meta (u/read-edn-silent meta-path)]
+  (let [meta (edn/read-edn-silent meta-path)]
     (cond
       (not (nil? (:category meta)))
       (assoc-in provider [:state :category] (:category meta))
