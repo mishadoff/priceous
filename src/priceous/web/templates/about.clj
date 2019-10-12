@@ -1,6 +1,6 @@
-(ns priceous.templates.about
+(ns priceous.web.templates.about
   (:require [hiccup.core :refer :all]
-            [priceous.templates.base :as base]))
+            [priceous.web.templates.base :as base]))
 
 (declare view about-container)
 

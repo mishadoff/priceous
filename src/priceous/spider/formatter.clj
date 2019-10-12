@@ -1,4 +1,4 @@
-(ns priceous.formatter)
+(ns priceous.spider.formatter)
 
 (defn processing-page [provider last-page-num]
   (format "[%s | %s] Processing page %s/%s"

@@ -3,7 +3,7 @@
   :url "http://priceous.mishadoff.com"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
-  :dependencies [[org.clojure/clojure "1.8.0"]
+  :dependencies [[org.clojure/clojure "1.10.1"]
 
                  ;; Instrumenting and dynamic providers loading
                  [org.clojure/tools.namespace "0.2.11"]
@@ -28,6 +28,9 @@
                  ;; logger
                  [com.taoensso/timbre "4.7.4"]
                  [com.fzakaria/slf4j-timbre "0.3.2"]
+
+                 ;; Components management
+                 [integrant "0.7.0"]
 
                  ;; solr client
                  [com.codesignals/flux "0.6.0"
@@ -55,11 +58,14 @@
                  [com.draines/postal "2.0.2"]]
 
                  ;; Selenium
+
   :aliases {"goodwine" ["run" "-m" "priceous.core" "goodwine"]}
 
-  :plugins [[lein-ring "0.9.7"]]
-  :ring {:handler priceous.web/app
-         :init    priceous.web/init}
+  :repl-options {:init-ns user}
+
+  :plugins []
+
+  :source-paths ["src" "dev"]
 
   :profiles {:dev {:plugins [[jonase/eastwood "0.2.1"]
                              [lein-kibit "0.1.2"]
@@ -69,6 +75,7 @@
   ;; no opts for now
   :jvm-opts []
 
-  :aot  [priceous.web]
-  :main priceous.web)
+  :aot  [priceous.main]
+  :main priceous.main
+  )
 

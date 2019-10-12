@@ -1,4 +1,4 @@
-(ns priceous.solr
+(ns priceous.spider.solr
   (:require [clj-time.coerce :as tc]
             [clojure.string :as str]
             [flux.core :as flux]

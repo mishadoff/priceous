@@ -1,10 +1,7 @@
-(ns priceous.templates.base
+(ns priceous.web.templates.base
   (:require [hiccup.core :refer :all]
             [hiccup.form :refer :all]
             [hiccup.page :as page]
-            [priceous.config :as config]
-            [priceous.utils :as u]
-            [taoensso.timbre :as log]
             [trptcolin.versioneer.core :as v]))
 
 (declare page header footer)

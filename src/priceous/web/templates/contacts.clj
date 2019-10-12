@@ -1,6 +1,6 @@
-(ns priceous.templates.contacts
+(ns priceous.web.templates.contacts
   (:require [hiccup.core :refer :all]
-            [priceous.templates.base :as base]))
+            [priceous.web.templates.base :as base]))
 
 (declare view contacts-container)
 

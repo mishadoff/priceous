@@ -1,7 +1,7 @@
-(ns priceous.templates.stats
+(ns priceous.web.templates.stats
   (:require [hiccup.core :refer :all]
             [hiccup.form :refer :all]
-            [priceous.templates.base :as base]
+            [priceous.web.templates.base :as base]
             [priceous.utils :as u]
             [taoensso.timbre :as log]))
 

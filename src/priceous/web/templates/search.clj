@@ -1,14 +1,12 @@
-(ns priceous.templates.search
+(ns priceous.web.templates.search
   (:require [clj-time.format :as tf]
             [clojure.string :as str]
             [hiccup.core :refer :all]
             [hiccup.form :refer :all]
-            [hiccup.page :as page]
-            [priceous.templates.base :as base]
-            [priceous.templates.query-examples :as qe]
+            [priceous.web.templates.base :as base]
+            [priceous.web.templates.query-examples :as qe]
             [priceous.config :as config]
-            [priceous.utils :as u]
-            [taoensso.timbre :as log]))
+            [priceous.utils :as u]))
 
 (declare
  view

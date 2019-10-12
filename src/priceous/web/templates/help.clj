@@ -1,7 +1,7 @@
-(ns priceous.templates.help
+(ns priceous.web.templates.help
   (:require [hiccup.core :refer :all]
-            [priceous.templates.base :as base]
-            [priceous.templates.query-examples :as qe]))
+            [priceous.web.templates.base :as base]
+            [priceous.web.templates.query-examples :as qe]))
 
 (declare view help-container)
 

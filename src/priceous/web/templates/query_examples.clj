@@ -1,4 +1,4 @@
-(ns priceous.templates.query-examples
+(ns priceous.web.templates.query-examples
   (:require [hiccup.core :refer :all]
             [hiccup.page :as page]))
 

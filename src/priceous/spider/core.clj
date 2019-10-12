@@ -1,4 +1,4 @@
-(ns priceous.core
+(ns priceous.spider.core
   (:require [priceous.solr :as solr]
             [priceous.utils :as u]
             [priceous.provider :as p]
@@ -7,7 +7,7 @@
             [priceous.appender :as a]
             [priceous.formatter :as fmt]
             [priceous.config :as config]
-            [priceous.alert :as alert]
+            [priceous.spider.alert :as alert]
             [priceous.flow :as flow]
             [clojure.java.io :as io]
             [taoensso.timbre :as log]

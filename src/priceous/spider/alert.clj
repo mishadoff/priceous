@@ -1,4 +1,4 @@
-(ns priceous.alert
+(ns priceous.spider.alert
   (:require [priceous.config :as config]
             [postal.core :as mail]
             [taoensso.timbre :as log]))
