@@ -2,12 +2,12 @@ version: "3.0"
 
 services:
   priceous:
-    build: priceous
+    build: ../.
     ports:
       - "8080:8080"
   solr:
     image: "solr:8.2.0"
     ports:
-      - "8985:8983"
+      - "8984:8983"
     volumes:
-      - ../resources/solr/whisky/:/var/solr/data/whisky/
+      - ../temp/whisky/:/var/solr/data/whisky/

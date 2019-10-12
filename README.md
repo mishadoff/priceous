@@ -2,6 +2,12 @@
 
 Web-aggregator for whisky prices in ukrainian whisky shops
 
+# Dev
+
+```
+scripts/init-solr-volume.sh
+```
+
 ## License
 
 Copyright © 2016 mishadoff
