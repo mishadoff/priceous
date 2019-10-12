@@ -16,3 +16,5 @@ priceous.log*
 config.edn
 temp/
 resourses/solr/whisky/data/
+resourses/solr/whisky/conf/managed-schema
+resourses/solr/whisky/conf/schema.xml.bak
