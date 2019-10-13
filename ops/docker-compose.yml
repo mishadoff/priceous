@@ -4,7 +4,7 @@ services:
   priceous:
     build: ../.
     ports:
-      - "8080:8080"
+      - "3000:3000"
   solr:
     image: "solr:8.2.0"
     ports:

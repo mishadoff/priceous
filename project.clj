@@ -3,7 +3,7 @@
   :url "http://priceous.mishadoff.com"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
-  :dependencies [[org.clojure/clojure "1.10.1"]
+  :dependencies [[org.clojure/clojure "1.9.0"]
 
                  ;; Instrumenting and dynamic providers loading
                  [org.clojure/tools.namespace "0.2.11"]
@@ -30,7 +30,7 @@
                  [com.fzakaria/slf4j-timbre "0.3.2"]
 
                  ;; Components management
-                 [integrant "0.7.0"]
+                 [integrant "0.6.3"]
 
                  ;; Prismatic schema
                  [prismatic/schema "1.1.12"]
@@ -77,6 +77,8 @@
 
   ;; no opts for now
   :jvm-opts []
+
+  :uberjar-name "priceous.jar"
 
   :aot  [priceous.main]
   :main priceous.main
