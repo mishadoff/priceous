@@ -5,9 +5,11 @@ services:
     build: ../.
     ports:
       - "3000:3000"
+    volumes:
+      - ../config.edn:/usr/src/app/config.edn
   solr:
     image: "solr:8.2.0"
     ports:
-      - "8984:8983"
+      - "8983:8983"
     volumes:
       - ../temp/whisky/:/var/solr/data/whisky/

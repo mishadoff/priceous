@@ -5,11 +5,13 @@ Web-aggregator for whisky prices in ukrainian whisky shops
 # Dev
 
 ```
+lein uberjar
 scripts/init-solr-volume.sh
+cd ops && docker-compose up -d
 ```
 
 ## License
 
-Copyright © 2016 mishadoff
+Copyright © 2019 mishadoff
 
 Distributed under the Eclipse Public License either version 1.0

@@ -4,7 +4,8 @@
             [priceous.system.config :as config]
             [priceous.web.routes :as web]
             [ring.adapter.jetty :as jetty]
-            [taoensso.timbre :as log]))
+            [taoensso.timbre :as log])
+  (:import (org.apache.solr.client.solrj.impl HttpSolrClient$Builder)))
 
 ;;; Components declaration
 
@@ -16,6 +17,9 @@
                    :webapp (ig/ref :server/webapp)}
 
    :server/webapp {:config (ig/ref :system/config)}
+
+   :solr/client {:config (ig/ref :system/config)}
+
    })
 
 ;;;
@@ -51,4 +55,14 @@
 
 (defmethod ig/halt-key! :server/webapp [_ _])
 
-;;;
+;;; Solr Client
+
+(defmethod ig/init-key :solr/client [_ {:keys [config]}]
+  (let [connection-string (str (-> config :solr :host)
+                               "/"
+                               (-> config :solr :collection))]
+    (log/info "Init solr connection:" connection-string)
+    (-> (HttpSolrClient$Builder. connection-string)
+        (.build))))
+
+(defmethod ig/halt-key! :solr/client [_ _])

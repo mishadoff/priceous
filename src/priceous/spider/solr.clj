@@ -1,14 +1,14 @@
 (ns priceous.spider.solr
   (:require [clj-time.coerce :as tc]
             [clojure.string :as str]
-            [flux.core :as flux]
-            [flux.http :as http]
-            [flux.query :as query]
             [priceous.system.config :as config]
             [priceous.spider.provider :as p]
             [priceous.utils.collections :as collections]
             [priceous.utils.time :as time]
-            [taoensso.timbre :as log])
+            [priceous.solr.client :as solr]
+            [taoensso.timbre :as log]
+            [flux.core :as flux]
+            [priceous.system.state :as system])
   (:import [org.apache.solr.client.solrj.util ClientUtils]))
 
 ;; TODO move solr out of spider
@@ -29,23 +29,19 @@
         available (resolve-available params)
         perpage (config/get :view :per-page)]
     (try
-      (flux/with-connection
-        (http/create
-          (config/get :solr :host)
-          (keyword (config/get :solr :collection)))
-        (let [random? (= "random" (:sort params))
-              {:keys [q fq]} (process-query params)
-              request {:q     q
-                       :q.op  "AND"
-                       :df    "text"
-                       :start (if random? 0 (* perpage (dec page)))
-                       :rows  (if random? 1 perpage)
-                       :sort  sorting
-                       :fq    (str/join " AND " fq)}
-              response (flux/request (query/create-query-request request))
-              total (if random? 1 (get-in response [:response :numFound]))]
-          (log/info (format "[%s] Completed SolrQuery [%s] found %s items" (:ip ctx) q total))
-          {:status :success :data response :total total}))
+      (let [random? (= "random" (:sort params))
+            {:keys [q fq]} (process-query params)
+            request {:q     q
+                     :q.op  "AND"
+                     :df    "text"
+                     :start (if random? 0 (* perpage (dec page)))
+                     :rows  (if random? 1 perpage)
+                     :sort  sorting
+                     :fq    (str/join " AND " fq)}
+            response (solr/query request)
+            total (if random? 1 (get-in response [:response :numFound]))]
+        (log/info (format "[%s] Completed SolrQuery [%s] found %s items" (:ip ctx) q total))
+        {:status :success :data response :total total})
       (catch Exception e
         (log/error e)
         {:status :error :response {}}))))
@@ -61,41 +57,35 @@
 
 (defn stats [ctx]
   (try
-    (flux/with-connection
-      ;; TODO solr component
-      (http/create
-        (config/get :solr :host)
-        (keyword (config/get :solr :collection)))
-      (log/info (format "[%s] Requested StatsRequest" (:ip ctx)))
-      (let [response
-            (flux/request
-              (query/create-query-request
-                {:q     "*"
-                 :q.op  "AND"
-                 :start 0
-                 :rows  0
-                 :df    "text"
-                 :json.facet.providers
-                        "{type:terms,
-                          field:provider,
-                          limit:100,
-                          facet:{
-                            ts:\"max(timestamp)\",
-                            available:{
-                              type:terms,
-                              field:available}}}"}))]
-        {:status   :success
-         :response {:total     (get-in response [:response :numFound])
-                    :providers (->> (get-in response [:facets :providers :buckets])
-                                    (mapv (fn [bkt]
-                                            {:name      (:val bkt)
-                                             :total     (:count bkt)
-                                             :ts        (-> (:ts bkt) (.getTime) time/to-date)
-                                             :available (or (some->> (get-in bkt [:available :buckets])
-                                                                     (filter :val)
-                                                                     (first)
-                                                                     (:count))
-                                                            0)})))}}))
+    (log/info (format "[%s] Requested StatsRequest" (:ip ctx)))
+    (let [response
+          (solr/query
+            {:q     "*"
+             :q.op  "AND"
+             :start 0
+             :rows  0
+             :df    "text"
+             :json.facet.providers
+                    "{type:terms,
+                      field:provider,
+                      limit:100,
+                      facet:{
+                        ts:\"max(timestamp)\",
+                        available:{
+                          type:terms,
+                          field:available}}}"})]
+      {:status   :success
+       :response {:total     (get-in response [:response :numFound])
+                  :providers (->> (get-in response [:facets :providers :buckets])
+                                  (mapv (fn [bkt]
+                                          {:name      (:val bkt)
+                                           :total     (:count bkt)
+                                           :ts        (-> (:ts bkt) (.getTime) time/to-date)
+                                           :available (or (some->> (get-in bkt [:available :buckets])
+                                                                   (filter :val)
+                                                                   (first)
+                                                                   (:count))
+                                                          0)})))}})
     (catch Exception e
       (log/error e)
       {:status :error :response {}})))
@@ -109,37 +99,30 @@
 
 (defn write [provider items]
   (try
-    (flux/with-connection
-      (http/create
-        (config/get :solr :host)
-        (keyword (config/get :solr :collection)))
-
+    (flux/with-connection (-> system/system :solr/client)
       (log/info "Connections to SOLR established")
-
-      ;; log deltas
-      (let [num-before (-> (flux/request (query/create-query-request
-                                          {:q "*" :rows 0
-                                           :df "text"
-                                           :q.op "AND"
-                                           :fq (format "provider:%s" (p/pname provider))}))
+      (let [num-before (-> (solr/query {:q "*" :rows 0
+                                        :df "text"
+                                        :q.op "AND"
+                                        :fq (format "provider:%s" (p/pname provider))})
                            (get-in [:response :numFound]))
             delta (- (count items) num-before)]
 
+        ;; log deltas
         (log/info (format "[%s] Items delta %d" (p/pname provider) delta))
         (when (< delta -50) ;; TODO configurable alert for deltas
           (log/warn "High delta change detected, probably something wrong")))
 
-      ;; delete all documents for this provider because currently we interested
-      ;; in recent items
       (flux/delete-by-query (str "provider:" (get-in provider [:info :name])))
 
-      ;; transform and add to solr
+      ;; TODO solr client add items
       (->> items
            (map transform-dashes-to-underscores)
            (flux/add))
+      (flux/commit))
 
-      (flux/commit)
-      (log/info (format "Pushed to solr %s items" (count items))))
+    (log/info (format "Pushed to solr %s items" (count items)))
+
     (catch Exception e
       (log/error "Pushing to solr failed")
       (log/error e))))
