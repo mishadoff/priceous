@@ -4,7 +4,7 @@
             [priceous.provider :as p]
             [priceous.selector-utils :as su]
             [priceous.utils :as u]
-            [taoensso.timbre :as log]))
+            [clojure.tools.logging :as log]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

@@ -1,6 +1,6 @@
 (ns priceous.utils.namespace
   (:require [clojure.tools.namespace :as cns]
-            [taoensso.timbre :as log]))
+            [clojure.tools.logging :as log]))
 
 (defn find-all-providers []
   (->> (cns/find-namespaces-on-classpath)

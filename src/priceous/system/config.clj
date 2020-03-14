@@ -1,6 +1,6 @@
 (ns priceous.system.config
   (:refer-clojure :exclude [get])
-  (:require [taoensso.timbre :as log]
+  (:require [clojure.tools.logging :as log]
             [priceous.utils.collections :as collections]
             [priceous.system.model :as model]
             [priceous.system.state :as state]

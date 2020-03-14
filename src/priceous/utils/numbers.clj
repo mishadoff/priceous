@@ -1,5 +1,5 @@
 (ns priceous.utils.numbers
-  (:require [taoensso.timbre :as log]))
+  (:require [clojure.tools.logging :as log]))
 
 ;;;
 

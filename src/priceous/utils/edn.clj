@@ -1,6 +1,6 @@
 (ns priceous.utils.edn
   (:require [clojure.java.io :as io]
-            [taoensso.timbre :as log]))
+            [clojure.tools.logging :as log]))
 
 ;;;
 

@@ -8,7 +8,7 @@
             [priceous.system.config :as config]
             [priceous.utils.namespace :as nsutil]
             [priceous.utils.time :as time]
-            [taoensso.timbre :as log]
+            [clojure.tools.logging :as log]
             [clojure.string :as str])
   (:gen-class))
 
@@ -104,10 +104,10 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defn -main
-  "This main needed to test scrapping without starting webserver
-   lein run -m priceous.core goodwine rozetka ...
+  "This main needed for on-demand scrapping without starting webserver
+   lein run -m priceous.spider.core goodwine rozetka ...
    or
-   lein run -m priceous.core all
+   lein run -m priceous.spider.core all
   "
   [& args]
   ;(config/config-timbre!)

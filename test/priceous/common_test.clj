@@ -1,7 +1,7 @@
 (ns priceous.common-test
   (:require [clojure.test :refer :all]
             [priceous.utils.edn :as edn]
-            [taoensso.timbre :as log]
+            [clojure.tools.logging :as log]
             [priceous.utils.http :as http])
   (:import (java.io File)))
 

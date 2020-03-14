@@ -1,6 +1,6 @@
 (ns priceous.provider.barbados
   (:require [net.cgrand.enlive-html :as html]
-            [taoensso.timbre :as log]
+            [clojure.tools.logging :as log]
             [clj-http.client :as http]
             [cheshire.core :as json]
             [priceous.utils :as u]

@@ -8,6 +8,9 @@
                  ;; Instrumenting and dynamic providers loading
                  [org.clojure/tools.namespace "0.3.1"]
 
+                 ;; Schema
+                 [prismatic/schema "1.1.12"]
+
                  ;; server and middleware
                  [ring "1.7.1"]
                  [ring/ring-defaults "0.3.2"]
@@ -25,9 +28,23 @@
                  ;; for selector based scrapping
                  [enlive "1.1.6"]
 
+                 ;; Database
+                 [com.layerware/hugsql "0.5.1"]
+                 [org.postgresql/postgresql "42.2.2"]
+                 [hikari-cp "2.10.0"]
+
+                 ;; Migrations
+                 [ragtime "0.8.0"]
+
                  ;; logger
-                 [com.taoensso/timbre "4.10.0"]
-                 [com.fzakaria/slf4j-timbre "0.3.14"]
+                 [org.clojure/tools.logging "1.0.0"]
+                 [ch.qos.logback/logback-classic "1.2.3"]
+                 [ch.qos.logback.contrib/logback-json-classic "0.1.5"]
+                 [ch.qos.logback.contrib/logback-jackson "0.1.5"]
+                 [org.slf4j/slf4j-api "1.7.26"]
+                 [org.slf4j/jul-to-slf4j "1.7.26"]                        ; JUL to SLF4J
+                 [org.slf4j/jcl-over-slf4j "1.7.26"]                      ; JCL to SLF4J
+                 [org.slf4j/log4j-over-slf4j "1.7.26"]
 
                  ;; Components management
                  [integrant "0.7.0"]
@@ -57,12 +74,13 @@
                  ;; extract version of the project into app
                  [trptcolin/versioneer "0.2.0"]
 
+                 ;; SparkleDriver
+                 [sparkledriver "0.2.4"]
+
                  ;; Mail library for alerts
                  [com.draines/postal "2.0.3"]]
 
-                 ;; Selenium
-
-  :aliases {"goodwine" ["run" "-m" "priceous.core" "goodwine"]}
+  :aliases {"goodwine" ["run" "-m" "priceous.spider.core" "goodwine"]}
 
   :repl-options {:init-ns user}
 

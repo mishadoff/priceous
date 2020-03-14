@@ -6,7 +6,7 @@
             [priceous.utils.collections :as collections]
             [priceous.utils.time :as time]
             [priceous.solr.client :as solr]
-            [taoensso.timbre :as log]
+            [clojure.tools.logging :as log]
             [flux.core :as flux]
             [priceous.system.state :as system])
   (:import [org.apache.solr.client.solrj.util ClientUtils]))

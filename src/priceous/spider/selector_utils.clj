@@ -2,7 +2,7 @@
   (:require [priceous.utils.numbers :as numbers]
             [priceous.utils.collections :as collections]
             [priceous.spider.provider :as p]
-            [taoensso.timbre :as log]
+            [clojure.tools.logging :as log]
             [net.cgrand.enlive-html :as html]
             [priceous.utils.error :as error]
             [priceous.utils.http :as http]))

@@ -1,6 +1,6 @@
 (ns priceous.utils.http
   (:require [clojure.string :as s]
-            [taoensso.timbre :as log]
+            [clojure.tools.logging :as log]
             [net.cgrand.enlive-html :as html]))
 
 ;;;

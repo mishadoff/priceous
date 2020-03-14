@@ -1,5 +1,5 @@
 (ns priceous.spider.provider
-  (:require [taoensso.timbre :as log]))
+  (:require [clojure.tools.logging :as log]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Accessors and Mutators for provider structure

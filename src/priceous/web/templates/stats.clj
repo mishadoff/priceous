@@ -4,7 +4,7 @@
             [priceous.web.templates.base :as base]
             [priceous.utils.namespace :as nsutil]
             [priceous.utils.time :as time]
-            [taoensso.timbre :as log]))
+            [clojure.tools.logging :as log]))
 
 (declare view stats-container)
 

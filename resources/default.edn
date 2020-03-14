@@ -9,6 +9,23 @@
           :rate-limit 1000
           }
 
+ :postgres {:auto-commit        true
+            :read-only          false
+            :connection-timeout 30000
+            :validation-timeout 5000
+            :idle-timeout       600000
+            :max-lifetime       1800000
+            :minimum-idle       10
+            :maximum-pool-size  10
+            :pool-name          "postgres-db-pool"
+            :adapter            "postgresql"
+            :username           "postgres"
+            :password           "postgres"
+            :database-name      "priceous"
+            :server-name        "localhost"
+            :port-number        5432
+            :register-mbeans    false}
+
  :solr {:host "http://localhost:8983/solr"
         :collection "whisky"}
 

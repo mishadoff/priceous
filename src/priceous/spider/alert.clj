@@ -1,7 +1,7 @@
 (ns priceous.spider.alert
   (:require [priceous.system.config :as config]
             [postal.core :as mail]
-            [taoensso.timbre :as log]))
+            [clojure.tools.logging :as log]))
 
 ;; TODO alerting component
 

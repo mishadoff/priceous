@@ -1,29 +1,6 @@
 (ns priceous.system.init
-  (:require [taoensso.timbre :as log]
+  (:require [clojure.tools.logging :as log]
             [taoensso.timbre.appenders.3rd-party.rotor :as rotor]))
-
-;;;
-
-(defn config-timbre! []
-  (let [colors {:info :green :warn :yellow :error :red :fatal :purple :report :blue}]
-    (log/set-config!
-      {:level          :info
-       :output-fn      log/default-output-fn
-       :timestamp-opts {:pattern "yyyy-MM-dd HH:mm:ss.SSS"}
-       :appenders      {:color-appender
-                        {:enabled?   true
-                         :async?     false
-                         :min-level  nil
-                         :rate-limit nil
-                         :output-fn  :inherit
-                         :fn         (fn [{:keys [error? level output-fn] :as data}]
-                                       (binding [*out* (if error? *err* *out*)]
-                                         (if-let [color (colors level)]
-                                           (println (log/color-str color (output-fn data)))
-                                           (println (output-fn data)))))}
-
-                        :rotor-appender
-                        (rotor/rotor-appender {:path "./priceous.log"})}})))
 
 ;;;
 

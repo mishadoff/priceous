@@ -1,8 +1,11 @@
 * Anomaly detection
 * Synonyms for Goodwine
 * Synonyms for Rozetka
-* Retry Startegy
+* Retry Strategy
 * Appender package
+* login via Google
+* Accounts
+* Match product against stores
 * Investigate how to avoid selenium
 * SOLR Tokenizer
 * HOST Solr

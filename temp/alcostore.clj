@@ -1,6 +1,6 @@
 (ns priceous.provider.alcostore
   (:require [net.cgrand.enlive-html :as html]
-            [taoensso.timbre :as log]
+            [clojure.tools.logging :as log]
             [priceous.utils :as u]
             [priceous.provider :as p]
             [priceous.selector-utils :as su]))

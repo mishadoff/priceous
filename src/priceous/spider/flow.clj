@@ -1,5 +1,5 @@
 (ns priceous.spider.flow
-  (:require [taoensso.timbre :as log]
+  (:require [clojure.tools.logging :as log]
             [priceous.utils.error :as error]
             [priceous.utils.http :as http]
             [priceous.spider.selector-utils :as su]

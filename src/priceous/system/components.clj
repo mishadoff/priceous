@@ -3,8 +3,12 @@
             [priceous.system.init :as init]
             [priceous.system.config :as config]
             [priceous.web.routes :as web]
+            [ragtime.core :as ragtime]
+            [ragtime.jdbc :as ragtime.jdbc]
+            [hikari-cp.core :as hikari]
             [ring.adapter.jetty :as jetty]
-            [taoensso.timbre :as log])
+            [clojure.tools.logging :as log]
+            [ragtime.core :as core])
   (:import (org.apache.solr.client.solrj.impl HttpSolrClient$Builder)))
 
 ;;; Components declaration
@@ -12,6 +16,11 @@
 (def declaration
   {:system/init   {}
    :system/config {:init (ig/ref :system/init)}
+
+   :db/postgres {:config (ig/ref :system/config)}
+
+   :db/migrations {:config (ig/ref :system/config)
+                   :db (ig/ref :db/postgres)}
 
    :server/jetty  {:config (ig/ref :system/config)
                    :webapp (ig/ref :server/webapp)}
@@ -26,7 +35,6 @@
 
 (defmethod ig/init-key :system/init [_ _]
   (log/info "Preinit system")
-  (init/config-timbre!)
   (init/trust-all-certificates!)
   :ok)
 
@@ -37,6 +45,34 @@
   (config/read-config!))
 
 (defmethod ig/halt-key! :system/config [_ _])
+
+;; Database connection
+
+(defmethod ig/init-key :db/postgres [_ {:keys [config]}]
+  (log/info "Init postgres connection pool")
+  (let [datasource-options (:postgres config)]
+    {:datasource (hikari/make-datasource datasource-options)}))
+
+(defmethod ig/halt-key! :db/postgres [_ datasource]
+  (log/info "Closing postgres connection pool")
+  (-> datasource
+      :datasource
+      (hikari/close-datasource)))
+
+;; Migrations
+
+(defmethod ig/init-key :db/migrations [_ {:keys [config db]}]
+  (log/info "Performing migrations")
+  (let [migrations (ragtime.jdbc/load-resources "migrations")
+        datastore (ragtime.jdbc/sql-database db {:migrations-table "migrations"})]
+    (core/migrate-all
+      datastore
+      {}
+      migrations
+      {:reporter (fn [_ op id]
+                   (case op
+                     :up   (log/info "Applying: " id)
+                     :down (log/info "Rolling back: " id)))})))
 
 ;;; Jetty server
 

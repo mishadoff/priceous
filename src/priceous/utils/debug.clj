@@ -1,5 +1,5 @@
 (ns priceous.utils.debug
-  (:require [taoensso.timbre :as log]))
+  (:require [clojure.tools.logging :as log]))
 
 (defn debug [e] (log/debug e) e)
 
