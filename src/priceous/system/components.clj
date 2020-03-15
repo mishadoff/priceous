@@ -5,10 +5,10 @@
             [priceous.web.routes :as web]
             [ragtime.core :as ragtime]
             [ragtime.jdbc :as ragtime.jdbc]
+            [priceous.db.postgres :as pg]
             [hikari-cp.core :as hikari]
             [ring.adapter.jetty :as jetty]
-            [clojure.tools.logging :as log]
-            [ragtime.core :as core])
+            [clojure.tools.logging :as log])
   (:import (org.apache.solr.client.solrj.impl HttpSolrClient$Builder)))
 
 ;;; Components declaration
@@ -50,6 +50,7 @@
 
 (defmethod ig/init-key :db/postgres [_ {:keys [config]}]
   (log/info "Init postgres connection pool")
+  (pg/register-postgres-type-bindings)
   (let [datasource-options (:postgres config)]
     {:datasource (hikari/make-datasource datasource-options)}))
 
@@ -65,7 +66,7 @@
   (log/info "Performing migrations")
   (let [migrations (ragtime.jdbc/load-resources "migrations")
         datastore (ragtime.jdbc/sql-database db {:migrations-table "migrations"})]
-    (core/migrate-all
+    (ragtime/migrate-all
       datastore
       {}
       migrations
