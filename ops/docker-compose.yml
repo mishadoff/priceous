@@ -1,15 +1,28 @@
 version: "3.0"
 
 services:
+
   priceous:
     build: ../.
     ports:
       - "3000:3000"
     volumes:
       - ../config.edn:/usr/src/app/config.edn
+
   solr:
     image: "solr:8.2.0"
     ports:
       - "8983:8983"
     volumes:
       - ../temp/whisky/:/var/solr/data/whisky/
+
+  postgres:
+    image: "postgres:13.2"
+    ports:
+      - "5442:5432"
+    volumes:
+      - ../temp/pgdata:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=priceous

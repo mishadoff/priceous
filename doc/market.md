@@ -2,7 +2,7 @@
 
 ## Working
 
-- [GoodWine](http://goodwine.com.ua/)
+- [Goodwine](http://goodwine.com.ua/)
 
 ## Not verified
 

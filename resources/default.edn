@@ -23,7 +23,7 @@
             :password           "postgres"
             :database-name      "priceous"
             :server-name        "localhost"
-            :port-number        5432
+            :port-number        5442
             :register-mbeans    false}
 
  :solr {:host "http://localhost:8983/solr"

@@ -1,5 +1,5 @@
 -- Table related to the scrapping jobs
-create table jobs (
+create table if not exists jobs (
     id text primary key,
     type text not null,
     status text not null,
@@ -9,13 +9,13 @@ create table jobs (
 );
 
 -- Make jobs fast
-create index jobs_type_idx on jobs (type);
-create index jobs_status_idx on jobs (status);
-create index jobs_started_ts_idx on jobs (started_ts);
-create index jobs_finished_ts_idx on jobs (finished_ts);
+create index if not exists jobs_type_idx on jobs (type);
+create index if not exists jobs_status_idx on jobs (status);
+create index if not exists jobs_started_ts_idx on jobs (started_ts);
+create index if not exists jobs_finished_ts_idx on jobs (finished_ts);
 
 -- Contains information about all providers of data
-create table providers (
+create table if not exists providers (
     id text primary key, -- code name of provider
     title text not null, -- visible name of provider
     base_url text not null, -- link to the site
@@ -26,7 +26,7 @@ create table providers (
 );
 
 -- Historical product
-create table products (
+create table if not exists products (
     id text primary key, -- synthetic id identifier of the row
     provider_id text references providers(id), -- provider of the data, e.g. goodwine, winetime
 
@@ -50,12 +50,12 @@ create table products (
     is_new boolean not null, -- recent products
     is_sale boolean not null, -- product on sale
     sale_description text, -- applicable if product on sale
-    is_excise boolean not null, -- does tax paid for this product
+    is_excise boolean not null, -- is tax paid for this product
 
     -- system information
     created_at timestamptz not null, -- time when product appeared
     job_id text references jobs(id) -- product created by the following job
 );
 
-create index products_link_idx on products(link);
-create index products_created_at_idx on products(created_at);
+create index if not exists products_link_idx on products(link);
+create index if not exists products_created_at_idx on products(created_at);

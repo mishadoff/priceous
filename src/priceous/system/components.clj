@@ -72,8 +72,8 @@
       migrations
       {:reporter (fn [_ op id]
                    (case op
-                     :up   (log/info "Applying: " id)
-                     :down (log/info "Rolling back: " id)))})))
+                     :up   (log/info "Applying:" id)
+                     :down (log/info "Rolling back:" id)))})))
 
 ;;; Jetty server
 
