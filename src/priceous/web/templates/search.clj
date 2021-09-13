@@ -40,7 +40,7 @@
     [:div {:class "search-controls"}
      [:div {:class "pagination-parent"}
       (pagination content)]
-     [:div {:clsss "sorting-parent"}
+     [:div {:class "sorting-parent"}
       (sorting content)]]
 
     [:div {:class "search-container"}
