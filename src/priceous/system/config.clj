@@ -5,7 +5,8 @@
             [priceous.system.model :as model]
             [priceous.system.state :as state]
             [clojure.java.io :as io]
-            [schema.core :as s]))
+            [schema.core :as s])
+  (:import (java.io FileNotFoundException)))
 
 ;;;
 
@@ -23,6 +24,8 @@
 (defn- from-external-file [file]
   (log/debug "Reading props from file" file)
   (try (read-string (slurp (io/file file)))
+       (catch FileNotFoundException _
+         (do (log/infof "Custom config file '%s' is missing, using defaults." file) {}))
        (catch Exception e
          (do (log/error e "Problem reading props from file") {}))))
 

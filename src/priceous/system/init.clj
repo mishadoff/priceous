@@ -1,6 +1,5 @@
 (ns priceous.system.init
-  (:require [clojure.tools.logging :as log]
-            [taoensso.timbre.appenders.3rd-party.rotor :as rotor]))
+  (:require [clojure.tools.logging :as log]))
 
 ;;;
 

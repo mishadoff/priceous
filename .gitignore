@@ -15,3 +15,4 @@ pom.xml.as
 priceous.log*
 config.edn
 temp/
+logs/

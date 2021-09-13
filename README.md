@@ -10,6 +10,14 @@ scripts/init-solr-volume.sh
 cd ops && docker-compose up -d
 ```
 
+# REPL
+
+```
+Start REPL...
+Clojure 1.10.1
+> (init)
+```
+
 ## License
 
 Copyright © 2019 mishadoff
