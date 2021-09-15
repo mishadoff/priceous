@@ -10,7 +10,7 @@
 
 (defn get-categories [provider]
   (->>
-    #_[["Виски" "https://goodwine.com.ua/viski.html"]
+    [["Виски" "https://goodwine.com.ua/viski.html"]
      ["Вино" "https://goodwine.com.ua/vino.html"]
      ["Игристое Вино" "https://goodwine.com.ua/igristye.html"]
      ["Пиво" "https://goodwine.com.ua/pivo.html"]
@@ -29,9 +29,9 @@
      ["Писко" "https://goodwine.com.ua/drugie-krepkie/prochie-krepkie/pisko.html"]
      ["Мескаль" "https://goodwine.com.ua/drugie-krepkie/prochie-krepkie/meskal.html"]]
     ;; FIXME: temp process only whisky category
-    [["Виски" "https://goodwine.com.ua/viski.html"]]
+    #_[["Виски" "https://goodwine.com.ua/viski.html"]]
 
-    (mapv (fn [[name url]] {:name name :template (str url "?dir=asc&p=%s")}))))
+    (mapv (fn [[name url]] {:name name :template (str url "?dir=asc&p=%s&order=producer")}))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -53,42 +53,49 @@
             (assoc :excise true)
             (assoc :trusted true)
             (assoc :name (text+ [:.titleProd :> [:* (html/but [:.articleProd])]]))
+            (assoc :product-code (str (p/pname provider)
+                                      "_"
+                                      (text+ [:.articleProd [:span (html/attr= :itemprop "sku")]])))
             (assoc :link link)
             (assoc :image (img [:.imageDetailProd [:img :#mag-thumb]]))
             (assoc :country (spec "география"))
+            (assoc :producer (spec "Производитель"))
+            (assoc :description (spec "цвет, вкус, аромат"))
+            (assoc :alcohol (numbers/smart-parse-double (spec "Крепость, %")))
+            (assoc :type (collections/cat-items (p/category-name provider) (spec "Тип")))
+            (assoc :timestamp (time/now))
+
+            ;; FIXME: test if works
             (assoc :wine_sugar (some-> (spec "Сахар, г/л") (numbers/smart-parse-double)))
+
+            ;; FIXME: test if works
             (assoc :wine_grape (some->> (spec "Сортовой состав")
                                         (#(clojure.string/split % #";"))
                                         (map collections/cleanup)
                                         (remove empty?)
                                         (clojure.string/join ", ")))
-            (assoc :vintage (spec "Винтаж"))
-            (assoc :producer (spec "Производитель"))
-            (assoc :type (collections/cat-items (p/category-name provider) (spec "Тип")))
-            (assoc :alcohol (numbers/smart-parse-double (spec "Крепость, %")))
-            (assoc :description (spec "цвет, вкус, аромат"))
-            (assoc :timestamp (time/now))
-            (assoc :product-code (str (p/pname provider) "_" (text+ [:.titleProd :.articleProd :span])))
-            (assoc :available (empty? (q? [:.notAvailableBlock])))
 
+            ;; FIXME: test if works
+            (assoc :vintage (spec "Винтаж"))
+
+            (assoc :product-code (str (p/pname provider) "_" (text+ [:.articleProd [:span (html/attr= :itemprop "sku")]])))
+            (assoc :available (empty? (q? [:.notAvailableBlock])))
             (assoc :item_new (->> (q*? [:.medalIcon :.stamp]) ;; TODO more medals
                                   (map #(.contains (get-in % [:attrs :src]) "/New_"))
                                   (some true?)))
 
             ;; volume and price blocks are present if product is available
             ((fn [p] (assoc p :volume
-                              (if (:available p)
-                                (-> (q* [:.additionallyServe :.bottle :p])
-                                    (first)
-                                    (html/text)
-                                    (numbers/smart-parse-double))))))
+                              (-> (q*? [:.bottle :p])
+                                  (first)
+                                  (html/text)
+                                  (numbers/smart-parse-double)))))
 
             ((fn [p] (assoc p :price
-                              (if (:available p)
-                                (-> (q* [:.additionallyServe :.price])
-                                    (first)
-                                    (html/text)
-                                    (numbers/smart-parse-double))))))
+                              (-> (q* [[:meta (html/attr= :itemprop "price")]])
+                                  (first)
+                                  (get-in [:attrs :content])
+                                  (numbers/smart-parse-double)))))
 
             ;; process sales
             (assoc :sale-description (some->> (q*? [:.bottle.pull-left :span])
@@ -117,6 +124,8 @@
 
 
    ;; provider state, will be changed by flow processor
+   ;; todo: get rid of this from provider configuration and move to flow dynamic init
+   ;; todo: split paging configuration and state
    :state {
            :page-current   1
            :page-processed 0
@@ -136,5 +145,6 @@
                    :node-selector      [:.textBlock]
                    :link-selector      [:.textBlock [:a :.title]]
                    :link-selector-type :full-href
+                   :paging             :increment-until-no-changes
                    :last-page-selector [:.paginator [:a (html/attr-has :href)]]}})
 

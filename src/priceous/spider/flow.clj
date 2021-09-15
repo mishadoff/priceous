@@ -44,7 +44,7 @@
    until state of the provider is not set to :done
    Function for retrieving documents is build based on provider conf"
   [provider]
-  (let [p (atom provider) docs (atom [])
+  (let [p (atom provider) docs (atom []) last-docs (atom [])
         process-page-fn (cond
                           (p/api? provider) process-query-api
                           (or (p/heavy? provider) (p/light? provider)) process-page
@@ -55,7 +55,16 @@
         (assert (:provider result) "Processor must return new provider")
         (assert (:docs result)     "Processor must return docs")
         (reset! p (:provider result))          ;; set current provider to new
-        (swap! docs into (:docs result))       ;; add docs to the processed
+        ;; condition same results
+        (if (= (->> @last-docs (map :link) (into #{}))
+               (->> (:docs result) (map :link) (into #{})))
+          (do (log/info "Seeing the same result...")
+              ;; set done
+              (reset! p (p/set-done @p)))
+          (do
+            (swap! docs into (:docs result))
+            (reset! last-docs (:docs result))
+            ))
         ))
 
     (log/info (fmt/category-processed @p (count @docs)))
@@ -114,7 +123,9 @@
 (defn- update-stats
   "Advance the provider state and checks if we are done
    based on limit, or last-page-selector"
-  [page {provider :provider docs :docs :as result}]
+  [page {provider :provider
+         docs :docs
+         :as result}]
   (assoc result :provider
          (-> provider
              (update-in [:state :page-current] inc)
@@ -124,6 +135,7 @@
              ((fn [p] (cond
                         (and (= :api (p/strategy p)) (empty? docs)) (p/set-done p)
                         (= :api (p/strategy p)) p
+                        (= :increment-until-no-changes (p/paging-strategy p)) p
                         :else (p/set-done-if-last-page p (su/last-page p page))
                         ))))))
 

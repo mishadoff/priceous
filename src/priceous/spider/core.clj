@@ -37,9 +37,10 @@
                   (:total final-state)
                   (time/elapsed-so-far start)))
 
-      (alert/notify "Alert from priceous"
-                    (str "Scrapping finished:\n\n\n"
-                         (with-out-str (clojure.pprint/pprint final-state))))
+      (if (true? (config/get :alert :on))
+        (alert/notify "Alert from priceous"
+                      (str "Scrapping finished:\n\n\n"
+                           (with-out-str (clojure.pprint/pprint final-state)))))
 
       final-state)
     (catch Exception e

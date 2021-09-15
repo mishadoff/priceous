@@ -38,6 +38,9 @@
 (defn strategy [provider]
   (get-in provider [:configuration :strategy]))
 
+(defn paging-strategy [provider]
+  (get-in provider [:configuration :paging]))
+
 (defn current-page [provider] ;; FIXME hack for rozetka
   (cond
     (and (= 1 (get-in provider [:state :current-val]))

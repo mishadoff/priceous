@@ -34,7 +34,8 @@
              :time-unit "HOURS"}
 
  :alert {
-         :emails ["mishadoff@gmail.com"]
+         :on false
+         :emails ["alcopriceous@gmail.com"]
          :from "alcopriceous@gmail.com"
          :password "<PASSWORD>"
  }

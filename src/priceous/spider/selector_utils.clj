@@ -169,7 +169,9 @@
     q+     query by selector, result should be single and required
     q?     query by selector, result should be single and optional
     q*     query by selector, result should be multiple items, required
+    q*?    query by selector, result should be multiple items, optional
     text+  query text by selector, same as q+
+    text?  query text by selector, same as q?
   "
 
   [provider nodemap & body]
