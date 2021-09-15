@@ -80,6 +80,7 @@
                  ;; Mail library for alerts
                  [com.draines/postal "2.0.3"]]
 
+  ;; FIXME: do not work good with integrant
   :aliases {"goodwine" ["run" "-m" "priceous.spider.core" "goodwine"]}
 
   :repl-options {:init-ns user}

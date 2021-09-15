@@ -44,6 +44,11 @@
    [:div {:class "mp-root"} 
     [:div {:class "mp-child"}
      [:a {:href "/contacts" :class "headerlink"} "Контакты"]]]
+
+   [:div {:class "mp-root"}
+    [:div {:class "mp-child"}
+     [:a {:href "/scrap" :class "headerlink"} "Собрать сейчас"]]]
+
    ])
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

@@ -1,6 +1,7 @@
 (ns priceous.web.controller
   (:require [priceous.utils.http :as utils.http]
             [priceous.spider.solr :as solr]
+            [priceous.spider.core :as spider]
             [priceous.web.templates.search :as search]
             [priceous.web.templates.stats :as stats]
             [priceous.web.templates.help :as help]
@@ -42,3 +43,10 @@
 
 (defn contacts [request]
   (contacts/view {}))
+
+;;;
+
+(defn scrap [request]
+  (future
+    (spider/scrap ["goodwine"]))
+  {:status 200 :body "ok"})

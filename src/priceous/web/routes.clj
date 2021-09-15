@@ -17,6 +17,9 @@
     (GET "/about" request (c/about request))
     (GET "/contacts" request (c/contacts request))
 
+    ;; admin
+    (GET "/scrap" request (c/scrap request))
+
     (route/resources "/")
     (route/not-found "<h1>Invalid page</h1>")))
 

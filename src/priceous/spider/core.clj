@@ -27,7 +27,7 @@
           e.g. [rozetka, goodwine, winetime]"
   [provider-names]
   (try
-    (log/info "Start monitoring prices for providers " (seq provider-names))
+    (log/info "Start monitoring prices for providers" (seq provider-names))
     (let [start (System/currentTimeMillis)
           providers (->> provider-names
                          (map nsutil/resolve-provider-by-name)
@@ -79,7 +79,7 @@
             (do (log/info (format "[%s] Found %s items in %.2f seconds"
                                   pname (count items) (time/elapsed-so-far start)))
                 ;; write data to every appender
-                (log/info (format "Available appenders %s" (config/get :appenders)))
+                (log/info "Items: " items)
 
                 (solr/write provider items) ;; TODO return delta
 

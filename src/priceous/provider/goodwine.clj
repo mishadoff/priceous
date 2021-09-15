@@ -10,7 +10,7 @@
 
 (defn get-categories [provider]
   (->>
-    [["Виски" "https://goodwine.com.ua/viski.html"]
+    #_[["Виски" "https://goodwine.com.ua/viski.html"]
      ["Вино" "https://goodwine.com.ua/vino.html"]
      ["Игристое Вино" "https://goodwine.com.ua/igristye.html"]
      ["Пиво" "https://goodwine.com.ua/pivo.html"]
@@ -28,6 +28,9 @@
      ["Текила" "https://goodwine.com.ua/drugie-krepkie/prochie-krepkie/tequilla.html"]
      ["Писко" "https://goodwine.com.ua/drugie-krepkie/prochie-krepkie/pisko.html"]
      ["Мескаль" "https://goodwine.com.ua/drugie-krepkie/prochie-krepkie/meskal.html"]]
+    ;; FIXME: temp process only whisky category
+    [["Виски" "https://goodwine.com.ua/viski.html"]]
+
     (mapv (fn [[name url]] {:name name :template (str url "?dir=asc&p=%s")}))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -130,7 +133,7 @@
                    :threads            8
                    :strategy           :heavy
                    :node->document     node->document
-                   :node-selector      [:.catalogListBlock :> :ul :> [:li (html/but [:.hide])]]
+                   :node-selector      [:.textBlock]
                    :link-selector      [:.textBlock [:a :.title]]
                    :link-selector-type :full-href
                    :last-page-selector [:.paginator [:a (html/attr-has :href)]]}})
